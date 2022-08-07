@@ -5,6 +5,7 @@ import {
   InMemoryCache, 
   ApolloProvider} from '@apollo/client'
 import { PostInfo, CreatePost } from './Post';
+import React from 'react';
 
 const client = new ApolloClient({
   // uri: 'http://localhost:8000/graphql/',
@@ -14,6 +15,8 @@ const client = new ApolloClient({
 
 function App() {
   return (
+    <React.Fragment>
+    <h1>Helloooo</h1>
     <ApolloProvider client={client}>
       <div style={{
         backgroundColor: '#00000008',
@@ -28,6 +31,7 @@ function App() {
         <PostInfo />
       </div>
     </ApolloProvider>
+    </React.Fragment>
   )
   // return (
   //   <div className="App">
