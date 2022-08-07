@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     #Third-party
     'debug_toolbar',
     'storages',
+    'graphene_django',
+    'corsheaders',
 
     #Local
     'accounts',
@@ -57,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -186,3 +189,18 @@ else:
 STATICFILES_DIRS = [str(BASE_DIR.joinpath('static'))]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+GRAPHENE = {
+    'SCHEMA': 'posts.schema.schema'
+}
+
+import django
+from django.utils.encoding import force_str
+django.utils.encoding.force_text = force_str
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:8000',
+    'https://www.typenpost.com'
+]
