@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html>
     <head>
@@ -9,8 +10,8 @@
         <title>
             {% block title %}Typenpost{% endblock title %}
         </title>
-        <script defer="defer" src="/static/js/main.c06d8e99.js"></script>
-        <link href="/static/css/main.073c9b0a.css" rel="stylesheet">
+        <script defer="defer" src="{% static 'js/main.c06d8e99.js' %}"></script>
+        <link href="{% static 'css/main.073c9b0a.css' %}" rel="stylesheet">
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
