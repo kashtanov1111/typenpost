@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'storages',
     'graphene_django',
     'corsheaders',
+    'django_cleanup.apps.CleanupConfig',
 
     #Local
     'accounts',
