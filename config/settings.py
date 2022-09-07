@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+from datetime import timedelta
 
 from pathlib import Path
 from environs import Env
@@ -49,7 +50,10 @@ INSTALLED_APPS = [
     'graphene_django',
     'corsheaders',
     'django_cleanup.apps.CleanupConfig',
-
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
+    'django_filters',
+    'graphql_auth',
+    
     #Local
     'accounts',
     'posts',
@@ -59,8 +63,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -192,16 +196,64 @@ STATICFILES_DIRS = [str(BASE_DIR.joinpath('static'))]
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 GRAPHENE = {
-    'SCHEMA': 'posts.schema.schema'
+    'SCHEMA': 'config.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+        'graphene_django.debug.DjangoDebugMiddleware',
+    ]
 }
 
 import django
 from django.utils.encoding import force_str
+from django.utils.translation import gettext, gettext_lazy
 django.utils.encoding.force_text = force_str
+django.utils.translation.ugettext = gettext
+django.utils.translation.ugettext_lazy = gettext_lazy
+
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:8000',
     'https://www.typenpost.com'
+]
+
+# CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken', 'Authorization']
+CORS_ALLOW_CREDENTIALS = True
+
+AUTHENTICATION_BACKENDS = [
+    # 'graphql_jwt.backends.JSONWebTokenBackend',
+    'graphql_auth.backends.GraphQLAuthBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
+
+GRAPHQL_JWT = {
+    "JWT_ALLOW_ANY_CLASSES": [
+        "graphql_auth.mutations.Register",
+        "graphql_auth.mutations.VerifyAccount",
+        "graphql_auth.mutations.ResendActivationEmail",
+        "graphql_auth.mutations.SendPasswordResetEmail",
+        "graphql_auth.mutations.PasswordReset",
+        "graphql_auth.mutations.ObtainJSONWebToken",
+        "graphql_auth.mutations.VerifyToken",
+        "graphql_auth.mutations.RefreshToken",
+        "graphql_auth.mutations.RevokeToken",
+        "graphql_auth.mutations.VerifySecondaryEmail",
+    ],
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    "JWT_EXPIRATION_DELTA": timedelta(seconds=60),
+    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=7),
+    "JWT_COOKIE_SECURE": env.bool('JWT_COOKIE_SECURE', default=True),
+    "JWT_COOKIE_SAMESITE": (None if env('JWT_COOKIE_SAMESITE') else 'Lax')
+}
+
+GRAPHQL_AUTH = {
+    'ALLOW_LOGIN_NOT_VERIFIED': False,
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
 ]

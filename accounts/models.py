@@ -9,7 +9,7 @@ def handle_user_avatar_path(instance, filename):
     return os.path.join(username, 'avatar', filename)
 
 class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, blank=False)
 
 
 class Follow(models.Model):
@@ -32,7 +32,7 @@ class Follow(models.Model):
         ]
     
     def __str__(self):
-        return '%s follows %s' % (self.from_user.user, self.to_user.user)
+        return '%s follows %s' % (self.to_user.user, self.from_user.user)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(

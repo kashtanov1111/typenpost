@@ -15,6 +15,8 @@ Including another URLconf
 """
 from graphene_django.views import GraphQLView
 
+from graphql_jwt.decorators import jwt_cookie
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -25,7 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html')),
     path('admin/', admin.site.urls),
-    path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path('graphql/', jwt_cookie(csrf_exempt(GraphQLView.as_view(graphiql=True)))),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG: # new

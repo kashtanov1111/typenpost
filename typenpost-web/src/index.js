@@ -1,15 +1,31 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import ReactDOM from 'react-dom/client'
+import App from './components/App';
 import reportWebVitals from './reportWebVitals';
+import { 
+  ApolloClient, 
+  InMemoryCache, 
+  ApolloProvider} from '@apollo/client'
+import { BrowserRouter } from 'react-router-dom';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.css';
+import './styles/index.css';
 
+const client = new ApolloClient({
+  uri: 'http://localhost:8000/graphql/',
+  // uri: 'https://www.typenpost.com/graphql/',
+  credentials: 'include',
+  cache: new InMemoryCache(),
+})
+  
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <BrowserRouter>
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
