@@ -1,7 +1,15 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; 
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import FloatingLabel from 'react-bootstrap/FloatingLabel'
+import Spinner from 'react-bootstrap/Spinner'
+import { useTitle } from "./App";
+import { Error } from "./Error";
 
 const REGISTER_MUTATION = gql`
     mutation register(
@@ -31,8 +39,9 @@ const RESEND_ACTIVATION_EMAIL = gql`
     }
 `
 
-export function Register() {
-    const [validated, setValidated] = useState(false)
+export function Register(props) {
+    useTitle('Typenpost - Sign up')
+    const {handleAlert} = props
     const navigate = useNavigate()
     const [registered, setRegistered] = useState(false)
     const [formState, setFormState] = useState({
@@ -41,7 +50,11 @@ export function Register() {
         password1: '',
         password2: '',
     })
-    const [handleRegister, {data, error, loading}] = useMutation(REGISTER_MUTATION, {
+    const [handleRegister, {
+                            data: dataRegister, 
+                            loading: loadingRegister,
+                            error: errorRegister}] = useMutation(
+        REGISTER_MUTATION, {
         variables: {
             email: formState.email,
             username: formState.username,
@@ -50,130 +63,231 @@ export function Register() {
         },
         onCompleted: (data) => {
             if (data.register.success) {
+                const message = 'Confirmation e-mail sent to ' + formState.email
+                handleAlert(message, 'primary')
                 setRegistered(true)
             }
         }
     })
-    const [handleResend] = useMutation(RESEND_ACTIVATION_EMAIL, {
+    const [handleResend, {
+                        loading: loadingResendEmail,
+                        error: errorResendEmail}] = useMutation(RESEND_ACTIVATION_EMAIL, {
         variables: {
             email: formState.email
+        }, 
+        onCompleted: (data) => {
+            if (data.resendActivationEmail.success) {
+                const message = 'Confirmation e-mail has been resent to ' + formState.email
+                handleAlert(message, 'primary')
+            }
         }
     })
-    function handleSubmitForm(event) {
+    function handleSubmit(event) {
         event.preventDefault()
-        const form = event.currentTarget
-        if (form.checkValidity() === false) {
-            event.stopPropagation()
-        }
-        setValidated(true)
         handleRegister()
     }
-    console.log(registered)
+    if (errorRegister || errorResendEmail) {
+        return (
+            <Error />
+        )
+    }
     return (!registered ?
-        <div className='row'>
-        <div className='col-md-6 mx-auto'>
+        <Row>
+        <Col md={6} className='mx-auto' >
             <h1 className='text-center mb-3'>
                 Sign up
             </h1>
-            {/* {data && !data.tokenAuth.success &&
-            data.tokenAuth.errors.map((el) => (
-                <div className="alert alert-danger" role="alert">
-                    {el.message}
-                </div>
-            ))
-            } */}
-            <form 
-                validated={validated}
-                className='needs-validation '
-                onSubmit={handleSubmitForm} 
+            <Form 
+                onSubmit={handleSubmit} 
                 noValidate>
-                <div className='form-floating mb-3 has-validation'>
-                    <input 
-                        className='form-control'
-                        id='floatingInputEmail'
-                        type="email"
-                        value={formState.email}
-                        onChange={(e) => 
-                            setFormState({
-                                ...formState,
-                                email: e.target.value
-                            })
-                        }
-                        placeholder='Email address'
-                        required
-                    />    
-                    <label for="floatingInputEmail">Email address</label>
-                    <div className='invalid-feedback'>
-                        Please provide a valid email.
-                    </div>
-                </div>
-                <div className='form-floating mb-3'>
-                    <input 
-                        className='form-control'
-                        id='floatingInputUsername'
-                        type="text"
-                        value={formState.username}
-                        onChange={(e) => 
-                            setFormState({
-                                ...formState,
-                                username: e.target.value
-                            })
-                        }
-                        placeholder='Username'
-                        required
-                    />
-                    <label for="floatingInputUsername">Username</label>
-                    <div className='valid-feedback'>
-                        Please provide a valid email.
-                    </div>
-                </div>
-                <div className='form-floating mb-3'>
-                    <input
-                        className='form-control'
-                        id='floatingInputPassword1'
-                        type="password"
-                        value={formState.password1}
-                        onChange={(e) => 
-                            setFormState({
-                                ...formState,
-                                password1: e.target.value
-                            })
-                        }
-                        placeholder='Password'
-                        required
-                    />
-                    <label for="floatingInputPassword1">Password</label>
-                </div>
-                <div className='form-floating mb-3'>
-                    <input 
-                        className='form-control'
-                        id='floatingInputPassword2'
-                        type="password"
-                        value={formState.password2}
-                        onChange={(e) => 
-                            setFormState({
-                                ...formState,
-                                password2: e.target.value
-                            })
-                        }
-                        placeholder='Password (again)'
-                        required
-                    />
-                    <label for="floatingInputPassword2">Password (again)</label>
-                </div>
-                <button className='login-signup-button btn btn-primary py-2 col-12 mb-2' type='submit'>
-                    Sign Up
-                </button>
+                <Form.Group className='mb-2'>
+                    <FloatingLabel
+                        label='Email address'
+                        controlId='floatingEmail'
+                    >
+                        <Form.Control 
+                            type="email"
+                            value={formState.email}
+                            isInvalid={dataRegister && dataRegister.register.errors.email}
+                            isValid={dataRegister && !dataRegister.register.errors.email}
+                            onChange={(e) => 
+                                setFormState({
+                                    ...formState,
+                                    email: e.target.value
+                                })
+                            }
+                            placeholder='Email address'
+                            required
+                        />    
+                        <Form.Control.Feedback>
+                            Looks good!
+                        </Form.Control.Feedback>
+                        {dataRegister && 
+                        dataRegister.register.errors.email &&
+                        dataRegister.register.errors.email.map((el) => (
+                        <Form.Control.Feedback type='invalid'>
+                                {el.message}
+                        </Form.Control.Feedback>
+                        ))}
+                    </FloatingLabel>
+                </Form.Group>
+                <Form.Group className='mb-2'>
+                    <FloatingLabel
+                        label='Username'
+                        controlId='floatingUsername'
+                    >
+
+                        <Form.Control 
+                            type="text"
+                            isInvalid={dataRegister && dataRegister.register.errors.username}
+                            isValid={dataRegister && !dataRegister.register.errors.username}
+                            value={formState.username}
+                            onChange={(e) => 
+                                setFormState({
+                                    ...formState,
+                                    username: e.target.value
+                                })
+                            }
+                            placeholder='Username'
+                            required
+                        />    
+                        <Form.Control.Feedback>
+                            Looks good!
+                        </Form.Control.Feedback>
+                        {dataRegister && 
+                        dataRegister.register.errors.username &&
+                        dataRegister.register.errors.username.map((el) => (
+                        <Form.Control.Feedback type='invalid'>
+                                {el.message}
+                        </Form.Control.Feedback>
+                        ))}
+                    </FloatingLabel>
+                </Form.Group>
+                <Form.Group className='mb-2'>
+                    <FloatingLabel
+                        label='Password'
+                        controlId='floatingPassword1'
+                    >
+                        <Form.Control 
+                            type="password"
+                            value={formState.password1}
+                            isInvalid={dataRegister && dataRegister.register.errors.password1}
+                            isValid={dataRegister && !dataRegister.register.errors.password1}
+                            onChange={(e) => 
+                                setFormState({
+                                    ...formState,
+                                    password1: e.target.value
+                                })
+                            }
+                            placeholder='Password'
+                            required
+                        />    
+                        <Form.Control.Feedback>
+                            Looks good!
+                        </Form.Control.Feedback>
+                        {dataRegister && 
+                        dataRegister.register.errors.password1 &&
+                        dataRegister.register.errors.password1.map((el) => (
+                        <Form.Control.Feedback type='invalid'>
+                                {el.message}
+                        </Form.Control.Feedback>
+                        ))}
+                    </FloatingLabel>
+                </Form.Group>
+                <Form.Group className='mb-2'>
+                    <FloatingLabel
+                        label='Password (again)'
+                        controlId='floatingPassword2'
+                    >
+                        <Form.Control 
+                            type="password"
+                            value={formState.password2}
+                            isInvalid={dataRegister && dataRegister.register.errors.password2}
+                            isValid={dataRegister && !dataRegister.register.errors.password2}
+                            onChange={(e) => 
+                                setFormState({
+                                    ...formState,
+                                    password2: e.target.value
+                                })
+                            }
+                            placeholder='Password (again)'
+                            required
+                        />    
+                        <Form.Control.Feedback>
+                            Looks good!
+                        </Form.Control.Feedback>
+                        {dataRegister && 
+                        dataRegister.register.errors.password2 &&
+                        dataRegister.register.errors.password2.map((el) => (
+                        <Form.Control.Feedback type='invalid'>
+                                {el.message}
+                        </Form.Control.Feedback>
+                        ))}
+                    </FloatingLabel>
+                </Form.Group>
+                <Button 
+                    variant='primary' 
+                    className='login-signup-button py-2 col-12 mb-2' 
+                    type='submit'
+                    disabled={!(formState.email &&
+                                formState.username &&
+                                formState.password1 &&
+                                formState.password2)}
+                                >
+                    {loadingRegister ? 
+                    <div><Spinner
+                        as='span'
+                        animation='border'
+                        size='sm'
+                        role='status'
+                        aria-hidden='true' />
+                    <span className='visually-hidden'>Loading...</span>
+                    </div> :
+                    <b>Sign up</b>
+                    }
+                </Button>
                 <div className='text-center'>
-                    <Link type="link" to='/login' >Already have an account?</Link>
+                    <Link type="link" to='/login'>
+                        Already have an account?
+                    </Link>
                 </div>
-            </form>
-        </div>
-        </div> :
-        <div>
-            <h1>Please confirm your email.</h1>
-            <p>Is Confirmation email not coming?</p>
-            <button onClick={handleResend}>Resend</button>
-        </div>
+            </Form>
+        </Col>
+        </Row> :
+        <Row>
+            <Col md={8} className='mx-auto'>
+            <h1 className='text-center'>Verify Your E-mail Address</h1>
+            <p>We have sent an e-mail to you for verification. 
+            Follow the link provided to finalize the signup process. 
+            If you do not see the verification e-mail in your main inbox,
+             check your spam folder. Please contact us 
+             if you do not receive the verification e-mail within
+              a few minutes.</p>
+            <Row className='justify-content-md-center'>
+                <Col xs='auto'>
+                    Is Confirmation email not coming?
+                </Col>
+                <Col xs='auto'>
+                    <Button 
+                        onClick={handleResend}
+                        variant='primary'
+                        >
+                        {loadingResendEmail ? 
+                        <div><Spinner
+                            as='span'
+                            animation='border'
+                            size='sm'
+                            role='status'
+                            aria-hidden='true' />
+                        <span className='visually-hidden'>Loading...</span>
+                        </div> :
+                        <span>Resend</span>
+                    }
+                    </Button>
+
+                </Col>
+            </Row>
+            </Col>
+        </Row>
     )
 }

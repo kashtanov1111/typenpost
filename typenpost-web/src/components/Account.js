@@ -3,7 +3,11 @@ import { useTitle } from "./App"
 import { useParams, Link } from "react-router-dom"
 import { gql, useMutation } from "@apollo/client"
 import { useNavigate } from "react-router-dom"
-
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import { Error } from "./Error"
 
 const VERIFY_ACCOUNT = gql`
     mutation VerifyAccount($token: String!) {
@@ -66,32 +70,30 @@ const PASSWORD_CHANGE = gql`
 export function VerifyAccount(props) {
     const {handleAlert} = props
     const params = useParams()
-    const [verified, setVerified] = useState(false)
     const token = params.confirmationToken
     const navigate = useNavigate()
-    useTitle('Typenpost')
-    const [verifyAccount, { data, loading, error }] = useMutation(VERIFY_ACCOUNT, {
+    useTitle('Typenpost - Verify Account')
+    const [verifyAccount, { error }] = useMutation(VERIFY_ACCOUNT, {
         variables: { token: token },
-        onCompleted: () => {
-            handleAlert('Your account has been verified. Thank you!', 'success')
-            navigate('../login', {replace: true})
+        onCompleted: (data) => {
+            if (data.verifyAccount.success) {
+                handleAlert('Your account has been verified.', 'success')
+                navigate('../login', {replace: true})
+            }
         }
     })
-    if (loading) {
-        return <p>Loading...</p>
-    }
     if (error) {
-        return <p>Error! {error.message}</p>
+        return <Error />
     }
-    return (!verified ?
-        <div>   
-            <p>Please verify your account.</p>
-            <button onClick={verifyAccount}>Verify Account</button>
-        </div> :
-        <div>
-            <p>Your account has been verified. Thank you!</p>
-            <Link type="button" to='/login' className="btn btn-outline-dark me-2">Log In</Link>
-        </div>
+    return (
+        <Row>
+            <Col md={6} className='mx-auto text-center'>
+                <h1>Confirm E-mail Address</h1>
+                <p>Please confirm that this is your email address.</p>
+                <Button variant='success' onClick={verifyAccount}>Verify Account</Button>
+            </Col>
+        </Row>
+
     )
 }
 
@@ -100,31 +102,41 @@ export function PasswordReset() {
     const [emailSent, setEmailSent] = useState(false)
     const [handleEmail] = useMutation(SEND_PASSWORD_RESET_EMAIL, {
         variables: {email: email},
-        onCompleted: () => setEmailSent(true)
+        onCompleted: (data) => {
+            if (data.sendPasswordResetEmail.success) {
+                setEmailSent(true)
+            }
+            
+        } 
     })
-    return (!emailSent ?
-        <div>
-        <h1>Password Reset</h1>
-        <p>Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it.</p>
-        <form onSubmit={(event) => {
-            event.preventDefault()
-            handleEmail()
-            }} action=''>
-            <input 
-                type="email"
-                value={email}
-                onChange={(e) => 
-                    setEmail(e.target.value)
-                }
-                placeholder='Your email'
-            />
-            <button type='submit'>Send</button>
-        </form>
-        </div> :
-        <div>
-            <h1>Password Reset</h1>
-            <p>We have sent you an e-mail. If you have not received it please check your spam folder. Otherwise contact us if you do not receive it in a few minutes.</p>
-        </div>
+    return (
+        <Row>
+            <Col md={6} className='mx-auto text-center'>
+                {!emailSent ? <div>
+                <h1>Password Reset</h1>
+                <p>Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it.</p>
+                <Form onSubmit={(event) => {
+                    event.preventDefault()
+                    handleEmail()
+                    }}>
+                    {/* <Form.Group */}
+                    <input 
+                        type="email"
+                        value={email}
+                        onChange={(e) => 
+                            setEmail(e.target.value)
+                        }
+                        placeholder='Your email'
+                    />
+                    <button type='submit'>Send</button>
+                </Form>
+                </div> :
+                <div>
+                    <h1>Password Reset</h1>
+                    <p>We have sent you an e-mail. If you have not received it please check your spam folder. Otherwise contact us if you do not receive it in a few minutes.</p>
+                </div>}
+            </Col>
+        </Row>
     )
 }
 

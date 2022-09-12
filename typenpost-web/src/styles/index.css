@@ -8,4 +8,26 @@
 }
 a {
     text-decoration: none;
+    color: black;
+}
+a:hover {
+    color: black
+}
+.dropdown-item-link:active {
+    color: white
+}
+.loader{
+    /* position: fixed;
+    left: 45%;
+    top: 35%;
+    z-index: 1000; */
+    position: fixed;
+    margin: auto;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 30%;
+    z-index: 1;
+    height: 50px;
+    width: 50px;
 }

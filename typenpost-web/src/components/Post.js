@@ -3,6 +3,7 @@ import { useQuery, useMutation, gql } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
 import { useTitle } from './App'
 import { useParams } from 'react-router-dom'
+import { Loader } from './Loader'
 
 const QUERY_POSTS = gql`
     query GetAllPosts {
@@ -49,7 +50,7 @@ export function PostDetail() {
             polling: 500,
     })
     if (loading) {
-        return <p>Loading...</p>
+        return <Loader />
     }
     if (error) {
         return <p>Error! {error.message}</p>
@@ -71,7 +72,7 @@ export function PostInfo() {
         }
     )
     if (loading) {
-        return <p>Loading...</p>
+        return <Loader />
     }
     if (error) {
         return <p>Error! {error.message}</p>
