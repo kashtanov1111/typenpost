@@ -19,10 +19,8 @@ export function Header(props) {
       <div>
       <Navbar bg="white" expand="lg" className='py-0'>
       <Container>
-          <Navbar.Brand className='me-2'>
-            <Link to="/" >
-            <img className="long-logo" src={aws_link + long_logo} alt="Logo" />
-            </Link>
+          <Navbar.Brand as={Link} to='/' className='me-2'>
+            <img height='40px' src={aws_link + long_logo} alt="Logo" />
           </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
