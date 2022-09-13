@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client'
-import App from './components/App';
 import reportWebVitals from './reportWebVitals';
 import { 
   ApolloClient, 
@@ -13,9 +12,10 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './styles/index.css';
 import { Authorization } from './components/Authorization';
 
+
 const client = new ApolloClient({
-  uri: 'http://localhost:8000/graphql/',
-  // uri: 'https://www.typenpost.com/graphql/'
+  // uri: 'http://localhost:8000/graphql/',
+  uri: 'https://www.typenpost.com/graphql/',
   credentials: 'include',
   cache: new InMemoryCache(),
 })

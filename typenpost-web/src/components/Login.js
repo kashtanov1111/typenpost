@@ -11,7 +11,9 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
 import { useTitle } from "./App";
 import { Error } from "./Error";
-
+import InputGroup from 'react-bootstrap/InputGroup'
+import {BsFillEyeFill} from 'react-icons/bs'
+import {BsFillEyeSlashFill} from 'react-icons/bs'
 
 const LOGIN_MUTATION = gql`
     mutation tokenAuth(
@@ -32,6 +34,7 @@ const LOGIN_MUTATION = gql`
 
 export function Login(props) {
     const navigate = useNavigate()
+    const [showPassword, setShowPassword] = useState(false)
     const [theFirstField, setTheFirstField] = useState('Username or Email')
     useTitle('Typenpost - Log In')
     const {handleAlert} = props
@@ -62,8 +65,18 @@ export function Login(props) {
     if (error) {
         return <Error />
     }
+
+    function handleShowPassword() {
+        if (showPassword === true) {
+            setShowPassword(false)
+        } else {
+            setShowPassword(true)
+        }
+    }
+    
     function handleSubmit(event) {
         event.preventDefault()
+        setShowPassword(false)
         const variablesEmail = {
             email: formState.usernameOrEmail,
             password: formState.password
@@ -115,13 +128,13 @@ export function Login(props) {
                         />
                     </FloatingLabel>
                 </Form.Group>
-                <Form.Group className='mb-3'>
+                <InputGroup className='mb-3'>
                     <FloatingLabel
                         label='Password'    
                         controlId='floatingPassword'
                     >
                         <Form.Control 
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             value={formState.password}
                             onChange={(e) => 
                                 setFormState({
@@ -133,7 +146,10 @@ export function Login(props) {
                             required
                         />
                     </FloatingLabel>
-                </Form.Group>
+                    <InputGroup.Text onClick={handleShowPassword} className='juju px-3' id="basic-addon1">
+                        {showPassword ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
+                    </InputGroup.Text>
+                </InputGroup>
                 <Button 
                     type='submit' 
                     variant='primary' 
@@ -155,7 +171,10 @@ export function Login(props) {
                 <div className='text-center'>
                     <Link 
                         type="link" 
-                        to='/password_reset'>
+                        to='/password_reset'
+                        state={theFirstField === 'Email' ? 
+                                formState.usernameOrEmail :
+                                ''}>
                         Forgot Account?
                     </Link>
                     <span> ∙ </span>

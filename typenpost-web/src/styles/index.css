@@ -31,3 +31,8 @@ a:hover {
     height: 50px;
     width: 50px;
 }
+.juju {
+    height: calc(3.5rem + 2px);
+    background-color: white;
+    border-left: None;
+}

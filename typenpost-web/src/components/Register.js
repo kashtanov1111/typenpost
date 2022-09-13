@@ -10,6 +10,9 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
 import { useTitle } from "./App";
 import { Error } from "./Error";
+import InputGroup from 'react-bootstrap/InputGroup'
+import {BsFillEyeFill} from 'react-icons/bs'
+import {BsFillEyeSlashFill} from 'react-icons/bs'
 
 const REGISTER_MUTATION = gql`
     mutation register(
@@ -41,6 +44,8 @@ const RESEND_ACTIVATION_EMAIL = gql`
 
 export function Register(props) {
     useTitle('Typenpost - Sign up')
+    const [showPassword1, setShowPassword1] = useState(false)
+    const [showPassword2, setShowPassword2] = useState(false)
     const {handleAlert} = props
     const navigate = useNavigate()
     const [registered, setRegistered] = useState(false)
@@ -84,8 +89,27 @@ export function Register(props) {
     })
     function handleSubmit(event) {
         event.preventDefault()
+        setShowPassword1(false)
+        setShowPassword2(false)
         handleRegister()
     }
+
+    function handleShowPassword(number) {
+        if (number === 1) {
+            if (showPassword1 === true) {
+                setShowPassword1(false)
+            } else {
+                setShowPassword1(true)
+            }
+        } else if (number === 2) {
+            if (showPassword2 === true) {
+                setShowPassword2(false)
+            } else {
+                setShowPassword2(true)
+            }
+        }
+    }
+    
     if (errorRegister || errorResendEmail) {
         return (
             <Error />
@@ -163,13 +187,13 @@ export function Register(props) {
                         ))}
                     </FloatingLabel>
                 </Form.Group>
-                <Form.Group className='mb-2'>
+                <InputGroup className='mb-2'>
                     <FloatingLabel
                         label='Password'
                         controlId='floatingPassword1'
                     >
                         <Form.Control 
-                            type="password"
+                            type={showPassword1 ? "text" : "password"}
                             value={formState.password1}
                             isInvalid={dataRegister && dataRegister.register.errors.password1}
                             isValid={dataRegister && !dataRegister.register.errors.password1}
@@ -193,14 +217,17 @@ export function Register(props) {
                         </Form.Control.Feedback>
                         ))}
                     </FloatingLabel>
-                </Form.Group>
-                <Form.Group className='mb-2'>
+                    <InputGroup.Text onClick={() => handleShowPassword(1)} className='juju px-3' id="basic-addon1">
+                        {showPassword1 ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
+                    </InputGroup.Text>
+                </InputGroup>
+                <InputGroup className='mb-2'>
                     <FloatingLabel
                         label='Password (again)'
                         controlId='floatingPassword2'
                     >
                         <Form.Control 
-                            type="password"
+                            type={showPassword2 ? "text" : "password"}
                             value={formState.password2}
                             isInvalid={dataRegister && dataRegister.register.errors.password2}
                             isValid={dataRegister && !dataRegister.register.errors.password2}
@@ -224,7 +251,10 @@ export function Register(props) {
                         </Form.Control.Feedback>
                         ))}
                     </FloatingLabel>
-                </Form.Group>
+                    <InputGroup.Text onClick={() => handleShowPassword(2)} className='juju px-3' id="basic-addon2">
+                        {showPassword2 ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
+                    </InputGroup.Text>
+                </InputGroup>
                 <Button 
                     variant='primary' 
                     className='login-signup-button py-2 col-12 mb-2' 

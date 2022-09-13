@@ -1,5 +1,5 @@
-import long_logo from '../long_logo.JPG';
-import nobody from '../images/nobody.jpg'
+import long_logo from '../assets/images/long_logo.jpg';
+import nobody from '../assets/images/nobody.jpg'
 import React from "react";
 import { Link, useNavigate } from 'react-router-dom'
 import Container from 'react-bootstrap/Container'
@@ -13,13 +13,15 @@ export function Header(props) {
     const navigate = useNavigate()
     const {username, isAuthenticated, 
           avatar, handleLogout} = props
+
+    const aws_link = "https://typenpost.s3.amazonaws.com"
     return (
       <div>
       <Navbar bg="white" expand="lg" className='py-0'>
       <Container>
           <Navbar.Brand className='me-2'>
             <Link to="/" >
-            <img className="long-logo" src={long_logo} alt="Logo" />
+            <img className="long-logo" src={aws_link + long_logo} alt="Logo" />
             </Link>
           </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

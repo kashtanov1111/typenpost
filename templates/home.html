@@ -2,10 +2,5 @@
 {% load static %}
 
 {% block content %}
-{% if user.is_authenticated %}
-    {{ user.username}}
-{% else %}
-    <p>no</p>
-{% endif %}
 <div id='root'></div>
 {% endblock content %}
