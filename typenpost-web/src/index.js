@@ -14,8 +14,8 @@ import { Authorization } from './components/Authorization';
 
 
 const client = new ApolloClient({
-  uri: 'http://localhost:8000/graphql/',
-  // uri: 'https://www.typenpost.com/graphql/',
+  // uri: 'http://localhost:8000/graphql/',
+  uri: 'https://www.typenpost.com/graphql/',
   credentials: 'include',
   cache: new InMemoryCache(),
 })
