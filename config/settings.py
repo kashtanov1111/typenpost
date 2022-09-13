@@ -246,7 +246,7 @@ GRAPHQL_JWT = {
     "JWT_EXPIRATION_DELTA": timedelta(seconds=60),
     "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=7),
     "JWT_COOKIE_SECURE": env.bool('JWT_COOKIE_SECURE', default=True),
-    "JWT_COOKIE_SAMESITE": (None if env('JWT_COOKIE_SAMESITE') else 'Lax')
+    "JWT_COOKIE_SAMESITE": (None if env('JWT_COOKIE_SAMESITE', default='') else 'Lax')
 }
 
 GRAPHQL_AUTH = {
