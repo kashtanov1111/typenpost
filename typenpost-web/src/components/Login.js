@@ -47,7 +47,7 @@ export function Login(props) {
         LOGIN_MUTATION, {
         onCompleted: (data) => {  
             if (data.tokenAuth.success) {
-                handleAlert('You have logged in.', 'success')
+                handleAlert('Successfully signed in as ' + formState.usernameOrEmail, 'success')
                 navigate('../', {replace: true})
                 localStorage.setItem('refreshToken', JSON.stringify('yes'))
             }

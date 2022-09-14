@@ -6,11 +6,12 @@ import Spinner from 'react-bootstrap/Spinner'
 
 
 export function Logout(props) {
-    const {handleLogout, loadingDeleteToken} = props
+    const {handleLogout, loadingDeleteToken, handleAlert} = props
     const navigate = useNavigate()
 
     function handleButtonClick() {
         handleLogout()
+        handleAlert('You have signed out.', 'success')
         navigate('../', {replace: true})
     }
     return (

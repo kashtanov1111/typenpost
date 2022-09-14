@@ -73,7 +73,8 @@ export function Authorization(props) {
     }
     }
     )
-    
+    console.log('username', username)
+    console.log('isauth', isAuthenticated)
     if (loading) {
     return (
         <Loader />

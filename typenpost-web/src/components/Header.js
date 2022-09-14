@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
+import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { CustomToggle } from './CustomToggle'
@@ -28,7 +29,7 @@ export function Header(props) {
             <Nav.Link as={Link} to='/'>Home</Nav.Link>
             <Nav.Link as={Link} to='/create'>Create</Nav.Link>
           </Nav>
-          <Form className="d-flex mb-lg-0 mb-3 ">
+          <Form className="d-flex mb-lg-0 mb-2">
             <Form.Control
               type="search"
               placeholder="Search"
@@ -67,18 +68,19 @@ export function Header(props) {
               </Dropdown.Menu>
             </Dropdown> :
             <div>
-                <Link 
-                  type="button" 
+                <Button 
+                  as={Link} 
                   to='/login' 
-                  className="btn btn-outline-dark me-2">
+                  variant='outline-dark'
+                  className="me-2">
                   Log In
-                </Link>
-                <Link 
-                  type="button" 
+                </Button>
+                <Button 
+                  as={Link} 
                   to='/register' 
-                  className="btn btn-primary">
+                  variant='primary'>
                   Sign Up
-                </Link>
+                </Button>
             </div>
           }
         </Navbar.Collapse>

@@ -43,7 +43,7 @@ function App(props) {
       isAuthenticated={isAuthenticated} />
     <Container>
     {showAlert ? 
-    <Alert key={styleAlert} variant={styleAlert}>
+    <Alert className='my-1' key={styleAlert} variant={styleAlert}>
       {textAlert}
     </Alert> : 
     <></>}
@@ -51,7 +51,10 @@ function App(props) {
         <Route path='/' element={<PostInfo />} />
         <Route 
           path='/logout' 
-          element={<Logout handleLogout={handleLogout}/>} />
+          element={<Logout 
+            handleLogout={handleLogout} 
+            handleAlert={handleAlert}
+            />} />
         <Route 
           path='/login' 
           element={<Login handleAlert={handleAlert} />} />
