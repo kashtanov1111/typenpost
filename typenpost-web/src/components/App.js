@@ -13,6 +13,7 @@ import {
 import Container from 'react-bootstrap/Container'
 import Alert from 'react-bootstrap/Alert'
 import { Logout } from './Logout';
+import { BsChevronDoubleLeft } from 'react-icons/bs';
 
 export function useTitle(title) {
   useEffect(() => {
@@ -20,6 +21,21 @@ export function useTitle(title) {
   })
 }
 
+export function createPlaceholderUrl(path, size) {
+  if (path.indexOf('cloudfront.net') > -1) {
+    path = path.slice(path.indexOf('cloudfront.net') + 14,)
+  }
+  const awsDomainOnlyForImages = "https://d1kll7zdtk3qm0.cloudfront.net"
+  const first_part_of_path = path.slice(0, path.lastIndexOf('/'))
+  const image_name = path.slice(path.lastIndexOf('/'),)
+  const url = awsDomainOnlyForImages + first_part_of_path + '/fit-in/' + size + image_name
+  return url
+}
+
+export function createSrcUrl(path) {
+  const awsDomainOnlyForImages = "https://d1kll7zdtk3qm0.cloudfront.net"
+  return awsDomainOnlyForImages + path
+}
 
 
 function App(props) {
@@ -27,6 +43,8 @@ function App(props) {
   const [showAlert, setShowAlert] = useState(false)
   const [textAlert, setTextAlert] = useState('')
   const [styleAlert, setStyleAlert] = useState('')
+
+  console.log('avatar', avatar.slice(avatar.indexOf('cloudfront.net') + 14,))
   function handleAlert(text, style) {
     setTextAlert(text)
     setStyleAlert(style)

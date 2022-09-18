@@ -9,19 +9,23 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { CustomToggle } from './CustomToggle'
+import ProgressiveImage from 'react-progressive-graceful-image'
+import { createPlaceholderUrl } from './App';
+import { createSrcUrl } from './App';
 
 export function Header(props) {
     const navigate = useNavigate()
     const {username, isAuthenticated, 
-          avatar, handleLogout} = props
-
-    const aws_link = "https://typenpost.s3.amazonaws.com"
+          avatar} = props
+    
     return (
       <div>
       <Navbar bg="white" expand="lg" className='py-0'>
       <Container>
           <Navbar.Brand as={Link} to='/' className='me-2'>
-            <img height='40px' src={aws_link + long_logo} alt="Logo" />
+            <ProgressiveImage src={createSrcUrl(long_logo)} placeholder={createPlaceholderUrl(long_logo, '20x20')}>
+              {(src, loading) => <img style={{filter: loading && 'blur(8px}', 'WebkitFilter': loading && 'blur(8px)'}} height='40px' src={src} alt="Logo" />}
+            </ProgressiveImage>
           </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
@@ -44,12 +48,9 @@ export function Header(props) {
                 id="dropdown-menu-align-responsive-1">
               <span className="d-block link-dark text-decoration-none 
                 dropdown-toggle" >
-                <img 
-                  src={avatar ? avatar : nobody} 
-                  alt="mdo" 
-                  width="32" 
-                  height="32" 
-                  className="rounded-circle" />
+                <ProgressiveImage src={avatar ? avatar : nobody} placeholder={avatar ? createPlaceholderUrl(avatar, '16x16') : nobody}>
+                  {(src, loading) => <img style={{filter: loading && 'blur(8px}', 'WebkitFilter': loading && 'blur(8px)'}} height='32' width='32' className="rounded-circle" src={src} alt="mdo" />}
+                </ProgressiveImage>
               </span>
               </Dropdown.Toggle>
 
