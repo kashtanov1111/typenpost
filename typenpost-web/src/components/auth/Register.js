@@ -1,53 +1,34 @@
-import { gql, useMutation } from "@apollo/client";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom"; 
+import { useMutation } from "@apollo/client";
+import { Link, useNavigate } from "react-router-dom";
+
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
-import { useTitle } from "./App";
-import { Error } from "./Error";
 import InputGroup from 'react-bootstrap/InputGroup'
-import {BsFillEyeFill} from 'react-icons/bs'
-import {BsFillEyeSlashFill} from 'react-icons/bs'
 
-const REGISTER_MUTATION = gql`
-    mutation register(
-        $username: String!
-        $email: String!
-        $password1: String!
-        $password2: String!
-    ) {
-        register(
-            username: $username
-            email: $email
-            password1: $password1
-            password2: $password2
-        ) {
-            success
-            errors
-        }
-    }
-`
+import { Error } from "../Error";
 
-const RESEND_ACTIVATION_EMAIL = gql`
-    mutation ResendActivationEmail($email: String!) {
-        resendActivationEmail(email: $email) {
-            success
-            errors
-        }
-    }
-`
+import {BsEye} from 'react-icons/bs'
+import {BsEyeSlash} from 'react-icons/bs'
+
+import { useTitle } from '../../functions/functions'
+
+import { 
+    REGISTER_MUTATION,
+    RESEND_ACTIVATION_EMAIL } from "../../gqls/mutations";
+
 
 export function Register(props) {
+    const {handleAlert, isAuthenticated} = props
+    const navigate = useNavigate()
     useTitle('Typenpost - Sign up')
+
     const [showPassword1, setShowPassword1] = useState(false)
     const [showPassword2, setShowPassword2] = useState(false)
-    const {handleAlert} = props
-    const navigate = useNavigate()
     const [registered, setRegistered] = useState(false)
     const [formState, setFormState] = useState({
         username: '',
@@ -55,6 +36,7 @@ export function Register(props) {
         password1: '',
         password2: '',
     })
+
     const [handleRegister, {
                             data: dataRegister, 
                             loading: loadingRegister,
@@ -68,7 +50,8 @@ export function Register(props) {
         },
         onCompleted: (data) => {
             if (data.register.success) {
-                const message = 'Confirmation e-mail sent to ' + formState.email
+                const message = 'Confirmation e-mail sent to ' + 
+                    formState.email
                 handleAlert(message, 'primary')
                 setRegistered(true)
             }
@@ -76,17 +59,22 @@ export function Register(props) {
     })
     const [handleResend, {
                         loading: loadingResendEmail,
-                        error: errorResendEmail}] = useMutation(RESEND_ACTIVATION_EMAIL, {
-        variables: {
-            email: formState.email
-        }, 
-        onCompleted: (data) => {
-            if (data.resendActivationEmail.success) {
-                const message = 'Confirmation e-mail has been resent to ' + formState.email
-                handleAlert(message, 'primary')
+                        error: errorResendEmail}] = useMutation(
+            RESEND_ACTIVATION_EMAIL, {
+                variables: {
+                    email: formState.email
+                }, 
+                onCompleted: (data) => {
+                    if (data.resendActivationEmail.success) {
+                        const message = 
+                            'Confirmation e-mail has been resent to ' + 
+                            formState.email
+                        handleAlert(message, 'primary')
+                    }
+                }
             }
-        }
-    })
+    )
+
     function handleSubmit(event) {
         event.preventDefault()
         setShowPassword1(false)
@@ -115,7 +103,8 @@ export function Register(props) {
             <Error />
         )
     }
-    return (!registered ?
+
+    return !isAuthenticated ? (!registered ?
         <Row>
         <Col md={6} className='mx-auto' >
             <h1 className='text-center mb-3'>
@@ -132,8 +121,10 @@ export function Register(props) {
                         <Form.Control 
                             type="email"
                             value={formState.email}
-                            isInvalid={dataRegister && dataRegister.register.errors.email}
-                            isValid={dataRegister && !dataRegister.register.errors.email}
+                            isInvalid={dataRegister && 
+                                dataRegister.register.errors.email}
+                            isValid={dataRegister && 
+                                !dataRegister.register.errors.email}
                             onChange={(e) => 
                                 setFormState({
                                     ...formState,
@@ -163,8 +154,10 @@ export function Register(props) {
 
                         <Form.Control 
                             type="text"
-                            isInvalid={dataRegister && dataRegister.register.errors.username}
-                            isValid={dataRegister && !dataRegister.register.errors.username}
+                            isInvalid={dataRegister && 
+                                dataRegister.register.errors.username}
+                            isValid={dataRegister && 
+                                !dataRegister.register.errors.username}
                             value={formState.username}
                             onChange={(e) => 
                                 setFormState({
@@ -180,11 +173,13 @@ export function Register(props) {
                         </Form.Control.Feedback>
                         {dataRegister && 
                         dataRegister.register.errors.username &&
-                        dataRegister.register.errors.username.map((el) => (
-                        <Form.Control.Feedback type='invalid'>
-                                {el.message}
-                        </Form.Control.Feedback>
-                        ))}
+                        dataRegister.register.errors.username.map(
+                            (el) => (
+                                <Form.Control.Feedback type='invalid'>
+                                        {el.message}
+                                </Form.Control.Feedback>
+                            )
+                        )}
                     </FloatingLabel>
                 </Form.Group>
                 <InputGroup className='mb-2'>
@@ -195,8 +190,10 @@ export function Register(props) {
                         <Form.Control 
                             type={showPassword1 ? "text" : "password"}
                             value={formState.password1}
-                            isInvalid={dataRegister && dataRegister.register.errors.password1}
-                            isValid={dataRegister && !dataRegister.register.errors.password1}
+                            isInvalid={dataRegister && 
+                                dataRegister.register.errors.password1}
+                            isValid={dataRegister && 
+                                !dataRegister.register.errors.password1}
                             onChange={(e) => 
                                 setFormState({
                                     ...formState,
@@ -211,14 +208,20 @@ export function Register(props) {
                         </Form.Control.Feedback>
                         {dataRegister && 
                         dataRegister.register.errors.password1 &&
-                        dataRegister.register.errors.password1.map((el) => (
-                        <Form.Control.Feedback type='invalid'>
-                                {el.message}
-                        </Form.Control.Feedback>
-                        ))}
+                        dataRegister.register.errors.password1.map(
+                            (el) => (
+                                <Form.Control.Feedback type='invalid'>
+                                        {el.message}
+                                </Form.Control.Feedback>
+                            )
+                        )}
                     </FloatingLabel>
-                    <InputGroup.Text onClick={() => handleShowPassword(1)} className='juju px-3' id="basic-addon1">
-                        {showPassword1 ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
+                    <InputGroup.Text 
+                        onClick={() => handleShowPassword(1)} 
+                        className='juju px-3' 
+                        id="basic-addon1">
+                        {showPassword1 ? <BsEye /> : 
+                        <BsEyeSlash />}
                     </InputGroup.Text>
                 </InputGroup>
                 <InputGroup className='mb-2'>
@@ -229,8 +232,10 @@ export function Register(props) {
                         <Form.Control 
                             type={showPassword2 ? "text" : "password"}
                             value={formState.password2}
-                            isInvalid={dataRegister && dataRegister.register.errors.password2}
-                            isValid={dataRegister && !dataRegister.register.errors.password2}
+                            isInvalid={dataRegister && 
+                                dataRegister.register.errors.password2}
+                            isValid={dataRegister && 
+                                !dataRegister.register.errors.password2}
                             onChange={(e) => 
                                 setFormState({
                                     ...formState,
@@ -245,14 +250,20 @@ export function Register(props) {
                         </Form.Control.Feedback>
                         {dataRegister && 
                         dataRegister.register.errors.password2 &&
-                        dataRegister.register.errors.password2.map((el) => (
-                        <Form.Control.Feedback type='invalid'>
-                                {el.message}
-                        </Form.Control.Feedback>
-                        ))}
+                        dataRegister.register.errors.password2.map(
+                            (el) => (
+                                <Form.Control.Feedback type='invalid'>
+                                        {el.message}
+                                </Form.Control.Feedback>
+                            )
+                        )}
                     </FloatingLabel>
-                    <InputGroup.Text onClick={() => handleShowPassword(2)} className='juju px-3' id="basic-addon2">
-                        {showPassword2 ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
+                    <InputGroup.Text 
+                        onClick={() => handleShowPassword(2)} 
+                        className='juju px-3' 
+                        id="basic-addon2">
+                        {showPassword2 ? <BsEye /> : 
+                            <BsEyeSlash />}
                     </InputGroup.Text>
                 </InputGroup>
                 <Button 
@@ -309,7 +320,9 @@ export function Register(props) {
                             size='sm'
                             role='status'
                             aria-hidden='true' />
-                        <span className='visually-hidden'>Loading...</span>
+                        <span className='visually-hidden'>
+                            Loading...
+                        </span>
                         </div> :
                         <span>Resend</span>
                     }
@@ -319,5 +332,6 @@ export function Register(props) {
             </Row>
             </Col>
         </Row>
-    )
+    ) :
+    <Error description='You are logged in. Please log out.'/>
 }

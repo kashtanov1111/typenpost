@@ -1,7 +1,7 @@
-import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { Link, useNavigate } from "react-router-dom";
+
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Alert from 'react-bootstrap/Alert'
@@ -9,35 +9,24 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
-import { useTitle } from "./App";
-import { Error } from "./Error";
 import InputGroup from 'react-bootstrap/InputGroup'
-import {BsFillEyeFill} from 'react-icons/bs'
-import {BsFillEyeSlashFill} from 'react-icons/bs'
+import {BsEye} from 'react-icons/bs'
+import {BsEyeSlash} from 'react-icons/bs'
 
-const LOGIN_MUTATION = gql`
-    mutation tokenAuth(
-        $username: String
-        $email: String
-        $password: String!
-    ) {
-        tokenAuth(
-            username: $username
-            password: $password
-            email: $email
-        ) {
-            success
-            errors
-        }
-    }
-`
+import { Error } from "../Error";
+
+import { useTitle } from '../../functions/functions'
+
+import { LOGIN_MUTATION } from "../../gqls/mutations";
 
 export function Login(props) {
+    const {handleAlert, isAuthenticated, setIsAuthenticated} = props
     const navigate = useNavigate()
-    const [showPassword, setShowPassword] = useState(false)
-    const [theFirstField, setTheFirstField] = useState('Username or Email')
     useTitle('Typenpost - Log In')
-    const {handleAlert} = props
+
+    const [showPassword, setShowPassword] = useState(false)
+    const [theFirstField, setTheFirstField] = useState(
+        'Username or Email')
     const [formState, setFormState] = useState({
         usernameOrEmail: '',
         password: '',
@@ -45,14 +34,20 @@ export function Login(props) {
 
     const [handleLogin, { data, loading, error }] = useMutation(
         LOGIN_MUTATION, {
-        onCompleted: (data) => {  
-            if (data.tokenAuth.success) {
-                handleAlert('Successfully signed in as ' + formState.usernameOrEmail, 'success')
-                navigate('../', {replace: true})
-                localStorage.setItem('refreshToken', JSON.stringify('yes'))
-            }
-        } 
-    })
+            onCompleted: async (data) => {  
+                    if (data.tokenAuth.success) {
+                        await setIsAuthenticated(true)
+                        handleAlert(
+                            'Successfully signed in as ' + 
+                            formState.usernameOrEmail, 'success')
+                        navigate('../', {replace: true})
+                        localStorage.setItem(
+                            'refreshToken', JSON.stringify(true))
+                    }
+                } 
+        }
+    )
+
     useEffect(() => {
         if (formState.usernameOrEmail.includes('@')) {
             setTheFirstField('Email')
@@ -62,6 +57,7 @@ export function Login(props) {
             setTheFirstField('Username')
         }
     }, [formState.usernameOrEmail, theFirstField])
+    
     if (error) {
         return <Error />
     }
@@ -91,7 +87,8 @@ export function Login(props) {
             handleLogin({variables: variablesUsername})
         }
     }
-    return (
+
+    return !isAuthenticated ? 
         <Row>
             <Col md={6} className='mx-auto'>
             <h1 className='text-center mb-3'>
@@ -146,8 +143,11 @@ export function Login(props) {
                             required
                         />
                     </FloatingLabel>
-                    <InputGroup.Text onClick={handleShowPassword} className='juju px-3' id="basic-addon1">
-                        {showPassword ? <BsFillEyeFill /> : <BsFillEyeSlashFill />}
+                    <InputGroup.Text 
+                        onClick={handleShowPassword} 
+                        className='juju px-3' id="basic-addon1">
+                        {showPassword ? 
+                            <BsEye /> : <BsEyeSlash />}
                     </InputGroup.Text>
                 </InputGroup>
                 <Button 
@@ -186,6 +186,6 @@ export function Login(props) {
                 </div>
             </Form>
             </Col>
-        </Row>
-    )
+        </Row> :
+        <Error description='You are already logged in. Please log out.'/>
 }

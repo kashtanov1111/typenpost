@@ -8,8 +8,6 @@ from graphql_jwt.decorators import login_required
 
 from .models import Post
 
-from graphql_auth.schema import UserNode
-
 class PostFilter(django_filters.FilterSet):
     text = django_filters.CharFilter(lookup_expr='iexact')
 

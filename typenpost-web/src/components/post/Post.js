@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, gql } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
-import { useTitle } from './App'
 import { useParams } from 'react-router-dom'
-import { Loader } from './Loader'
-import ccc from '../assets/images/ccc.jpg';
-import { createSrcUrl } from './App'
+import { Loader } from '../Loader'
+import ccc from '../../assets/images/ccc.jpg';
+
+import { useTitle, createImageSrcUrl } from '../../functions/functions'
 
 const QUERY_POSTS = gql`
     query GetAllPosts {
@@ -59,7 +59,7 @@ export function PostDetail() {
     }
     return (
         <React.Fragment>
-        <img src={createSrcUrl(ccc)} alt='sdfsd' />
+        <img src={createImageSrcUrl(ccc)} alt='sdfsd' />
         <p>{data.post.id}</p>
         <p>{data.post.text}</p>
         </React.Fragment>

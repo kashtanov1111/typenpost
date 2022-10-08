@@ -10,7 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.css';
 import './styles/index.css';
-import { Authorization } from './components/Authorization';
+import { Authorization } from './components/auth/Authorization';
 
 
 const client = new ApolloClient({

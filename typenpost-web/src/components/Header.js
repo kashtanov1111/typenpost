@@ -1,30 +1,61 @@
+import React, {useState} from "react";
+import { Link, useNavigate } from 'react-router-dom'
+
 import long_logo from '../assets/images/long_logo.jpg';
 import nobody from '../assets/images/nobody.jpg'
-import React from "react";
-import { Link, useNavigate } from 'react-router-dom'
+
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Dropdown from 'react-bootstrap/Dropdown'
-import { CustomToggle } from './CustomToggle'
+import Modal from 'react-bootstrap/Modal'
+
+import { CustomToggle } from '../CustomToggle'
+
 import ProgressiveImage from 'react-progressive-graceful-image'
-import { createPlaceholderUrl } from './App';
-import { createSrcUrl } from './App';
+
+import { 
+  createImageSrcUrl, 
+  createImagePlaceholderUrl } from '../functions/functions'
+
 
 export function Header(props) {
     const navigate = useNavigate()
-    const {username, isAuthenticated, 
-          avatar} = props
+    const {
+      avatar, 
+      username,
+      id, 
+      isAuthenticated, 
+      handleLogout, 
+      handleAlert} = props
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+
+    const handleClose = () => setShowDeleteModal(false)
+    const handleShow = () => setShowDeleteModal(true)
     
+    function handleButtonClick() {
+        setShowDeleteModal(false)
+        handleLogout()
+        handleAlert('You have signed out.', 'success')
+        navigate('../', {replace: true})
+    }
     return (
       <div>
       <Navbar bg="white" expand="lg" className='py-0'>
       <Container>
           <Navbar.Brand as={Link} to='/' className='me-2'>
-            <ProgressiveImage src={createSrcUrl(long_logo)} placeholder={createPlaceholderUrl(long_logo, '20x20')}>
-              {(src, loading) => <img style={{filter: loading && 'blur(8px}', 'WebkitFilter': loading && 'blur(8px)'}} height='40px' src={src} alt="Logo" />}
+            <ProgressiveImage 
+              src={createImageSrcUrl(long_logo)} 
+              placeholder={createImagePlaceholderUrl(long_logo, '20x20')}>
+              {(src, loading) => 
+                <img 
+                  style={{filter: loading && 'blur(8px}', 
+                          'WebkitFilter': loading && 'blur(8px)'}} 
+                  height='40px' 
+                  src={src} 
+                  alt="Logo" />}
             </ProgressiveImage>
           </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -48,22 +79,37 @@ export function Header(props) {
                 id="dropdown-menu-align-responsive-1">
               <span className="d-block link-dark text-decoration-none 
                 dropdown-toggle" >
-                <ProgressiveImage src={avatar ? avatar : nobody} placeholder={avatar ? createPlaceholderUrl(avatar, '16x16') : nobody}>
-                  {(src, loading) => <img style={{filter: loading && 'blur(8px}', 'WebkitFilter': loading && 'blur(8px)'}} height='32' width='32' className="rounded-circle" src={src} alt="mdo" />}
+                <ProgressiveImage 
+                  src={avatar ? avatar : nobody} 
+                  placeholder={avatar ? 
+                    createImagePlaceholderUrl(avatar, '16x16') : nobody}>
+                  {(src, loading) => 
+                    <img 
+                      style={{filter: loading && 'blur(8px}', 
+                        'WebkitFilter': loading && 'blur(8px)'}} 
+                      height='32' 
+                      width='32' 
+                      className="rounded-circle" 
+                      src={src} 
+                      alt="mdo" />}
                 </ProgressiveImage>
               </span>
               </Dropdown.Toggle>
 
               <Dropdown.Menu align={{lg: 'end'}}>
-                <Dropdown.Item>{username}</Dropdown.Item>
+                <Dropdown.Item
+                  as={Link}
+                  to={'/profile/' + id}
+                  >
+                  {username}
+                </Dropdown.Item>
                 <Dropdown.Item 
                   as={Link}
                   to='/password_change'>
                     Change password
                 </Dropdown.Item>
                 <Dropdown.Item
-                  as={Link} 
-                  to='/logout'>
+                  onClick={handleShow}>
                   Log out
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -87,6 +133,24 @@ export function Header(props) {
         </Navbar.Collapse>
       </Container>
     </Navbar>
+    <Modal show={showDeleteModal} onHide={handleClose} centered>
+      <Modal.Header closeButton >
+          <Modal.Title>Log Out</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Are you sure want to log out?</Modal.Body>
+      <Modal.Footer>
+          <Button 
+              variant="outline-secondary"
+              onClick={handleClose} >
+              Close
+          </Button>
+          <Button 
+              onClick={handleButtonClick} 
+              variant='warning'>
+              Log Out
+          </Button>
+      </Modal.Footer>
+    </Modal>
 </div>
     )
 }
