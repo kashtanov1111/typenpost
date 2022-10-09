@@ -110,3 +110,14 @@ export const RESEND_ACTIVATION_EMAIL = gql`
         }
     }
 `
+
+export const FOLLOWING_USER = gql`
+    mutation FollowingUser($username: String!) {
+        followingUser(username: $username) {
+            user {
+                id
+            }
+        }
+    }
+`
+

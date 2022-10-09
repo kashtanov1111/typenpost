@@ -40,17 +40,20 @@ export function Authorization() {
     }
   )
   useEffect(() => {
-    console.log('refreshTokenExists', refreshTokenExists)
+    if (refreshTokenExists) {
+      refreshToken()
+    }
     function intervalFunction() {
       if (refreshTokenExists){
         refreshToken()
-        console.log('y', refreshTokenExists)
+        console.log('lllsdf')
       }
     }
     const interval = setInterval(intervalFunction, 55000)
+    console.log('uuuu')
     return () => clearInterval(interval)
   }, [refreshTokenExists])
-  
+  console.log(refreshTokenExists)
 
   if (loading) {
     return (

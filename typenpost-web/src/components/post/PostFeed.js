@@ -29,7 +29,6 @@ export function PostFeed(props) {
     if (error) {
         return <Error />
     }
-    console.log(data)
     return (
         <Row>
             <Col className='text-center mx-auto' >

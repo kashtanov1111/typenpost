@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 
 import long_logo from '../assets/images/long_logo.jpg';
 import nobody from '../assets/images/nobody.jpg'
@@ -23,6 +23,8 @@ import {
 
 export function Header(props) {
     const navigate = useNavigate()
+    const location = useLocation()
+    const pathname = location.pathname
     const {
       avatar, 
       username,
@@ -100,12 +102,13 @@ export function Header(props) {
                 <Dropdown.Item
                   as={Link}
                   to={'/profile/' + id}
-                  >
+                  active={pathname === '/profile/' + id}>
                   {username}
                 </Dropdown.Item>
                 <Dropdown.Item 
                   as={Link}
-                  to='/password_change'>
+                  to='/password_change'
+                  active={pathname === '/password_change'}>
                     Change password
                 </Dropdown.Item>
                 <Dropdown.Item

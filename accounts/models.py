@@ -13,9 +13,9 @@ class CustomUser(AbstractUser):
 
 
 class Follow(models.Model):
-    from_user = models.ForeignKey(
-        "UserProfile", on_delete=models.CASCADE, related_name='+')
     to_user = models.ForeignKey(
+        "UserProfile", on_delete=models.CASCADE, related_name='+')
+    from_user = models.ForeignKey(
         "UserProfile", on_delete=models.CASCADE, related_name='+')
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -32,14 +32,14 @@ class Follow(models.Model):
         ]
     
     def __str__(self):
-        return '%s follows %s' % (self.to_user.user, self.from_user.user)
+        return '%s follows %s' % (self.from_user.user, self.to_user.user)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
         CustomUser, on_delete=models.CASCADE, related_name='profile')
     avatar = models.ImageField(
         upload_to=handle_user_avatar_path, blank=True, null=True)
-    about = models.TextField(max_length=750, null=True, blank=True)
+    about = models.TextField(max_length=350, null=True, blank=True)
     followers = models.ManyToManyField(
         to='self', blank=True, null=True, related_name='following',
         through=Follow, symmetrical=False)
