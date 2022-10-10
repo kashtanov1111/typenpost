@@ -46,14 +46,11 @@ export function Authorization() {
     function intervalFunction() {
       if (refreshTokenExists){
         refreshToken()
-        console.log('lllsdf')
       }
     }
     const interval = setInterval(intervalFunction, 55000)
-    console.log('uuuu')
     return () => clearInterval(interval)
   }, [refreshTokenExists])
-  console.log(refreshTokenExists)
 
   if (loading) {
     return (

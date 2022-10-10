@@ -1,20 +1,21 @@
 import nobody from '../../assets/images/nobody.jpg'
 import {format, parseISO } from 'date-fns'
 
-import React, {useState} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { useTitle } from "../../functions/functions";
 import { useParams, Link } from "react-router-dom";
-import { USER_PROFILE, AM_I_FOLLOWING } from "../../gqls/queries";
+import { USER_PROFILE } from "../../gqls/queries";
 import { FOLLOWING_USER } from '../../gqls/mutations';
 import { Error } from "../Error";
 import ProgressiveImage from 'react-progressive-graceful-image'
-import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Loader } from "../Loader";
 
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Spinner from 'react-bootstrap/Spinner'
 
 import { 
     createImagePlaceholderUrl } from '../../functions/functions';
@@ -25,30 +26,18 @@ export function UserProfile(props) {
     const userId = params.userId
     
     const [title, setTitle] = useState('Typenpost')
-    const [isMyProfile, setIsMyProfile] = useState(false)
-    const [isFollowing, setIsFollowing] = useState(false)
+    const [isMyProfile, setIsMyProfile] = useState('initial')
+    const [isFollowing, setIsFollowing] = useState('initial')
+    const [followingBtnText, setFollowingBtnText] = useState('Following')
     useTitle(title)
-    
-    const [checkSubscription, { 
-        loading: loadingAmIFollowing, 
-        error: errorAmIFollowing}] = useLazyQuery(AM_I_FOLLOWING, {
-            onCompleted: (data) => {
-                console.log(data)
-                if (data.amIFollowing === 'no') {
-                    setIsFollowing(false)
-                } else if (data.amIFollowing === 'yes') {
-                    setIsFollowing(true)
-                }  
-            }
-        })
+
     const { 
-        data, 
+        data: userData, 
         loading: loadingUserProfile, 
         error: errorUserProfile, refetch } = useQuery(USER_PROFILE, {
             variables: { id: userId },
             polling: 500,
             onCompleted: (data) => {
-                console.log(data.user.profile.numberOfFollowers)
                 if (username === data.user.username) {
                     setTitle('Typenpost - My profile')
                     setIsMyProfile(true)
@@ -56,40 +45,58 @@ export function UserProfile(props) {
                     setTitle('Typenpost - ' + data.user.username)
                     setIsMyProfile(false)
                 }
+                const amIFollowing = data.user.profile.amIFollowing
+                if (amIFollowing === 'no') {
+                    setIsFollowing(false)
+                } else if (amIFollowing === 'yes') {
+                    setIsFollowing(true)
+                }
                 const newTitle = ((username === data.user.username) ? 
                 'Typenpost - My profile' : 
                 'Typenpost - ' + data.user.username)
                 setTitle(newTitle)
-                if (isAuthenticated && !isMyProfile) {
-                    checkSubscription(
-                        {variables: {username: data.user.username}})
-                }
-                }
+            }
     })
 
-    const [handleFollow, {loading, error}] = useMutation(FOLLOWING_USER, {
-        onCompleted: async (data) => {
+    const [handleFollow, {
+        loading: loadingFollowingUser, 
+        error: errorFollowingUser}] = useMutation(FOLLOWING_USER, {
+        onCompleted: (data) => {
             if (data.followingUser.user !== null) {
-                console.log('lll')
-                console.log('r', isFollowing)
-                console.log('t', isFollowing)
-                await refetch({id: userId})
-                // setIsFollowing(current => !current)
+                refetch({id: userId})
             }
         }
     })
     function handleFollowButton() {
-        handleFollow({variables: {username: data.user.username}})
+        handleFollow({variables: {username: userData.user.username}})
     }
 
-    if (loadingUserProfile || loadingAmIFollowing) {
+    function handleChangeFollowingBtnText() {
+        if (followingBtnText == 'Following') {
+            setFollowingBtnText('Unfollow')
+        } else {
+            setFollowingBtnText('Following')
+        }
+    }
+    
+    useEffect(() => {
+        refetch({id: userId})
+        setFollowingBtnText('Following')
+    },[userData])
+
+    if (
+        loadingUserProfile) {
         return <Loader />
     }
 
-    if (errorUserProfile || errorAmIFollowing) {
+    if (
+        errorUserProfile ||
+        errorFollowingUser) {
         return <Error />
     }
-    console.log('isFollowing', isFollowing)
+    
+    console.log(followingBtnText)
+    
     return (
         <>
         <h1 className='text-center mb-3'>
@@ -99,11 +106,11 @@ export function UserProfile(props) {
         <Row>
             <Col md={4} xs={12} className='text-center'>
                 <ProgressiveImage 
-                  src={data.user.profile.avatar ? 
-                    data.user.profile.avatar : nobody} 
-                  placeholder={data.user.profile.avatar ? 
+                  src={userData.user.profile.avatar ? 
+                    userData.user.profile.avatar : nobody} 
+                  placeholder={userData.user.profile.avatar ? 
                     createImagePlaceholderUrl(
-                        data.user.profile.avatar, '16x16') : nobody}
+                        userData.user.profile.avatar, '16x16') : nobody}
                 >
                   {(src, loading) => 
                     <img 
@@ -119,13 +126,14 @@ export function UserProfile(props) {
             <Col md={8} xs={12}>
                 <Row>
                     <Col xs>
-                        {data.user.firstName && 
-                        data.user.lastName && 
+                        {userData.user.firstName && 
+                            userData.user.lastName && 
                         <h2 className='mb-0'>
-                            {data.user.firstName + ' ' + data.user.lastName}
+                            {userData.user.firstName + ' ' + userData.user.lastName}
                         </h2>}
-                        <p className='text-muted mt-0 mb-1'>@{data.user.username}</p>
+                        <p className='text-muted mt-0 mb-1'>@{userData.user.username}</p>
                     </Col>
+                    {isAuthenticated &&
                     <Col xs='auto'>
                         {isMyProfile ? 
                         <Button 
@@ -133,22 +141,56 @@ export function UserProfile(props) {
                             as={Link}
                             to='/'>Edit profile
                         </Button> : 
-                        <Button 
+                        <>
+                        {isFollowing ? 
+                        <button 
+                            className='fixed-btn-size following-btn btn'
+                            onClick={handleFollowButton}
+                            onMouseOver={handleChangeFollowingBtnText}
+                            onMouseLeave={handleChangeFollowingBtnText}
+                            >
+                            {loadingFollowingUser ? 
+                                <div><Spinner
+                                    as='span'
+                                    animation='border'
+                                    size='sm'
+                                    role='status'
+                                    aria-hidden='true' />
+                                <span className='visually-hidden'>
+                                    Loading...</span>
+                                </div> : 
+                                followingBtnText
+                            }
+                        </button> :
+                        <Button
+                            className='fixed-btn-size'
                             variant='primary'
                             onClick={handleFollowButton}>
-                            {isFollowing ? 'Unfollow' : 'Follow'}
-                        </Button> 
+                            {loadingFollowingUser ? 
+                                <div><Spinner
+                                    as='span'
+                                    animation='border'
+                                    size='sm'
+                                    role='status'
+                                    aria-hidden='true' />
+                                <span className='visually-hidden'>
+                                    Loading...</span>
+                                </div> : 
+                                'Follow'
+                            }
+                        </Button>}
+                        </>
                         }
-                    </Col>
+                    </Col>}
                 </Row>
                 <p>
-                    <b>{data.user.profile.numberOfFollowing}</b>
+                    <b>{userData.user.profile.numberOfFollowing}</b>
                     <span className='text-muted'> Following &nbsp;</span>
-                    <b>{data.user.profile.numberOfFollowers}</b>
+                    <b>{userData.user.profile.numberOfFollowers}</b>
                     <span className='text-muted'> Followers</span>
                 </p>
-                {data.user.profile.about && <p>{data.user.profile.about}</p>}
-                <p className='mb-1'>Joined: {format(parseISO(data.user.dateJoined), 'MMMM d, yyyy')}</p>
+                {userData.user.profile.about && <p>{userData.user.profile.about}</p>}
+                <p className='mb-1'>Joined: {format(parseISO(userData.user.dateJoined), 'MMMM d, yyyy')}</p>
             </Col>
         </Row>
         </Card>

@@ -36,12 +36,10 @@ export function Header(props) {
 
     const handleClose = () => setShowDeleteModal(false)
     const handleShow = () => setShowDeleteModal(true)
-    
     function handleButtonClick() {
         setShowDeleteModal(false)
         handleLogout()
         handleAlert('You have signed out.', 'success')
-        navigate('../', {replace: true})
     }
     return (
       <div>
@@ -120,7 +118,8 @@ export function Header(props) {
             <div>
                 <Button 
                   as={Link} 
-                  to='/login' 
+                  to='/login'
+                  state={location.pathname}
                   variant='outline-dark'
                   className="me-2">
                   Log In

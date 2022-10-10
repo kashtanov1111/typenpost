@@ -31,3 +31,19 @@ a:hover {
     background-color: white;
     border-left: None;
 }
+.following-btn {
+    color: black;
+    background-color: white;
+    border-color: black;
+}
+.following-btn:hover {
+    color: red;
+    background-color: white;
+    border-color: red;
+}
+.fixed-btn-size {
+    width: 95px;
+}
+.fixed-btn-size:hover {
+    width: 95px;
+}

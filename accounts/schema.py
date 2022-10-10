@@ -13,6 +13,7 @@ from .models import CustomUser, UserProfile
 class UserProfileNode(DjangoObjectType):
     number_of_followers = graphene.Int()
     number_of_following = graphene.Int()
+    am_i_following = graphene.String()
     class Meta:
         model = UserProfile
         fields = ('user', 'avatar', 'about', 'followers')
@@ -29,19 +30,17 @@ class UserProfileNode(DjangoObjectType):
 
     def resolve_number_of_following(parent, info):
         return parent.following.count()
-
-class Query(UserQuery, MeQuery, graphene.ObjectType):
-    am_i_following = graphene.String(
-        username=graphene.String(required=True))
-
+    
     @login_required
-    def resolve_am_i_following(parent, info, username):
+    def resolve_am_i_following(parent, info):
         me = info.context.user
-        user = CustomUser.objects.get(username=username) 
-        if user.profile.followers.filter(user=me).exists():
-            return 'yes'
+        if parent.followers.filter(user=me).exists():
+            return 'yes'        
         else:
             return 'no'
+
+class Query(UserQuery, MeQuery, graphene.ObjectType):
+    pass
 
 class AuthMutation(graphene.ObjectType):
     register = mutations.Register.Field()

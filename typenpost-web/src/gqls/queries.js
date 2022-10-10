@@ -42,13 +42,8 @@ export const USER_PROFILE = gql`
                 about
                 numberOfFollowers
                 numberOfFollowing
+                amIFollowing
             }
         }
-    }
-`
-
-export const AM_I_FOLLOWING = gql`
-    query AmIFollowing($username: String!) {
-        amIFollowing(username: $username)
     }
 `

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -22,6 +22,7 @@ import { LOGIN_MUTATION } from "../../gqls/mutations";
 export function Login(props) {
     const {handleAlert, isAuthenticated, setIsAuthenticated} = props
     const navigate = useNavigate()
+    const location = useLocation()
     useTitle('Typenpost - Log In')
 
     const [showPassword, setShowPassword] = useState(false)
@@ -31,7 +32,6 @@ export function Login(props) {
         usernameOrEmail: '',
         password: '',
     })
-
     const [handleLogin, { data, loading, error }] = useMutation(
         LOGIN_MUTATION, {
             onCompleted: async (data) => {  
@@ -40,7 +40,13 @@ export function Login(props) {
                         handleAlert(
                             'Successfully signed in as ' + 
                             formState.usernameOrEmail, 'success')
-                        navigate('../', {replace: true})
+                        if (
+                            location.state === '/login' ||
+                            location.state === null) {
+                            navigate('../', {replace: true})
+                        } else {
+                            navigate(-1)
+                        }
                         localStorage.setItem(
                             'refreshToken', JSON.stringify(true))
                     }
