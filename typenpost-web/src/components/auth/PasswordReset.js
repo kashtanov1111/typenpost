@@ -21,7 +21,8 @@ export function PasswordReset(props) {
     const location = useLocation()
     useTitle('Typenpost - Password Reset')
 
-    const [email, setEmail] = useState(location.state)
+    const [email, setEmail] = useState(
+        location.state ? location.state : '')
     const [emailSent, setEmailSent] = useState(false)
 
 

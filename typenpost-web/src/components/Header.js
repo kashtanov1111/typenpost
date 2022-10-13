@@ -11,6 +11,9 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Modal from 'react-bootstrap/Modal'
+import ListGroup from 'react-bootstrap/ListGroup'
+import { RiLockPasswordLine } from 'react-icons/ri'
+import { BiRename } from 'react-bootstrap/bi'
 
 import { CustomToggle } from '../CustomToggle'
 
@@ -33,9 +36,13 @@ export function Header(props) {
       handleLogout, 
       handleAlert} = props
     const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [showSettingsModal, setShowSettingsModal] = useState(false)
 
     const handleClose = () => setShowDeleteModal(false)
+    const handleCloseSettingsModal = () => setShowSettingsModal(false)
     const handleShow = () => setShowDeleteModal(true)
+    const handleShowSettingsModal = () => setShowSettingsModal(true)
+
     function handleButtonClick() {
         setShowDeleteModal(false)
         handleLogout()
@@ -104,10 +111,12 @@ export function Header(props) {
                   {username}
                 </Dropdown.Item>
                 <Dropdown.Item 
-                  as={Link}
-                  to='/password_change'
-                  active={pathname === '/password_change'}>
-                    Change password
+                  onClick={handleShowSettingsModal}
+                  active={
+                    pathname.startsWith('/password_change') ||
+                    pathname.startsWith('/username_change')
+                      }>
+                    Settings
                 </Dropdown.Item>
                 <Dropdown.Item
                   onClick={handleShow}>
@@ -152,6 +161,34 @@ export function Header(props) {
               Log Out
           </Button>
       </Modal.Footer>
+    </Modal>
+    <Modal
+      size='sm' 
+      show={showSettingsModal} 
+      onHide={handleCloseSettingsModal} centered>
+      <Modal.Header closeButton >
+          <Modal.Title>Settings</Modal.Title>
+      </Modal.Header>
+        <ListGroup variant='flush' className='border-bottom-rounded'>
+          <ListGroup.Item 
+            action
+            as={Link}
+            onClick={handleCloseSettingsModal} 
+            to='/password_change'><RiLockPasswordLine /> Change password</ListGroup.Item>
+          <ListGroup.Item
+            action
+            as={Link}
+            onClick={handleCloseSettingsModal}
+            to='/username_change'><BiRename /> Change username</ListGroup.Item>
+          <ListGroup.Item
+            action>Add secondary email</ListGroup.Item>
+          <ListGroup.Item
+            action>Make secondary email primary</ListGroup.Item>
+          <ListGroup.Item
+            action>Delete secondary email</ListGroup.Item>
+          <ListGroup.Item
+            action>Delete account</ListGroup.Item>
+        </ListGroup>
     </Modal>
 </div>
     )

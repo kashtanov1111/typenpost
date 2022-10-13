@@ -49,6 +49,7 @@ export function Register(props) {
             password2: formState.password2,
         },
         onCompleted: (data) => {
+            console.log(data)
             if (data.register.success) {
                 const message = 'Confirmation e-mail sent to ' + 
                     formState.email

@@ -10,12 +10,14 @@ import { Error } from "../Error";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { useMutation, useQuery } from "@apollo/client";
 import { Loader } from "../Loader";
+import Lightbox from 'react-image-lightbox'
 
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
+import Placeholder from 'react-bootstrap/Placeholder'
 
 import { 
     createImagePlaceholderUrl } from '../../functions/functions';
@@ -29,6 +31,7 @@ export function UserProfile(props) {
     const [isMyProfile, setIsMyProfile] = useState('initial')
     const [isFollowing, setIsFollowing] = useState('initial')
     const [followingBtnText, setFollowingBtnText] = useState('Following')
+    const [isImageOpen, setIsImageOpen] = useState(false)
     useTitle(title)
 
     const { 
@@ -62,7 +65,7 @@ export function UserProfile(props) {
         loading: loadingFollowingUser, 
         error: errorFollowingUser}] = useMutation(FOLLOWING_USER, {
         onCompleted: (data) => {
-            if (data.followingUser.user !== null) {
+            if (data.followingUser.success === true) {
                 refetch({id: userId})
             }
         }
@@ -78,26 +81,27 @@ export function UserProfile(props) {
             setFollowingBtnText('Following')
         }
     }
+
+    function handleImageClick(event) {
+        setIsImageOpen(true)
+    }
     
     useEffect(() => {
         refetch({id: userId})
         setFollowingBtnText('Following')
     },[userData])
 
-    if (
-        loadingUserProfile) {
-        return <Loader />
-    }
+    // if (
+    //     loadingUserProfile) {
+    //     return <Loader />
+    // }
 
     if (
         errorUserProfile ||
         errorFollowingUser) {
         return <Error />
     }
-    
-    console.log(followingBtnText)
-    
-    return (
+    return (!isImageOpen ?
         <>
         <h1 className='text-center mb-3'>
             {isMyProfile ? 'My Profile' : 'User Profile' }
@@ -106,9 +110,9 @@ export function UserProfile(props) {
         <Row>
             <Col md={4} xs={12} className='text-center'>
                 <ProgressiveImage 
-                  src={userData.user.profile.avatar ? 
+                  src={userData && userData.user.profile.avatar ? 
                     userData.user.profile.avatar : nobody} 
-                  placeholder={userData.user.profile.avatar ? 
+                  placeholder={userData && userData.user.profile.avatar ? 
                     createImagePlaceholderUrl(
                         userData.user.profile.avatar, '16x16') : nobody}
                 >
@@ -119,6 +123,7 @@ export function UserProfile(props) {
                       height='250' 
                       width='250' 
                       className="rounded-circle" 
+                      onClick={handleImageClick}
                       src={src}
                       alt="mdo" />}
                 </ProgressiveImage>
@@ -126,12 +131,24 @@ export function UserProfile(props) {
             <Col md={8} xs={12}>
                 <Row>
                     <Col xs>
-                        {userData.user.firstName && 
-                            userData.user.lastName && 
-                        <h2 className='mb-0'>
-                            {userData.user.firstName + ' ' + userData.user.lastName}
-                        </h2>}
-                        <p className='text-muted mt-0 mb-1'>@{userData.user.username}</p>
+                        {(loadingUserProfile || userData.user.firstName || 
+                            userData.user.lastName) && 
+                        <Placeholder as='h2' animation='glow' 
+                            className='mb-0'>
+                            {loadingUserProfile ? 
+                            <>
+                                <Placeholder xs={2} bg='secondary'/>{' '}
+                                <Placeholder xs={4} bg='secondary'/>
+                            </> : 
+                            userData.user.firstName + ' ' + 
+                            userData.user.lastName}
+                        </Placeholder>}
+                        <Placeholder as='p' animation='glow' 
+                            className='text-muted mt-0 mb-1'>
+                            {loadingUserProfile ? 
+                            <Placeholder xs={3} bg='secondary'/> :
+                            '@' + userData.user.username}
+                        </Placeholder>
                     </Col>
                     {isAuthenticated &&
                     <Col xs='auto'>
@@ -139,7 +156,8 @@ export function UserProfile(props) {
                         <Button 
                             variant='outline-dark'
                             as={Link}
-                            to='/'>Edit profile
+                            to='/profile/edit'
+                            state={userData}>Edit profile
                         </Button> : 
                         <>
                         {isFollowing ? 
@@ -184,16 +202,47 @@ export function UserProfile(props) {
                     </Col>}
                 </Row>
                 <p>
-                    <b>{userData.user.profile.numberOfFollowing}</b>
+                    <Placeholder as='b' animation='glow'>
+                        {loadingUserProfile ? 
+                        <Placeholder xs={1} bg='secondary'/> :
+                        userData.user.profile.numberOfFollowing}
+                    </Placeholder>
                     <span className='text-muted'> Following &nbsp;</span>
-                    <b>{userData.user.profile.numberOfFollowers}</b>
+                    <Placeholder as='b' animation='glow'>
+                        {loadingUserProfile ? 
+                        <Placeholder xs={1} bg='secondary'/>:
+                        userData.user.profile.numberOfFollowers}
+                    </Placeholder>
                     <span className='text-muted'> Followers</span>
                 </p>
-                {userData.user.profile.about && <p>{userData.user.profile.about}</p>}
-                <p className='mb-1'>Joined: {format(parseISO(userData.user.dateJoined), 'MMMM d, yyyy')}</p>
+                {(loadingUserProfile || userData.user.profile.about) && 
+                <Placeholder as='p' animation='glow'>
+                    {loadingUserProfile ? 
+                    <>
+                    <Placeholder xs={3} bg='secondary'/>{' '}
+                    <Placeholder xs={5} bg='secondary'/>{' '} 
+                    <Placeholder xs={2} bg='secondary'/>{' '}
+                    <Placeholder xs={6} bg='secondary'/>{' '} 
+                    <Placeholder xs={3} bg='secondary'/>{' '}
+                    <Placeholder xs={5} bg='secondary'/>
+                    </> :
+                    userData.user.profile.about}
+                </Placeholder>}
+                <Placeholder as='p' animation='glow' className='mb-1'>
+                    Joined:{' '}
+                    {loadingUserProfile ? 
+                    <Placeholder xs={3} bg='secondary'/> : 
+                    format(parseISO(userData.user.dateJoined), 
+                        'MMMM d, yyyy')}
+                </Placeholder>
             </Col>
         </Row>
         </Card>
-        </>
+        </> :
+        <Lightbox
+            mainSrc={userData.user.profile.avatar ? 
+                    userData.user.profile.avatar : nobody}
+            onCloseRequest={() => setIsImageOpen(false)} 
+        />
     )
 }

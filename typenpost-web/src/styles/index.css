@@ -47,3 +47,25 @@ a:hover {
 .fixed-btn-size:hover {
     width: 95px;
 }
+
+.dropdown-menu li {
+    position: relative;
+}
+.dropdown-menu .dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+}
+.dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+}
+.dropdown-menu > li:active > .dropdown-submenu {
+    display: block;
+}
+
+.border-bottom-rounded {
+    border-bottom-left-radius: calc(0.5rem - 1px);
+    border-bottom-right-radius: calc(0.5rem - 1px);
+}

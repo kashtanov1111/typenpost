@@ -114,9 +114,38 @@ export const RESEND_ACTIVATION_EMAIL = gql`
 export const FOLLOWING_USER = gql`
     mutation FollowingUser($username: String!) {
         followingUser(username: $username) {
-            user {
-                id
-            }
+            success
+        }
+    }
+`
+
+export const EDIT_PROFILE = gql`
+    mutation EditProfile(
+        $about: String
+        $firstName: String
+        $lastName: String
+        ) {
+        editProfile(
+            about: $about
+            firstName: $firstName
+            lastName: $lastName
+            ) {
+            success
+            errorsUser
+            errorsUserProfile
+        }
+    }
+`
+
+export const USERNAME_CHANGE = gql`
+    mutation UsernameChange(
+        $username: String!
+        ) {
+        usernameChange(
+            username: $username
+            ) {
+            success
+            errors
         }
     }
 `

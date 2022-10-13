@@ -9,6 +9,7 @@ import {
 import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'react-image-lightbox/style.css'
 import './styles/index.css';
 import { Authorization } from './components/auth/Authorization';
 

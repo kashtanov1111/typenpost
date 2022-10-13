@@ -8,10 +8,12 @@ import { Header } from './Header';
 import { Login } from './auth/Login';
 import { Register } from './auth/Register';
 import { PasswordChange} from './auth/PasswordChange';
+import { UsernameChange } from './auth/UsernameChange';
 import { VerifyAccount } from './auth/VerifyAccount';
 import { PasswordReset } from './auth/PasswordReset';
 import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
 import { UserProfile } from './profile/UserProfile';
+import { EditProfile } from './profile/EditProfile';
 
 import Container from 'react-bootstrap/Container'
 import Alert from 'react-bootstrap/Alert'
@@ -90,10 +92,23 @@ export function App(props) {
             handleLogout={handleLogout}
             isAuthenticated={isAuthenticated} />} />
         <Route 
+          path='/username_change' 
+          element={<UsernameChange 
+            handleAlert={handleAlert} 
+            handleLogout={handleLogout}
+            isAuthenticated={isAuthenticated} />} />
+        <Route 
           path='/profile/:userId'
           element={<UserProfile
             isAuthenticated={isAuthenticated}
             username={username} />} />
+        <Route 
+          path='/profile/edit'
+          element={<EditProfile 
+            isAuthenticated={isAuthenticated}
+            handleAlert={handleAlert}
+            username={username}
+          />} />
       </Routes>
     </Container>
     </>

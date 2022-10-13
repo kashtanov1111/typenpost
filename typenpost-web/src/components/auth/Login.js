@@ -40,12 +40,20 @@ export function Login(props) {
                         handleAlert(
                             'Successfully signed in as ' + 
                             formState.usernameOrEmail, 'success')
-                        if (
-                            location.state === '/login' ||
-                            location.state === null) {
-                            navigate('../', {replace: true})
+                        if (location.state) {
+                            if (
+                                location.state.startsWith('/login') ||
+                                location.state.startsWith('/register') ||
+                                location.state.startsWith('/password_reset') ||
+                                location.state.startsWith('/activate')
+                                ) {
+                                navigate('../', {replace: true})
+                            } else {
+                                navigate(
+                                    '..' + location.state, {replace: true})
+                                }
                         } else {
-                            navigate(-1)
+                            navigate('../', {replace: true})
                         }
                         localStorage.setItem(
                             'refreshToken', JSON.stringify(true))
@@ -63,6 +71,12 @@ export function Login(props) {
             setTheFirstField('Username')
         }
     }, [formState.usernameOrEmail, theFirstField])
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('../', {replace: true})
+        }
+    }, [isAuthenticated])
     
     if (error) {
         return <Error />

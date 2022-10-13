@@ -29,7 +29,7 @@ export function PostFeed(props) {
     if (error) {
         return <Error />
     }
-    return (
+    return (isAuthenticated ?
         <Row>
             <Col className='text-center mx-auto' >
                 <Button className='text-center mx-auto' onClick={() => refetch()}>
@@ -43,6 +43,7 @@ export function PostFeed(props) {
                         </a>
                     </div>
                 ))}
-        </Row>
+        </Row> :
+        <Loader />
     )
 }

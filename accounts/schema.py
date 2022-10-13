@@ -2,13 +2,17 @@ import graphene
 import graphql_jwt
 
 from graphene_django import DjangoObjectType
+from graphene_django.utils import camelize
 from graphql_jwt.decorators import login_required
 
-from graphql_auth.schema import UserQuery, MeQuery, UserNode
+from graphql_auth.schema import UserQuery, MeQuery
 from graphql_auth import mutations
 
-
 from .models import CustomUser, UserProfile
+from .forms import (
+    CustomUserChangeForm, 
+    UserProfileChangeForm,
+    CustomUserUsernameChangeForm)
 
 class UserProfileNode(DjangoObjectType):
     number_of_followers = graphene.Int()
@@ -72,7 +76,7 @@ class AuthMutation(graphene.ObjectType):
     delete_refresh_token_cookie = graphql_jwt.DeleteRefreshTokenCookie.Field()
 
 class FollowingUser(graphene.Mutation):
-    user = graphene.Field(UserNode)
+    success = graphene.Boolean()
 
     class Arguments:
         username = graphene.String(required=True)
@@ -87,10 +91,73 @@ class FollowingUser(graphene.Mutation):
         else:
             to_user.profile.followers.add(from_user_profile)
         to_user.save()
-        return FollowingUser(user=to_user)
+        return FollowingUser(success=True)
 
+class ErrorType(graphene.Scalar):
+    @staticmethod
+    def serialize(errors):
+        if isinstance(errors, dict):
+            if errors.get("__all__", False):
+                errors["non_field_errors"] = errors.pop("__all__")
+            return camelize(errors)
+        raise Exception("`errors` should be dict!")
 
+class EditProfile(graphene.Mutation):
+    success = graphene.Boolean()
+    errors_user = graphene.Field(ErrorType)
+    errors_user_profile = graphene.Field(ErrorType)
+
+    class Arguments:
+        firstName = graphene.String()
+        lastName = graphene.String()
+        about = graphene.String()
+        
+    @login_required
+    def mutate(root, info, firstName='', lastName='', about=''):
+        user = info.context.user
+        form_user = CustomUserChangeForm(
+            instance=user, 
+            data={ 
+                'first_name': firstName, 
+                'last_name': lastName})
+        form_user_profile = UserProfileChangeForm(
+            instance=user.profile,
+            data={
+                'about': about
+            }
+        )
+        if form_user.is_valid() and form_user_profile.is_valid():
+            form_user.save()
+            form_user_profile.save()
+            return EditProfile(
+                success=True, 
+                errors_user=form_user.errors,
+                errors_user_profile=form_user_profile.errors)
+        return EditProfile(
+            success=False, 
+            errors_user=form_user.errors,
+            errors_user_profile=form_user_profile.errors)
+
+class UsernameChange(graphene.Mutation):
+    success = graphene.Boolean()
+    errors = graphene.Field(ErrorType)
+
+    class Arguments:
+        username = graphene.String(required=True)
+
+    @login_required
+    def mutate(root, info, username):
+        user = info.context.user
+        form = CustomUserUsernameChangeForm(
+            instance=user,
+            data={'username': username}
+        )
+        if form.is_valid():
+            form.save()
+            return UsernameChange(success=True, errors=form.errors)
+        return UsernameChange(success=False, errors=form.errors)
 
 class Mutation(AuthMutation, graphene.ObjectType):
     following_user = FollowingUser.Field()
-
+    edit_profile = EditProfile.Field()
+    username_change = UsernameChange.Field()

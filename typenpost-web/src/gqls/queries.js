@@ -5,8 +5,11 @@ export const QUERY_ME = gql`
         me {
             id
             username
+            firstName
+            lastName
             profile {
               avatar
+              about
             }
         }
     }
@@ -33,6 +36,7 @@ export const POST_FEED = gql`
 export const USER_PROFILE = gql`
     query UserProfile($id: ID!) {
         user(id: $id) {
+            id
             username
             firstName
             lastName
