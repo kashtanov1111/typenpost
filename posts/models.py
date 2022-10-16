@@ -11,7 +11,7 @@ from django.template.defaultfilters import slugify
 User = get_user_model()
 
 class PostQueryset(models.QuerySet):
-    pass
+
     def feed(self, user):
         user_following = user.profile.following
         followed_users_ids = []

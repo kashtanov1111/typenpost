@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import { useMutation } from "@apollo/client"
 import { useNavigate} from "react-router-dom"
 
@@ -47,6 +47,12 @@ export function PasswordChange(props) {
         }
     )
 
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('../login', {replace: true, state: '/password_change'})
+        }
+    }, [isAuthenticated])
+
     if (error) {
         return <Error />
     }
@@ -73,7 +79,7 @@ export function PasswordChange(props) {
         }
     }
 
-    return (isAuthenticated ?
+    return (
         <Row>
             <Col md={6} className='mx-auto'>
                 <h1 className='text-center mb-3'>Change Password</h1>
@@ -113,7 +119,8 @@ export function PasswordChange(props) {
                         data.passwordChange.errors.oldPassword &&
                         data.passwordChange.errors.oldPassword.map(
                             (el) => (
-                                <Form.Control.Feedback type='invalid'>
+                                <Form.Control.Feedback 
+                                    key={el.message} type='invalid'>
                                         {el.message}
                                 </Form.Control.Feedback>
                             )
@@ -156,7 +163,8 @@ export function PasswordChange(props) {
                         data.passwordChange.errors.newPassword1 &&
                         data.passwordChange.errors.newPassword1.map(
                             (el) => (
-                                <Form.Control.Feedback type='invalid'>
+                                <Form.Control.Feedback
+                                    key={el.message} type='invalid'>
                                         {el.message}
                                 </Form.Control.Feedback>
                             )
@@ -199,7 +207,8 @@ export function PasswordChange(props) {
                         data.passwordChange.errors.newPassword2 &&
                         data.passwordChange.errors.newPassword2.map(
                             (el) => (
-                                <Form.Control.Feedback type='invalid'>
+                                <Form.Control.Feedback
+                                    key={el.message} type='invalid'>
                                         {el.message}
                                 </Form.Control.Feedback>
                             )
@@ -236,7 +245,6 @@ export function PasswordChange(props) {
                 </Button>
                 </Form>
             </Col>
-        </Row> :
-        <Error description='You are not logged in. Please log in.' />
+        </Row> 
     )
 }

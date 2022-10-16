@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -76,6 +76,12 @@ export function Register(props) {
             }
     )
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('../', {replace: true})
+        }
+    }, [isAuthenticated])
+    
     function handleSubmit(event) {
         event.preventDefault()
         setShowPassword1(false)
@@ -105,7 +111,7 @@ export function Register(props) {
         )
     }
 
-    return !isAuthenticated ? (!registered ?
+    return (!registered ?
         <Row>
         <Col md={6} className='mx-auto' >
             <h1 className='text-center mb-3'>
@@ -141,7 +147,8 @@ export function Register(props) {
                         {dataRegister && 
                         dataRegister.register.errors.email &&
                         dataRegister.register.errors.email.map((el) => (
-                        <Form.Control.Feedback type='invalid'>
+                        <Form.Control.Feedback
+                            key={el.message} type='invalid'>
                                 {el.message}
                         </Form.Control.Feedback>
                         ))}
@@ -176,7 +183,8 @@ export function Register(props) {
                         dataRegister.register.errors.username &&
                         dataRegister.register.errors.username.map(
                             (el) => (
-                                <Form.Control.Feedback type='invalid'>
+                                <Form.Control.Feedback
+                                    key={el.message} type='invalid'>
                                         {el.message}
                                 </Form.Control.Feedback>
                             )
@@ -211,7 +219,8 @@ export function Register(props) {
                         dataRegister.register.errors.password1 &&
                         dataRegister.register.errors.password1.map(
                             (el) => (
-                                <Form.Control.Feedback type='invalid'>
+                                <Form.Control.Feedback
+                                    key={el.message} type='invalid'>
                                         {el.message}
                                 </Form.Control.Feedback>
                             )
@@ -253,7 +262,8 @@ export function Register(props) {
                         dataRegister.register.errors.password2 &&
                         dataRegister.register.errors.password2.map(
                             (el) => (
-                                <Form.Control.Feedback type='invalid'>
+                                <Form.Control.Feedback
+                                    key={el.message} type='invalid'>
                                         {el.message}
                                 </Form.Control.Feedback>
                             )
@@ -333,6 +343,5 @@ export function Register(props) {
             </Row>
             </Col>
         </Row>
-    ) :
-    <Error description='You are logged in. Please log out.'/>
+    )
 }

@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import { useMutation } from "@apollo/client"
 import { useParams, useNavigate } from "react-router-dom"
 
@@ -48,6 +48,12 @@ export function PasswordResetWithToken(props) {
         }
     )
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('../', {replace: true})
+        }
+    }, [isAuthenticated])
+
     if (error) {
         return <Error />
     }
@@ -68,7 +74,7 @@ export function PasswordResetWithToken(props) {
         }
     }
 
-    return (!isAuthenticated ?
+    return (
         <Row>
         <Col md={6} className='mx-auto' > 
             <h1 className='text-center mb-3'>Reset Your Password</h1>
@@ -105,7 +111,8 @@ export function PasswordResetWithToken(props) {
                     {data && 
                     data.passwordReset.errors.newPassword1 &&
                     data.passwordReset.errors.newPassword1.map((el) => (
-                    <Form.Control.Feedback type='invalid'>
+                    <Form.Control.Feedback
+                        key={el.message} type='invalid'>
                             {el.message}
                     </Form.Control.Feedback>
                     ))}
@@ -145,7 +152,8 @@ export function PasswordResetWithToken(props) {
                     {data && 
                     data.passwordReset.errors.newPassword2 &&
                     data.passwordReset.errors.newPassword2.map((el) => (
-                    <Form.Control.Feedback type='invalid'>
+                    <Form.Control.Feedback
+                        key={el.message} type='invalid'>
                             {el.message}
                     </Form.Control.Feedback>
                     ))}
@@ -179,7 +187,6 @@ export function PasswordResetWithToken(props) {
             </Button>
         </Form>
         </Col>
-        </Row> :
-        <Error description='You are logged in. Please log out.' />
+        </Row>
     )
 }

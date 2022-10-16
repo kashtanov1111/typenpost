@@ -108,7 +108,7 @@ export function Login(props) {
         }
     }
 
-    return !isAuthenticated ? 
+    return (
         <Row>
             <Col md={6} className='mx-auto'>
             <h1 className='text-center mb-3'>
@@ -206,6 +206,6 @@ export function Login(props) {
                 </div>
             </Form>
             </Col>
-        </Row> :
-        <Error description='You are already logged in. Please log out.'/>
+        </Row> 
+    )
 }

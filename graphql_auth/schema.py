@@ -34,7 +34,7 @@ class UserNode(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info):
-        return queryset.select_related("status")
+        return queryset.select_related("status").filter(status__archived=False).select_related('profile')
 
 
 class UserQuery(graphene.ObjectType):

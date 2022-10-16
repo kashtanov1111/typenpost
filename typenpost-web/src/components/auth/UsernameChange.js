@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import { useMutation } from "@apollo/client"
 import { useNavigate} from "react-router-dom"
 
@@ -37,11 +37,17 @@ export function UsernameChange(props) {
         }
     )
 
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('../login', {replace: true, state: '/username_change'})
+        }
+    }, [isAuthenticated])
+
     if (error) {
         return <Error />
     }
     
-    return (isAuthenticated ?
+    return (
         <Row>
             <Col md={6} className='mx-auto'>
                 <h1 className='text-center mb-3'>Change Username</h1>
@@ -74,7 +80,8 @@ export function UsernameChange(props) {
                         data.usernameChange.errors.username &&
                         data.usernameChange.errors.username.map(
                             (el) => (
-                                <Form.Control.Feedback type='invalid'>
+                                <Form.Control.Feedback
+                                    key={el.message} type='invalid'>
                                         {el}
                                 </Form.Control.Feedback>
                             )
@@ -101,7 +108,6 @@ export function UsernameChange(props) {
                 </Button>
                 </Form>
             </Col>
-        </Row> :
-        <Error description='You are not logged in. Please log in.' />
+        </Row>
     )
 }

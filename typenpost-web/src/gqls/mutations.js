@@ -150,3 +150,55 @@ export const USERNAME_CHANGE = gql`
     }
 `
 
+export const SEND_SECONDARY_EMAIL_ACTIVATION = gql`
+    mutation SendSecondaryEmailActivation(
+        $email: String!
+        $password: String!
+        ) {
+        sendSecondaryEmailActivation(
+            email: $email
+            password: $password
+            ) {
+            success
+            errors
+        }
+    }
+`
+
+export const VERIFY_SECONDARY_EMAIL = gql`
+    mutation VerifySecondaryEmail($token: String!) {
+        verifySecondaryEmail(token: $token) {
+            success
+            errors
+        }
+    }
+`
+
+export const SWAP_EMAILS = gql`
+    mutation SwapEmails($password: String!) {
+        swapEmails(password: $password) {
+            success
+            errors
+        }
+    }
+`
+
+export const REMOVE_SECONDARY_EMAIL = gql`
+    mutation RemoveSecondaryEmail($password: String!) {
+        removeSecondaryEmail(password: $password) {
+            success
+            errors
+        }
+    }
+`
+
+export const ARCHIVE_ACCOUNT = gql`
+    mutation ArchiveAccount($password: String!) {
+        archiveAccount(password: $password) {
+            success
+            errors
+        }
+    }
+`
+
+

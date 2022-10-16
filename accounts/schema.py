@@ -42,6 +42,7 @@ class UserProfileNode(DjangoObjectType):
             return 'yes'        
         else:
             return 'no'
+    
 
 class Query(UserQuery, MeQuery, graphene.ObjectType):
     pass
@@ -156,6 +157,14 @@ class UsernameChange(graphene.Mutation):
             form.save()
             return UsernameChange(success=True, errors=form.errors)
         return UsernameChange(success=False, errors=form.errors)
+
+# class UnarchiveUser(graphene.Mutation):
+#     success = graphene.Boolean()
+
+#     @login_required
+#     def mutate(root, info):
+#         user = info.context.user
+#         user.
 
 class Mutation(AuthMutation, graphene.ObjectType):
     following_user = FollowingUser.Field()

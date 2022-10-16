@@ -16,6 +16,9 @@ export function Authorization() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [username, setUsername] = useState('')
   const [avatar, setAvatar] = useState('')
+  const [email, setEmail] = useState('')
+  const [secondaryEmail, setSecondaryEmail] = useState('')
+  const [verified, setVerified] = useState(false)
   const [id, setId] = useState('')
   const refreshTokenExists = JSON.parse(
     localStorage.getItem('refreshToken'))
@@ -35,6 +38,9 @@ export function Authorization() {
               setUsername(me.username)
               setAvatar(me.profile.avatar)
               setId(me.id)
+              setEmail(me.email)
+              setVerified(me.verified)
+              setSecondaryEmail(me.secondaryEmail)
           }
       }
     }
@@ -88,8 +94,11 @@ export function Authorization() {
       username={username}
       avatar={avatar}
       id={id}
+      email={email}
+      verified={verified}
       handleLogout={handleLogout}
       setIsAuthenticated={setIsAuthenticated}
+      secondaryEmail={secondaryEmail}
     />  
   )
 }

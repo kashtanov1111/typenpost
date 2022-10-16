@@ -1,10 +1,11 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import { useMutation } from "@apollo/client"
 import { useLocation } from "react-router-dom"
 
 import { useTitle } from '../../functions/functions'
 
 import { Error } from "../Error"
+import { useNavigate } from "react-router-dom"
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -17,6 +18,7 @@ import { SEND_PASSWORD_RESET_EMAIL } from "../../gqls/mutations"
 
 
 export function PasswordReset(props) {
+    const navigate = useNavigate()
     const {isAuthenticated} = props
     const location = useLocation()
     useTitle('Typenpost - Password Reset')
@@ -38,11 +40,17 @@ export function PasswordReset(props) {
         }
     )
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('../', {replace: true})
+        }
+    }, [isAuthenticated])
+
     if (error) {
         return <Error />
     }
 
-    return (!isAuthenticated ?
+    return (
         <Row>
             <Col md={6} className='mx-auto'>
                 {!emailSent ? <div>
@@ -85,7 +93,8 @@ export function PasswordReset(props) {
                         {data && 
                         data.sendPasswordResetEmail.errors.email &&
                         data.sendPasswordResetEmail.errors.email.map((el) => (
-                        <Form.Control.Feedback type='invalid'>
+                        <Form.Control.Feedback
+                            key={el.message} type='invalid'>
                                 {el.message}
                         </Form.Control.Feedback>
                         ))}
@@ -126,7 +135,6 @@ export function PasswordReset(props) {
                     </p>
                 </div>}
             </Col>
-        </Row> :
-        <Error description='You are logged in. Please log out.' />
+        </Row>
     )
 }

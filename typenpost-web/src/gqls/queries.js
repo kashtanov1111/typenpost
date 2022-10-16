@@ -7,6 +7,10 @@ export const QUERY_ME = gql`
             username
             firstName
             lastName
+            email
+            isActive
+            secondaryEmail
+            verified
             profile {
               avatar
               about
@@ -41,6 +45,9 @@ export const USER_PROFILE = gql`
             firstName
             lastName
             dateJoined
+            email
+            secondaryEmail
+            isActive
             profile {
                 avatar
                 about

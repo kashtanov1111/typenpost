@@ -1,6 +1,6 @@
 import os
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 
@@ -41,7 +41,7 @@ class UserProfile(models.Model):
         upload_to=handle_user_avatar_path, blank=True, null=True)
     about = models.TextField(max_length=350, null=True, blank=True)
     followers = models.ManyToManyField(
-        to='self', blank=True, null=True, related_name='following',
+        to='self', blank=True, related_name='following',
         through=Follow, symmetrical=False)
 
     def __str__(self):

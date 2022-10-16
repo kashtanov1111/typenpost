@@ -14,6 +14,10 @@ import { PasswordReset } from './auth/PasswordReset';
 import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
 import { UserProfile } from './profile/UserProfile';
 import { EditProfile } from './profile/EditProfile';
+import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
+import { SwapEmails } from './auth/SwapEmails';
+import { RemoveSecondaryEmail } from './auth/RemoveSecondaryEmail';
+import { ArchiveAccount } from './auth/ArchiveAccount';
 
 import Container from 'react-bootstrap/Container'
 import Alert from 'react-bootstrap/Alert'
@@ -23,9 +27,12 @@ export function App(props) {
     avatar, 
     username, 
     id,
+    email,
+    verified,
     handleLogout, 
     isAuthenticated, 
-    setIsAuthenticated} = props
+    setIsAuthenticated,
+    secondaryEmail} = props
 
   const [showAlert, setShowAlert] = useState(false)
   const [textAlert, setTextAlert] = useState('')
@@ -49,6 +56,7 @@ export function App(props) {
       isAuthenticated={isAuthenticated}
       handleLogout={handleLogout}
       handleAlert={handleAlert} 
+      secondaryEmail={secondaryEmail}
     />
     <Container>
       {showAlert ? 
@@ -58,7 +66,9 @@ export function App(props) {
       <></>}
       <Routes>
         <Route path='/' element={<PostFeed
-          isAuthenticated={isAuthenticated} />} />
+          isAuthenticated={isAuthenticated} 
+          username={username}
+          />} />
         <Route 
           path='/login' 
           element={<Login 
@@ -74,7 +84,9 @@ export function App(props) {
         <Route 
           path='/activate/:confirmationToken' 
           element={<VerifyAccount 
+            verified={verified}
             handleAlert={handleAlert} 
+            id={id}
             isAuthenticated={isAuthenticated} />} />
         <Route 
           path='/password-reset/:confirmationToken' 
@@ -107,7 +119,34 @@ export function App(props) {
           element={<EditProfile 
             isAuthenticated={isAuthenticated}
             handleAlert={handleAlert}
-            username={username}
+          />} />
+        <Route 
+          path='/add_email'
+          element={<AddSecondaryEmail 
+            isAuthenticated={isAuthenticated}
+            handleAlert={handleAlert}
+            email={email}
+          />} />
+        <Route 
+          path='/swap_emails'
+          element={<SwapEmails 
+            isAuthenticated={isAuthenticated}
+            handleAlert={handleAlert}
+            secondaryEmail={secondaryEmail}
+          />} />
+        <Route 
+          path='/remove_secondary_email'
+          element={<RemoveSecondaryEmail 
+            isAuthenticated={isAuthenticated}
+            handleAlert={handleAlert}
+            secondaryEmail={secondaryEmail}
+          />} />
+        <Route 
+          path='/archive_account'
+          element={<ArchiveAccount 
+            isAuthenticated={isAuthenticated}
+            handleAlert={handleAlert}
+            handleLogout={handleLogout}
           />} />
       </Routes>
     </Container>

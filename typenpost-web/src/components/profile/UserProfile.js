@@ -9,8 +9,8 @@ import { FOLLOWING_USER } from '../../gqls/mutations';
 import { Error } from "../Error";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { useMutation, useQuery } from "@apollo/client";
-import { Loader } from "../Loader";
 import Lightbox from 'react-image-lightbox'
+import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
 
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
@@ -32,6 +32,7 @@ export function UserProfile(props) {
     const [isFollowing, setIsFollowing] = useState('initial')
     const [followingBtnText, setFollowingBtnText] = useState('Following')
     const [isImageOpen, setIsImageOpen] = useState(false)
+    const [showMore, setShowMore] = useState(false)
     useTitle(title)
 
     const { 
@@ -41,6 +42,7 @@ export function UserProfile(props) {
             variables: { id: userId },
             polling: 500,
             onCompleted: (data) => {
+                console.log(data)
                 if (username === data.user.username) {
                     setTitle('Typenpost - My profile')
                     setIsMyProfile(true)
@@ -87,19 +89,17 @@ export function UserProfile(props) {
     }
     
     useEffect(() => {
-        refetch({id: userId})
         setFollowingBtnText('Following')
+        refetch({id: userId})
     },[userData])
-
-    // if (
-    //     loadingUserProfile) {
-    //     return <Loader />
-    // }
 
     if (
         errorUserProfile ||
         errorFollowingUser) {
         return <Error />
+    }
+    if (userData && userData.user === null) {
+        return <Error description='User is not found.' />
     }
     return (!isImageOpen ?
         <>
@@ -108,7 +108,7 @@ export function UserProfile(props) {
         </h1>
         <Card style={{padding: '10px'}}>
         <Row>
-            <Col md={4} xs={12} className='text-center'>
+            <Col md='auto' xs={12} className='text-center'>
                 <ProgressiveImage 
                   src={userData && userData.user.profile.avatar ? 
                     userData.user.profile.avatar : nobody} 
@@ -128,7 +128,7 @@ export function UserProfile(props) {
                       alt="mdo" />}
                 </ProgressiveImage>
             </Col>
-            <Col md={8} xs={12}>
+            <Col md xs={12}>
                 <Row>
                     <Col xs>
                         {(loadingUserProfile || userData.user.firstName || 
@@ -216,7 +216,7 @@ export function UserProfile(props) {
                     <span className='text-muted'> Followers</span>
                 </p>
                 {(loadingUserProfile || userData.user.profile.about) && 
-                <Placeholder as='p' animation='glow'>
+                <Placeholder as='p' className='mb-2' animation='glow'>
                     {loadingUserProfile ? 
                     <>
                     <Placeholder xs={3} bg='secondary'/>{' '}
@@ -228,13 +228,36 @@ export function UserProfile(props) {
                     </> :
                     userData.user.profile.about}
                 </Placeholder>}
-                <Placeholder as='p' animation='glow' className='mb-1'>
-                    Joined:{' '}
-                    {loadingUserProfile ? 
-                    <Placeholder xs={3} bg='secondary'/> : 
-                    format(parseISO(userData.user.dateJoined), 
-                        'MMMM d, yyyy')}
-                </Placeholder>
+                
+                {isMyProfile && 
+                    <>
+                    <div className='mb-2'>
+                    <a
+                    onClick={() => setShowMore(prev => !prev)}
+                    style={{'cursor': 'pointer'}}>
+                    <div className='centered-label'>
+                    {!showMore ? <>More info&nbsp;<BsChevronDown/></> : 
+                    <>Less info&nbsp;<BsChevronUp/></>} 
+                    </div>
+                    </a>
+                    </div>
+                    {showMore ? 
+                    <>
+                    <p className='mb-1 text-muted'>
+                        Joined: {format(parseISO(userData.user.dateJoined), 
+                            'MMMM d, yyyy')}
+                    </p>
+                    <p className='mb-1 text-muted'>
+                        Email: {userData.user.email}
+                    </p>
+                    {userData && userData.user.secondaryEmail &&
+                    <p animation='glow' className='mb-1 text-muted'>
+                        Secondary Email: {userData.user.secondaryEmail}
+                    </p>}
+                    </>: <></>
+                    }
+                    </>
+                }
             </Col>
         </Row>
         </Card>

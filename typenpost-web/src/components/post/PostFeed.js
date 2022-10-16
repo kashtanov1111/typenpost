@@ -12,21 +12,29 @@ import { POST_FEED } from "../../gqls/queries"
 import { Error } from "../Error"
 
 export function PostFeed(props) {
-    const {isAuthenticated} = props
+    const {isAuthenticated, username} = props
     useTitle('Typenpost')
     const navigate = useNavigate()
     const { data, loading, error, refetch } = useQuery(
-        POST_FEED
+        POST_FEED, {
+            errorPolicy: 'ignore'
+        }
     )
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('../login/', {replace: true})
         }
     }, [isAuthenticated])
+
+    useEffect(() => {
+        refetch()
+    }, [username])
+
     if (loading) {
         return <Loader />
     }
     if (error) {
+        console.log(error.graphQLErrors)
         return <Error />
     }
     return (isAuthenticated ?
@@ -36,12 +44,12 @@ export function PostFeed(props) {
                     Load new posts
                 </Button>
             </Col>
-                {data.feed.edges.map((el) => (
-                    <div key={el.node.id}>
+                {data && data.feed.edges.map((el) => (
+                    (el.node && <div key={el.node.id}>
                         <a onClick={() => navigate(`/${el.node.id}`)}>
                             Post - {el.node.id}: { el.node.text } { el.node.created } {el.node.user.username}
                         </a>
-                    </div>
+                    </div>)
                 ))}
         </Row> :
         <Loader />

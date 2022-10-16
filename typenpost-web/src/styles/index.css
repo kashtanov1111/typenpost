@@ -69,3 +69,21 @@ a:hover {
     border-bottom-left-radius: calc(0.5rem - 1px);
     border-bottom-right-radius: calc(0.5rem - 1px);
 }
+.only-top-border {
+    border-top: 0px;
+}
+.centered-label {
+    display: flex;
+    align-items: center;
+  }
+.no-left-right-top-border {
+    border-right: 0px;
+    border-left: 0px;
+    border-top: 0px;
+}
+.no-border {
+    border-right: 0px;
+    border-left: 0px;
+    border-top: 0px;
+    border-bottom: 0px;
+}
