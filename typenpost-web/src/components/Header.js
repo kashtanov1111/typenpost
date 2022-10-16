@@ -198,14 +198,13 @@ export function Header(props) {
               <BiRename />&nbsp;Change username
             </div>
             </ListGroup.Item>
-          <div className="accordion-item only-top-border">
-            <h2 className="accordion-header" id="headingOne">
-              <button style={{'height': '40px'}} className="accordion-button px-3 py-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                <MdEmail />	&nbsp;Change email
-              </button>
-            </h2>
-            <div id="collapseOne" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-              <div className="accordion-body p-0">
+          <Accordion.Item className="only-top-border" eventKey='0'>
+            <Accordion.Header className='innerBtn'>
+              <div className='centered-label'>
+                <MdEmail />&nbsp;Change email
+              </div>
+            </Accordion.Header>
+            <Accordion.Body className='p-0'>
                 <ListGroup.Item
                   className='no-left-right-top-border'
                   as={Link}
@@ -240,9 +239,8 @@ export function Header(props) {
                   &nbsp;&nbsp;<AiFillDelete />&nbsp;Remove secondary email
                   </div>
                 </ListGroup.Item>
-              </div>
-            </div>
-          </div>
+            </Accordion.Body>
+          </Accordion.Item>
           <ListGroup.Item
             as={Link}
             onClick={handleCloseSettingsModal}
