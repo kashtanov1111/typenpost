@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'django_filters',
     'graphql_auth',
+    'rest_framework',
     
     #Local
     'accounts',
@@ -259,3 +260,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
 ]
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485761

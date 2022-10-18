@@ -4,7 +4,9 @@ import React, {useState, useEffect, useRef} from "react";
 import { useTitle } from "../../functions/functions";
 import { Link, useNavigate } from "react-router-dom";
 import { QUERY_ME } from "../../gqls/queries";
-import { EDIT_PROFILE } from '../../gqls/mutations';
+import { 
+    EDIT_PROFILE, 
+    DELETE_USER_PROFILE_AVATAR } from '../../gqls/mutations';
 import { Error } from "../Error";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { useMutation, useLazyQuery } from "@apollo/client";
@@ -18,6 +20,11 @@ import Spinner from 'react-bootstrap/Spinner'
 import Form from 'react-bootstrap/Form'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
 
+import { 
+    convertBase64,
+    createImagePlaceholderUrl } from '../../functions/functions';
+import FormLabel from 'react-bootstrap/esm/FormLabel';
+
 export function EditProfile(props) {
     const {isAuthenticated, handleAlert} = props
     const location = useLocation()
@@ -28,6 +35,10 @@ export function EditProfile(props) {
 
     const [userData, setUserData] = useState('')
     const [userProfileData, setUserProfileData] = useState('')
+    const [errorImage, setErrorImage] = useState({
+        error: false,
+        message: ''
+    })
 
     const [getUserProfile, {
         loading: loadingQueryMe, 
@@ -39,7 +50,6 @@ export function EditProfile(props) {
             }
         }     
     )
-
     const [handleEditProfile, {
         loading: loadingEditProfile,
         error: errorEditProfile}] = useMutation(
@@ -47,17 +57,36 @@ export function EditProfile(props) {
             variables: {
                 about: userProfileData.about,
                 firstName: userData.firstName,
-                lastName: userData.lastName
+                lastName: userData.lastName,
+                avatar: (
+                    userProfileData.avatar && 
+                    userProfileData.avatar.startsWith('http') ? 
+                    '' : userProfileData.avatar),
             },
             onCompleted: (data) => {
-                hasTextareaInitiallyChanged.current = false
-                handleAlert(
-                    'Your profile has been successfully changed',
-                     'success')
-                navigate('../profile/' + userData.id, {replace: true})
+                if (data.editProfile.success) {
+                    hasTextareaInitiallyChanged.current = false
+                    handleAlert(
+                        'Your profile has been successfully changed',
+                         'success')
+                    navigate('../profile/' + userData.id, {replace: true})
+                }
             }
         }
     )
+    const [handleDeleteUserProfileAvatar, {
+        error: errorDeleteUserProfileAvatar,
+        loading: loadingDeleteUserProfileAvatar
+    }] = useMutation(DELETE_USER_PROFILE_AVATAR, {
+        onCompleted: (data) => {
+            if (data.deleteUserProfileAvatar.success) {
+                setUserProfileData({
+                    ...userProfileData,
+                    avatar: ''
+                })
+            }
+        }
+    })
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -89,9 +118,32 @@ export function EditProfile(props) {
         e.target.style.height= `${e.target.scrollHeight}px`
     }
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
         handleEditProfile()
+    }
+
+    async function handleImageChange(e) {
+        const file = e.target.files[0]
+        if (file.size > 10485760) {
+            setErrorImage({
+                error: true, 
+                message: 'File size exceeds 10 Mb. Please choose another image.'})
+            setTimeout(() => {
+                setErrorImage({error: false, message: ''})}, 3000)
+            e.target.value = ''
+        } else {
+            setErrorImage({error: false, message: 'Good'})
+            const base64 = await convertBase64(file)
+            setUserProfileData({
+                ...userProfileData,
+                avatar: base64
+            })
+        }
+    }
+
+    function handleDeleteBtn() {
+        handleDeleteUserProfileAvatar()
     }
 
     if (loadingQueryMe) {
@@ -112,6 +164,63 @@ export function EditProfile(props) {
             <Form 
                 onSubmit={handleSubmit} 
                 noValidate>
+                <div className='text-center container-image'>
+                <ProgressiveImage 
+                  src={userProfileData && userProfileData.avatar ? 
+                    userProfileData.avatar : nobody} 
+                  placeholder={userProfileData && 
+                    userProfileData.avatar ? 
+                    createImagePlaceholderUrl(
+                        userProfileData.avatar, '16x16') : nobody}
+                >
+                  {(src, loading) => 
+                    <img 
+                      style={{filter: loading && 'blur(8px}', 
+                        'WebkitFilter': loading && 'blur(8px)',}} 
+                      height='150' 
+                      width='150' 
+                      className={userProfileData.avatar ? 'darkened-img rounded-circle' : 'rounded-circle'}
+                      src={src}
+                      alt="mdo" />}
+                </ProgressiveImage>
+                <div className='centered'>
+                    {userProfileData.avatar &&
+                    <p 
+                        className='pointer mb-0'
+                        onClick={handleDeleteBtn}>
+                    {loadingDeleteUserProfileAvatar ? 
+                    <div><Spinner
+                        as='span'
+                        animation='border'
+                        size='sm'
+                        role='status'
+                        aria-hidden='true' />
+                    <span className='visually-hidden'>Loading...</span>
+                    </div> :
+                    'Delete'
+                    }
+                    </p>}
+                </div>
+                </div>
+                <Form.Group controlId="formFile" className="mb-2 mt-0">
+                    <FormLabel className='mb-1'>New Image</FormLabel>
+                    <Form.Control
+                        type="file"
+                        accept="image/jpeg,image/png"
+                        isInvalid={errorImage.error}
+                        isValid={errorImage.message === 'Good'}
+                        onChange={(e) => handleImageChange(e)}
+                    />
+                    <Form.Control.Feedback>
+                            Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                            {errorImage.message}
+                    </Form.Control.Feedback>
+                    {errorImage.message === '' && <Form.Text muted>
+                        File size should not exceed 10 Mb.
+                    </Form.Text>}
+                </Form.Group>
                 <Form.Group className='mb-2'>
                     <FloatingLabel
                         label='First name'
@@ -121,6 +230,7 @@ export function EditProfile(props) {
                             type="text"
                             maxLength={150}
                             value={userData.firstName}
+                            
                             onChange={(e) => 
                                 setUserData({
                                     ...userData,
@@ -129,7 +239,8 @@ export function EditProfile(props) {
                             }
                             placeholder='First name'
                             required
-                        />    
+                        />  
+                        
                     </FloatingLabel>
                 </Form.Group>
                 <Form.Group className='mb-2'>
@@ -179,6 +290,7 @@ export function EditProfile(props) {
                     variant='primary' 
                     className='login-signup-button py-2 col-12 mb-2' 
                     type='submit'
+                    disabled={errorImage === 'File size exceeds 10 Mb.'}
                     >
                     {loadingEditProfile ? 
                     <div><Spinner

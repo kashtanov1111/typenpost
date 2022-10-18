@@ -12,6 +12,7 @@ export const QUERY_ME = gql`
             secondaryEmail
             verified
             profile {
+              id
               avatar
               about
             }
@@ -49,6 +50,7 @@ export const USER_PROFILE = gql`
             secondaryEmail
             isActive
             profile {
+                id
                 avatar
                 about
                 numberOfFollowers

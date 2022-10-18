@@ -1,11 +1,11 @@
 import nobody from '../../assets/images/nobody.jpg'
 import {format, parseISO } from 'date-fns'
 
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect} from "react";
 import { useTitle } from "../../functions/functions";
 import { useParams, Link } from "react-router-dom";
 import { USER_PROFILE } from "../../gqls/queries";
-import { FOLLOWING_USER } from '../../gqls/mutations';
+import { FOLLOWING_USER, UPDATE_USER_AVATAR } from '../../gqls/mutations';
 import { Error } from "../Error";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { useMutation, useQuery } from "@apollo/client";
@@ -33,6 +33,7 @@ export function UserProfile(props) {
     const [followingBtnText, setFollowingBtnText] = useState('Following')
     const [isImageOpen, setIsImageOpen] = useState(false)
     const [showMore, setShowMore] = useState(false)
+    const [base64Avatar, setBase64Avatar] = useState('')
     useTitle(title)
 
     const { 
@@ -42,7 +43,6 @@ export function UserProfile(props) {
             variables: { id: userId },
             polling: 500,
             onCompleted: (data) => {
-                console.log(data)
                 if (username === data.user.username) {
                     setTitle('Typenpost - My profile')
                     setIsMyProfile(true)
@@ -72,6 +72,7 @@ export function UserProfile(props) {
             }
         }
     })
+    
     function handleFollowButton() {
         handleFollow({variables: {username: userData.user.username}})
     }
@@ -84,9 +85,19 @@ export function UserProfile(props) {
         }
     }
 
-    function handleImageClick(event) {
+    function handleImageClick() {
         setIsImageOpen(true)
     }
+
+    
+
+    
+
+    // function handleSubmit(e) {
+    //     e.preventDefault()
+    //     handleUpdateUserProfileAvatar()
+    // }
+    
     
     useEffect(() => {
         setFollowingBtnText('Following')

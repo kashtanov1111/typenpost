@@ -27,3 +27,16 @@ export function createImageSrcUrl(path) {
     const awsDomainOnlyForImages = "https://d1kll7zdtk3qm0.cloudfront.net"
     return awsDomainOnlyForImages + path
 }
+
+export function convertBase64(file) {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file)
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      }
+      fileReader.onerror = (error) => {
+        reject(error);
+      }
+    })
+}

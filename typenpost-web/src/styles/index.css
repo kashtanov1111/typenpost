@@ -92,3 +92,23 @@ a:hover {
     padding-left: 1rem;
     padding-right: 1rem;
 }
+.rounded-circle {
+    object-fit: cover;
+}
+.pointer {
+    cursor: pointer !important;
+}
+.darkened-img {
+    filter: brightness(60%)
+}
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.container-image {
+    position: relative;
+    text-align: center;
+    color: white;
+}

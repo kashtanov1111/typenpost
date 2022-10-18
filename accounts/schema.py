@@ -1,3 +1,7 @@
+import base64
+from random import randint
+from django.core.files.base import ContentFile
+
 import graphene
 import graphql_jwt
 
@@ -20,7 +24,7 @@ class UserProfileNode(DjangoObjectType):
     am_i_following = graphene.String()
     class Meta:
         model = UserProfile
-        fields = ('user', 'avatar', 'about', 'followers')
+        fields = ('user', 'avatar', 'about', 'followers', 'pk')
         interfaces = (graphene.relay.Node, )
     
     def resolve_avatar(parent, info):
@@ -87,10 +91,11 @@ class FollowingUser(graphene.Mutation):
         from_user = info.context.user
         from_user_profile = from_user.profile
         to_user = CustomUser.objects.get(username=username)
-        if to_user.profile.followers.filter(user=from_user).exists():
-            to_user.profile.followers.remove(from_user_profile)
+        to_user_followers = to_user.profile.followers
+        if to_user_followers.filter(user=from_user).exists():
+            to_user_followers.remove(from_user_profile)
         else:
-            to_user.profile.followers.add(from_user_profile)
+            to_user_followers.add(from_user_profile)
         to_user.save()
         return FollowingUser(success=True)
 
@@ -112,19 +117,30 @@ class EditProfile(graphene.Mutation):
         firstName = graphene.String()
         lastName = graphene.String()
         about = graphene.String()
+        avatar = graphene.String()
         
     @login_required
-    def mutate(root, info, firstName='', lastName='', about=''):
+    def mutate(root, info, firstName='', lastName='', about='', avatar=''):
         user = info.context.user
+        user_profile = user.profile
+        if avatar:
+            format, encoded_avatar = avatar.split(';base64,') 
+            ext = format.split('/')[-1]
+            random_number = randint(1, 100000)
+            decoded_avatar = ContentFile(
+                base64.b64decode(encoded_avatar), 
+                name=str(random_number) + '.' + ext)
+            user_profile.avatar = decoded_avatar
+            user_profile.save()
         form_user = CustomUserChangeForm(
             instance=user, 
             data={ 
                 'first_name': firstName, 
                 'last_name': lastName})
         form_user_profile = UserProfileChangeForm(
-            instance=user.profile,
+            instance=user_profile,
             data={
-                'about': about
+                'about': about,
             }
         )
         if form_user.is_valid() and form_user_profile.is_valid():
@@ -158,15 +174,19 @@ class UsernameChange(graphene.Mutation):
             return UsernameChange(success=True, errors=form.errors)
         return UsernameChange(success=False, errors=form.errors)
 
-# class UnarchiveUser(graphene.Mutation):
-#     success = graphene.Boolean()
+class DeleteUserProfileAvatar(graphene.Mutation):
+    success = graphene.Boolean()
 
-#     @login_required
-#     def mutate(root, info):
-#         user = info.context.user
-#         user.
+    @login_required
+    def mutate(root, info):
+        user = info.context.user
+        user_profile = user.profile
+        user_profile.avatar = ''
+        user_profile.save()
+        return DeleteUserProfileAvatar(success=True)
 
 class Mutation(AuthMutation, graphene.ObjectType):
     following_user = FollowingUser.Field()
     edit_profile = EditProfile.Field()
     username_change = UsernameChange.Field()
+    delete_user_profile_avatar = DeleteUserProfileAvatar.Field()

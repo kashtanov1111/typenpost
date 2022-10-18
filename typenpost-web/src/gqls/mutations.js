@@ -124,11 +124,13 @@ export const EDIT_PROFILE = gql`
         $about: String
         $firstName: String
         $lastName: String
+        $avatar: String
         ) {
         editProfile(
             about: $about
             firstName: $firstName
             lastName: $lastName
+            avatar: $avatar
             ) {
             success
             errorsUser
@@ -200,5 +202,17 @@ export const ARCHIVE_ACCOUNT = gql`
         }
     }
 `
+
+export const DELETE_USER_PROFILE_AVATAR = gql`
+    mutation DeleteUserProfileAvatar {
+        deleteUserProfileAvatar {
+            success
+        }
+    }
+`
+
+
+
+
 
 
