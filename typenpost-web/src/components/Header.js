@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 import { Link, useLocation } from 'react-router-dom'
 
 import long_logo from '../assets/images/long_logo.jpg';
@@ -20,6 +20,7 @@ import { IoMdSwap } from 'react-icons/io'
 import { AiFillDelete } from 'react-icons/ai' 
 import { MdEmail } from 'react-icons/md' 
 
+
 import { CustomToggle } from '../CustomToggle'
 
 import ProgressiveImage from 'react-progressive-graceful-image'
@@ -40,6 +41,7 @@ export function Header(props) {
       secondaryEmail, 
       handleLogout, 
       handleAlert} = props
+    const containerNavbar = useRef(null)
     
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -48,18 +50,18 @@ export function Header(props) {
     const handleCloseSettingsModal = () => setShowSettingsModal(false)
     const handleShow = () => setShowDeleteModal(true)
     const handleShowSettingsModal = () => setShowSettingsModal(true)
-    
-    
+    const [expanded, setExpanded] = useState(false);
+
     function handleButtonClick() {
         setShowDeleteModal(false)
         handleLogout()
         handleAlert('You have signed out.', 'success')
     }
-    
+
     return (
       <div>
-      <Navbar bg="white" expand="lg" className='py-0'>
-      <Container>
+      <Navbar expanded={expanded} bg="white" expand="lg" className='py-0'>
+      <Container ref={containerNavbar}>
           <Navbar.Brand as={Link} to='/' className='me-2'>
             <ProgressiveImage 
               src={createImageSrcUrl(long_logo)} 
@@ -69,15 +71,16 @@ export function Header(props) {
                   style={{filter: loading && 'blur(8px}', 
                           'WebkitFilter': loading && 'blur(8px)'}} 
                   height='40px' 
+                  onClick={() => setExpanded(false)}
                   src={src} 
                   alt="Logo" />}
             </ProgressiveImage>
           </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
+        <Navbar.Collapse  id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to='/'>Home</Nav.Link>
-            <Nav.Link as={Link} to='/create'>Create</Nav.Link>
+            <Nav.Link as={Link} onClick={() => setExpanded(false)} to='/'>Home</Nav.Link>
+            <Nav.Link as={Link} onClick={() => setExpanded(false)} to='/create'>Create</Nav.Link>
           </Nav>
           <Form className="d-flex mb-lg-0 mb-2">
             <Form.Control
@@ -115,11 +118,15 @@ export function Header(props) {
                 <Dropdown.Item
                   as={Link}
                   to={'/profile/' + id}
+                  onClick={() => setExpanded(false)}
                   active={pathname === '/profile/' + id}>
                   {username}
                 </Dropdown.Item>
                 <Dropdown.Item 
-                  onClick={handleShowSettingsModal}
+                  onClick={() => {
+                    setExpanded(false)
+                    handleShowSettingsModal()
+                  }}
                   active={
                     pathname.startsWith('/password_change') ||
                     pathname.startsWith('/username_change')
@@ -127,7 +134,9 @@ export function Header(props) {
                     Settings
                 </Dropdown.Item>
                 <Dropdown.Item
-                  onClick={handleShow}>
+                  onClick={() => {
+                    setExpanded(false)
+                    handleShow()}}>
                   Log out
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -137,6 +146,7 @@ export function Header(props) {
                   as={Link} 
                   to='/login'
                   state={location.pathname}
+                  onClick={() => setExpanded(false)}
                   variant='outline-dark'
                   className="me-2">
                   Log In
@@ -144,6 +154,7 @@ export function Header(props) {
                 <Button 
                   as={Link} 
                   to='/register' 
+                  onClick={() => setExpanded(false)}
                   variant='primary'>
                   Sign Up
                 </Button>

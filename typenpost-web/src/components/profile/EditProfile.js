@@ -67,7 +67,7 @@ export function EditProfile(props) {
                 if (data.editProfile.success) {
                     hasTextareaInitiallyChanged.current = false
                     handleAlert(
-                        'Your profile has been successfully changed',
+                        'Your profile has been successfully changed.',
                          'success')
                     navigate('../profile/' + userData.id, {replace: true})
                 }
@@ -290,7 +290,6 @@ export function EditProfile(props) {
                     variant='primary' 
                     className='login-signup-button py-2 col-12 mb-2' 
                     type='submit'
-                    disabled={errorImage === 'File size exceeds 10 Mb.'}
                     >
                     {loadingEditProfile ? 
                     <div><Spinner
