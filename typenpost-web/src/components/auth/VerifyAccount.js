@@ -12,7 +12,7 @@ import Button from 'react-bootstrap/Button'
 import { VERIFY_ACCOUNT, VERIFY_SECONDARY_EMAIL } from "../../gqls/mutations"
 
 export function VerifyAccount(props) {
-    const {handleAlert, isAuthenticated, id, verified} = props
+    const {handleAlert, username, verified} = props
     const params = useParams()
     const token = params.confirmationToken
     const navigate = useNavigate()
@@ -35,7 +35,7 @@ export function VerifyAccount(props) {
         onCompleted: (data) => {
             if (data.verifySecondaryEmail.success) {
                 handleAlert('Your email has been verified.', 'success')
-                navigate('../profile/' + id, {replace: true})
+                navigate('../profile/' + username, {replace: true})
             }
         }
     })

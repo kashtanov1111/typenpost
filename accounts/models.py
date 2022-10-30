@@ -1,15 +1,46 @@
+import re
 import os
+
+from django.core import validators
+from django.utils.deconstruct import deconstructible
+from django.utils.translation import gettext_lazy as _
 
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.db.models.signals import post_save, pre_save
+
+@deconstructible
+class CustomUnicodeUsernameValidator(validators.RegexValidator):
+    regex = r"^[\w.]+\Z"
+    message = _(
+        "Enter a valid username. This value may contain only letters, "
+        "numbers, and ./_ characters."
+    )
+    flags = 0
 
 def handle_user_avatar_path(instance, filename):
     username = instance.user.username
     return os.path.join(username, 'avatar', filename)
 
 class CustomUser(AbstractUser):
+
+    username_validator = CustomUnicodeUsernameValidator()
+    
     email = models.EmailField(unique=True, blank=False)
+    username = models.CharField(
+        _("username"),
+        max_length=20,
+        unique=True,
+        help_text=_(
+            "Required. 20 characters or fewer. Letters, digits and ./_ only."
+        ),
+        validators=[username_validator],
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+    )
+    first_name = models.CharField(_("first name"), max_length=30, blank=True)
+    last_name = models.CharField(_("last name"), max_length=40, blank=True)
 
 
 class Follow(models.Model):

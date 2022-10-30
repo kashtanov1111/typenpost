@@ -112,3 +112,24 @@ a:hover {
     text-align: center;
     color: white;
 }
+.follow-text-profile {
+    color: #6c757d;
+}
+.follow-text-profile:hover {
+    color: #212529;
+}
+.card:hover {
+    background: rgb(248, 249, 250)}
+.follow-images {
+    height: 5rem;
+    width: 5rem;
+}
+.bottom-border {
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 1px;
+    border-style: solid;
+    border-color: #dee2e6;
+    border-radius: 0%;
+}

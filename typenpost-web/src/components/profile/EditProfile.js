@@ -69,7 +69,7 @@ export function EditProfile(props) {
                     handleAlert(
                         'Your profile has been successfully changed.',
                          'success')
-                    navigate('../profile/' + userData.id, {replace: true})
+                    navigate('../profile/' + userData.username, {replace: true})
                 }
             }
         }
@@ -228,7 +228,7 @@ export function EditProfile(props) {
                     >
                         <Form.Control 
                             type="text"
-                            maxLength={150}
+                            maxLength={30}
                             value={userData.firstName}
                             
                             onChange={(e) => 
@@ -250,7 +250,7 @@ export function EditProfile(props) {
                     >
                         <Form.Control 
                             type="text"
-                            maxLength={150}
+                            maxLength={40}
                             value={userData.lastName}
                             onChange={(e) => 
                                 setUserData({

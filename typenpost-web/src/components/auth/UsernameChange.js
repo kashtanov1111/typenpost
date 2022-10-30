@@ -62,6 +62,7 @@ export function UsernameChange(props) {
                     >
                         <Form.Control 
                             type="text"
+                            maxLength={20}
                             isInvalid={data && 
                                 data.usernameChange.errors.username}
                             isValid={data && 

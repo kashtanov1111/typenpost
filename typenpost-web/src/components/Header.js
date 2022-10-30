@@ -36,7 +36,6 @@ export function Header(props) {
     const {
       avatar, 
       username,
-      id, 
       isAuthenticated,
       secondaryEmail, 
       handleLogout, 
@@ -61,7 +60,7 @@ export function Header(props) {
     return (
       <div>
       <Navbar expanded={expanded} bg="white" expand="lg" className='py-0'>
-      <Container ref={containerNavbar}>
+      <Container ref={containerNavbar} className='bottom-border pb-md-0 pb-2'>
           <Navbar.Brand as={Link} to='/' className='me-2'>
             <ProgressiveImage 
               src={createImageSrcUrl(long_logo)} 
@@ -117,9 +116,9 @@ export function Header(props) {
               <Dropdown.Menu align={{lg: 'end'}}>
                 <Dropdown.Item
                   as={Link}
-                  to={'/profile/' + id}
+                  to={'/profile/' + username}
                   onClick={() => setExpanded(false)}
-                  active={pathname === '/profile/' + id}>
+                  active={pathname === '/profile/' + username}>
                   {username}
                 </Dropdown.Item>
                 <Dropdown.Item 

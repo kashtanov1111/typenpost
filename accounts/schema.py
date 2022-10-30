@@ -5,48 +5,21 @@ from django.core.files.base import ContentFile
 import graphene
 import graphql_jwt
 
+import graphene_django_optimizer as gql_optimizer
+
 from graphene_django import DjangoObjectType
 from graphene_django.utils import camelize
 from graphql_jwt.decorators import login_required
 
-from graphql_auth.schema import UserQuery, MeQuery
+from graphql_auth.schema import UserNode, UserQuery, MeQuery
 from graphql_auth import mutations
+from graphene_django.filter.fields import DjangoFilterConnectionField
 
 from .models import CustomUser, UserProfile
 from .forms import (
     CustomUserChangeForm, 
     UserProfileChangeForm,
     CustomUserUsernameChangeForm)
-
-class UserProfileNode(DjangoObjectType):
-    number_of_followers = graphene.Int()
-    number_of_following = graphene.Int()
-    am_i_following = graphene.String()
-    class Meta:
-        model = UserProfile
-        fields = ('user', 'avatar', 'about', 'followers', 'pk')
-        interfaces = (graphene.relay.Node, )
-    
-    def resolve_avatar(parent, info):
-        if parent.avatar:
-            return parent.avatar.url
-        else:
-            return None
-    
-    def resolve_number_of_followers(parent, info):
-        return parent.followers.count()
-
-    def resolve_number_of_following(parent, info):
-        return parent.following.count()
-    
-    @login_required
-    def resolve_am_i_following(parent, info):
-        me = info.context.user
-        if parent.followers.filter(user=me).exists():
-            return 'yes'        
-        else:
-            return 'no'
-    
 
 class Query(UserQuery, MeQuery, graphene.ObjectType):
     pass

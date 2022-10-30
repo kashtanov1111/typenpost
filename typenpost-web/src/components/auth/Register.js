@@ -104,6 +104,18 @@ export function Register(props) {
             }
         }
     }
+
+    
+
+    function handleUsernameChange(e) {
+        const reg = /^[A-Za-z0-9._]*$/
+        if (reg.test(e.target.value)) {
+            setFormState({
+                ...formState,
+                username: e.target.value
+            })
+        }
+    }
     
     if (errorRegister || errorResendEmail) {
         return (
@@ -167,12 +179,10 @@ export function Register(props) {
                             isValid={dataRegister && 
                                 !dataRegister.register.errors.username}
                             value={formState.username}
-                            onChange={(e) => 
-                                setFormState({
-                                    ...formState,
-                                    username: e.target.value
-                                })
+                            onChange={(e) =>
+                                handleUsernameChange(e)
                             }
+                            maxLength={20}
                             placeholder='Username'
                             required
                         />    

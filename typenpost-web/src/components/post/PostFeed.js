@@ -46,7 +46,7 @@ export function PostFeed(props) {
             </Col>
                 {data && data.feed.edges.map((el) => (
                     (el.node && <div key={el.node.id}>
-                        <a onClick={() => navigate(`/${el.node.id}`)}>
+                        <a onClick={() => navigate(`posts/${el.node.id}`)}>
                             Post - {el.node.id}: { el.node.text } { el.node.created } {el.node.user.username}
                         </a>
                     </div>)

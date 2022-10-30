@@ -18,6 +18,10 @@ import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
 import { SwapEmails } from './auth/SwapEmails';
 import { RemoveSecondaryEmail } from './auth/RemoveSecondaryEmail';
 import { ArchiveAccount } from './auth/ArchiveAccount';
+import { Followers } from './profile/Followers';
+import { Following } from './profile/Following';
+import { FollowHeader } from './profile/FollowHeader';
+import { Error } from './Error';
 
 import Container from 'react-bootstrap/Container'
 import Alert from 'react-bootstrap/Alert'
@@ -26,7 +30,6 @@ export function App(props) {
   const {
     avatar, 
     username, 
-    id,
     email,
     verified,
     handleLogout, 
@@ -52,20 +55,19 @@ export function App(props) {
     <Header 
       username={username} 
       avatar={avatar} 
-      id={id}
       isAuthenticated={isAuthenticated}
       handleLogout={handleLogout}
       handleAlert={handleAlert} 
       secondaryEmail={secondaryEmail}
     />
-    <Container>
+    <Container className='p-0'>
       {showAlert ? 
       <Alert className='my-1' key={styleAlert} variant={styleAlert}>
         {textAlert}
       </Alert> : 
       <></>}
       <Routes>
-        <Route path='/' element={<PostFeed
+        <Route index element={<PostFeed
           isAuthenticated={isAuthenticated} 
           username={username}
           />} />
@@ -80,13 +82,13 @@ export function App(props) {
           element={<Register 
             handleAlert={handleAlert}
             isAuthenticated={isAuthenticated} />} />
-        <Route path='/:postId' element={<PostDetail />} />
+        <Route path='posts/:postId' element={<PostDetail />} />
         <Route 
           path='/activate/:confirmationToken' 
           element={<VerifyAccount 
             verified={verified}
             handleAlert={handleAlert} 
-            id={id}
+            username={username}
             isAuthenticated={isAuthenticated} />} />
         <Route 
           path='/password-reset/:confirmationToken' 
@@ -109,11 +111,22 @@ export function App(props) {
             handleAlert={handleAlert} 
             handleLogout={handleLogout}
             isAuthenticated={isAuthenticated} />} />
+        <Route path='/profile/:userUsername' element={<UserProfile
+        isAuthenticated={isAuthenticated}
+        username={username} />} /> 
         <Route 
-          path='/profile/:userId'
-          element={<UserProfile
-            isAuthenticated={isAuthenticated}
-            username={username} />} />
+          path='/profile/:userUsername'
+          element={<FollowHeader />}
+           >
+            <Route 
+              path='followers' 
+              element={<Followers 
+                isAuthenticated={isAuthenticated}
+                username={username} />} />
+            <Route 
+              path='following' 
+              element={<Following isAuthenticated={isAuthenticated} />} />
+        </Route>
         <Route 
           path='/profile/edit'
           element={<EditProfile 
@@ -148,6 +161,9 @@ export function App(props) {
             handleAlert={handleAlert}
             handleLogout={handleLogout}
           />} />
+        <Route 
+          path='*'
+          element={<Error description="The page doesn't exist." />} />
       </Routes>
     </Container>
     </>

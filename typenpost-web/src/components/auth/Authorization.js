@@ -19,7 +19,6 @@ export function Authorization() {
   const [email, setEmail] = useState('')
   const [secondaryEmail, setSecondaryEmail] = useState('')
   const [verified, setVerified] = useState(false)
-  const [id, setId] = useState('')
   const refreshTokenExists = JSON.parse(
     localStorage.getItem('refreshToken'))
   const [deleteToken, {error: errorDeleteToken}] = 
@@ -37,7 +36,6 @@ export function Authorization() {
               setIsAuthenticated(true)
               setUsername(me.username)
               setAvatar(me.profile.avatar)
-              setId(me.id)
               setEmail(me.email)
               setVerified(me.verified)
               setSecondaryEmail(me.secondaryEmail)
@@ -93,7 +91,6 @@ export function Authorization() {
       isAuthenticated={isAuthenticated}
       username={username}
       avatar={avatar}
-      id={id}
       email={email}
       verified={verified}
       handleLogout={handleLogout}

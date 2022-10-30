@@ -8,13 +8,57 @@ export const QUERY_ME = gql`
             firstName
             lastName
             email
-            isActive
+            dateJoined
             secondaryEmail
             verified
             profile {
               id
               avatar
               about
+            }
+        }
+    }
+`
+
+export const USER_PROFILE = gql`
+    query UserProfile($username: String!) {
+        user(username: $username) {
+            id
+            username
+            firstName
+            lastName
+            dateJoined
+            email
+            secondaryEmail
+            profile {
+                id
+                avatar
+                about
+                numberOfFollowers
+                numberOfFollowing
+                amIFollowing
+                isHeFollowing
+            }
+        }
+    }
+`
+
+export const USER_FOLLOWERS = gql`
+    query userFollowers($username: String!) {
+        userFollowers(username: $username) {
+            edges {
+                node {
+                    id
+                    avatar
+                    amIFollowing
+                    isHeFollowing
+                    user {
+                        id
+                        username
+                        firstName
+                        lastName
+                    }
+                }
             }
         }
     }
@@ -33,29 +77,6 @@ export const POST_FEED = gql`
                         username
                     }
                 }
-            }
-        }
-    }
-`
-
-export const USER_PROFILE = gql`
-    query UserProfile($id: ID!) {
-        user(id: $id) {
-            id
-            username
-            firstName
-            lastName
-            dateJoined
-            email
-            secondaryEmail
-            isActive
-            profile {
-                id
-                avatar
-                about
-                numberOfFollowers
-                numberOfFollowing
-                amIFollowing
             }
         }
     }

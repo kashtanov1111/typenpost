@@ -19,6 +19,7 @@ graphene-django = {git = "https://github.com/graphql-python/graphene-django.git"
 django-graphql-jwt = "==0.3.4"
 django-filter = "==22.1"
 djangorestframework = "==3.14.0"
+graphene-django-optimizer = "==0.9.1"
 
 [dev-packages]
 
