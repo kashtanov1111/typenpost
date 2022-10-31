@@ -42,6 +42,7 @@ export function UserProfile(props) {
             variables: { username: userUsername },
             polling: 500,
             onCompleted: (data) => {
+                console.log(data)
                 if (username === data.user.username) {
                     setTitle('Typenpost - My profile')
                     setIsMyProfile(true)
@@ -109,7 +110,7 @@ export function UserProfile(props) {
     }
     return (
         <>{!isImageOpen ?
-        <>
+        <div className='marginx-8px'>
         <Card className='bottom-border py-3 px-2'>
         <Row>
             <Col md='auto' xs={12} className='text-center'>
@@ -134,7 +135,7 @@ export function UserProfile(props) {
             </Col>
             <Col md xs={12}>
                 <Row>
-                    <Col xs={7} md={9} className='me-auto pe-0'>
+                    <Col xs={8} md={9} className='me-auto pe-0'>
                         {(loadingUserProfile || userData.user.firstName || 
                             userData.user.lastName) && 
                         <Placeholder as='h4' animation='glow' 
@@ -155,7 +156,7 @@ export function UserProfile(props) {
                         </Placeholder>
                     </Col>
                     {isAuthenticated &&
-                    <Col xs='auto'>
+                    <Col xs='auto' className='ps-0'>
                         {isMyProfile ? 
                         <Button 
                             variant='outline-dark'
@@ -165,11 +166,9 @@ export function UserProfile(props) {
                         </Button> : 
                         <>
                         {amIFollowing ? 
-                        <button 
+                        <Button 
                             className='fixed-btn-size following-btn btn'
                             onClick={handleFollowButton}
-                            onMouseOver={handleChangeFollowingBtnText}
-                            onMouseLeave={handleChangeFollowingBtnText}
                             >
                             {loadingFollowingUser ? 
                                 <div><Spinner
@@ -181,9 +180,9 @@ export function UserProfile(props) {
                                 <span className='visually-hidden'>
                                     Loading...</span>
                                 </div> : 
-                                followingBtnText
+                                <span>Following</span>
                             }
-                        </button> :
+                        </Button> :
                         <Button
                             className={!isHeFollowing ?'fixed-btn-size' : ''}
                             variant='primary'
@@ -269,7 +268,7 @@ export function UserProfile(props) {
             </Col>
         </Row>
         </Card>
-        </> :
+        </div> :
         <Lightbox
             mainSrc={userData.user.profile.avatar ? 
                     userData.user.profile.avatar : nobody}

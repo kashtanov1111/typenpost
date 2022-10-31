@@ -5,11 +5,13 @@ import React, {useState, useEffect} from "react";
 import { useTitle } from "../../functions/functions";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { USER_FOLLOWERS } from "../../gqls/queries";
+import { FOLLOWING_USER } from "../../gqls/mutations";
 import { Error } from "../Error";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { useMutation, useQuery } from "@apollo/client";
 import Lightbox from 'react-image-lightbox'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
+import { useWidth } from '../../functions/functions';
 
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
@@ -27,33 +29,54 @@ export function Followers(props) {
     const userUsername = params.userUsername
     const navigate = useNavigate()
     const [followingBtnText, setFollowingBtnText] = useState('Following')
+    const [width, setWidth] = useState(window.innerWidth)
     
     useTitle('Typenpost - Followers')
 
     const { 
         data, 
         loading: loadingUserFollowers, 
-        error: errorUserFollowers } = useQuery(USER_FOLLOWERS, {
+        error: errorUserFollowers,
+        refetch, fetchMore } = useQuery(USER_FOLLOWERS, {
             variables: { username: userUsername },
             polling: 500,
-            onCompleted: (data) => {
-                console.log(data)
-            }
+            // onCompleted: (data) => {
+            //     console.log(data)
+            // }
     })
 
-    // const [handleFollow, {
-    //     loading: loadingFollowingUser, 
-    //     error: errorFollowingUser}] = useMutation(FOLLOWING_USER, {
-    //     onCompleted: (data) => {
-    //         if (data.followingUser.success === true) {
-    //             refetch({id: userId})
-    //         }
-    //     }
-    // })
+    function handleUserFirstLastName(firstName, lastName, width) {
+        if (width >= 992) {
+            return firstName + ' ' + lastName
+        }
+        var finalFirstName = ''
+        var finalLastName = ''
+        if (firstName.length > 14) {
+            finalFirstName = firstName.slice(0, 13) + '...'
+        } else {
+            finalFirstName = firstName
+        }
+        if (lastName.length > 14) {
+            finalLastName = lastName.slice(0, 13) + '...'
+        } else {
+            finalLastName = lastName
+        }
+        return finalFirstName + ' ' + finalLastName
+        // return firstName + ' ' + lastName
+    }   
+
+    const [handleFollow, {
+        loading: loadingFollowingUser, 
+        error: errorFollowingUser}] = useMutation(FOLLOWING_USER
+            , {
+        onCompleted: (data) => {
+            if (data.followingUser.success === true) {
+                refetch({username: userUsername})
+            }
+        }
+    }
+    )
     
-    // function handleFollowButton() {
-    //     handleFollow({variables: {username: data.user.username}})
-    // }
 
     // function handleChangeFollowingBtnText() {
     //     if (followingBtnText == 'Following') {
@@ -67,10 +90,9 @@ export function Followers(props) {
     //     setIsImageOpen(true)
     // }
     
-    // useEffect(() => {
-    //     setFollowingBtnText('Following')
-    //     refetch({id: userId})
-    // },[data])
+    useEffect(() => {
+        refetch({username: userUsername})
+    },[data])
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -80,6 +102,18 @@ export function Followers(props) {
         }
     }, [isAuthenticated])
 
+    useEffect(() => {
+        window.addEventListener('resize', handleWindowSizeChange)
+        return () => {
+              window.removeEventListener('resize', handleWindowSizeChange)
+          }
+    }, [window.innerWidth])
+
+
+    function handleWindowSizeChange() {
+        setWidth(window.innerWidth)
+    }
+
     if (errorUserFollowers) {
         return <Error />
     }
@@ -88,10 +122,10 @@ export function Followers(props) {
     // }
     return (
         <>
-        {data && data.userFollowers.edges.map((el) => (el.node && 
-        <Card key={el.node.id} as={Link} className='mb-2 p-md-2 p-1' to={'/profile/' + el.node.user.username}>
+        {data && data.user.profile.followers.edges.map((el) => (el.node && 
+        <Card key={el.node.id} as={Link} className='bottom-border p-2' to={'/profile/' + el.node.user.username}>
         <Row>
-            <Col xs='auto' className='text-center pe-0'>
+            <Col xs='auto' className='text-center pe-1 my-auto'>
                 <ProgressiveImage 
                   src={el.node.avatar ? 
                     el.node.avatar : nobody} 
@@ -103,27 +137,28 @@ export function Followers(props) {
                     <img 
                       style={{filter: loading && 'blur(8px}', 
                         'WebkitFilter': loading && 'blur(8px)'}} 
-                    //   height='100rem' 
-                    //   width='100rem' 
                       className="rounded-circle follow-images" 
                       src={src}
                       alt="mdo" />}
                 </ProgressiveImage>
             </Col>
-            <Col xs>
+            <Col xs className='my-auto'>
                 <Row>
                     <Col xs className='pe-0 ps-md-3 ps-1'>
                         {(loadingUserFollowers || el.node.user.firstName || 
                             el.node.lastName) && 
-                        <Placeholder as='h5' animation='glow' 
+                        <Placeholder as='h6' animation='glow' 
                             className='mb-0'>
                             {loadingUserFollowers ? 
                             <>
                                 <Placeholder xs={2} bg='secondary'/>{' '}
                                 <Placeholder xs={4} bg='secondary'/>
                             </> : 
-                            el.node.user.firstName + ' ' + 
-                            el.node.user.lastName}
+                            handleUserFirstLastName(
+                                el.node.user.firstName,
+                                el.node.user.lastName,
+                                width)
+                            }
                         </Placeholder>}
                         <Placeholder as='p' animation='glow' 
                             className='text-muted mt-0 mb-1'>
@@ -132,16 +167,17 @@ export function Followers(props) {
                             '@' + el.node.user.username}
                         </Placeholder>
                     </Col>
-                    <Col xs='auto'>
+                    <Col xs='auto' className='my-auto'>
                         {username === el.node.user.username ? 
                         <></> : 
                         <>
-                        {el.node.amIFollowing === 'yes' ? 
+                        {el.node.amIFollowing ? 
                         <button 
-                            className='fixed-btn-size following-btn btn'
+                            className='fixed-btn-size following-btn btn btn-sm'
+                            size='sm'
                             onClick={(e) => {
                                 e.preventDefault()
-                                console.log('yyy')
+                                handleFollow({variables: {username: el.node.user.username}})
                             }}
                             // onMouseOver={handleChangeFollowingBtnText}
                             // onMouseLeave={handleChangeFollowingBtnText}
@@ -156,15 +192,16 @@ export function Followers(props) {
                                 <span className='visually-hidden'>
                                     Loading...</span>
                                 </div> : 
-                                followingBtnText
+                                <span>Following</span>
                             }
                         </button> :
                         <Button
-                            className={!el.node.isHeFollowing ?'fixed-btn-size' : ''}
+                            className='fixed-btn-size '
                             variant='primary'
+                            size='sm'
                             onClick={(e) => {
                                 e.preventDefault()
-                                console.log('yyy')
+                                handleFollow({variables: {username: el.node.user.username}})
                             }}
                             >
                             {1 !== 1 ? 
@@ -188,6 +225,14 @@ export function Followers(props) {
         </Row>
         </Card>
         ))}
+        <Button onClick={() => {
+            console.log('asdfs')
+            fetchMore({
+                variables: {
+                    cursor: data.user.profile.followers.pageInfo.endCursor
+                }
+            })
+        }}>Load more</Button>
         </>
     )
 }

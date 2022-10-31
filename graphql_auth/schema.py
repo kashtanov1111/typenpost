@@ -52,7 +52,7 @@ class UserProfileNode(DjangoObjectType):
     am_i_following = graphene.Boolean()
     is_he_following = graphene.Boolean()
     user = graphene.Field(UserNode, required=False)
-    # followers = DjangoFilterConnectionField(lambda: UserProfileNode, required=False)
+    followers = DjangoFilterConnectionField(lambda: UserProfileNode, required=False)
     # following = DjangoFilterConnectionField(lambda: UserProfileNode, required=False)
 
     class Meta:
@@ -69,24 +69,29 @@ class UserProfileNode(DjangoObjectType):
             return None
     
     def resolve_number_of_followers(parent, info):
-        # return parent.followers.count()
         return parent.followers.filter(user__status__archived=False).count()
 
     def resolve_number_of_following(parent, info):
-        # return parent.following.count()
         return parent.following.filter(user__status__archived=False).count()
     
-    @login_required
     def resolve_am_i_following(parent, info):
-        if parent.followers_me:
-            return True        
+        user = info.context.user
+        if user.is_authenticated:
+            if parent.followers_me:
+                return True        
+            else:
+                return False
         else:
             return False
+            
     
-    @login_required
     def resolve_is_he_following(parent, info):
-        if parent.following_me:
-            return True
+        user = info.context.user
+        if user.is_authenticated:
+            if parent.following_me:
+                return True
+            else:
+                return False
         else:
             return False
 
@@ -96,44 +101,28 @@ class UserProfileNode(DjangoObjectType):
         return (
             queryset
             .filter(user__status__archived=False)
-            # .prefetch_related(Prefetch('following', queryset=UserProfile.objects.filter(user=me), to_attr='following_me'))
+            .prefetch_related(Prefetch('followers', queryset=UserProfile.objects.filter(user=me), to_attr='followers_me'))
+            .prefetch_related(Prefetch('following', queryset=UserProfile.objects.filter(user=me), to_attr='following_me'))
             .select_related('user')
         )
 
 
+
 class UserQuery(graphene.ObjectType):
     user = graphene.Field(UserNode, username=graphene.String())
-    user_followers = DjangoFilterConnectionField(
-        UserProfileNode, username=graphene.String(required=True))
-    # user_following = DjangoFilterConnectionField(
-    #     UserProfileNode, username=graphene.String(required=True))
-
-    def resolve_user_followers(parent, info, username):
-        me = info.context.user
-        return (
-            UserProfile.objects
-            .get(user__username=username)
-            .followers
-            .prefetch_related(Prefetch('followers', queryset=UserProfile.objects.filter(user=me), to_attr='followers_me'))
-            .prefetch_related(Prefetch('following', queryset=UserProfile.objects.filter(user=me), to_attr='following_me'))
-            )
-
-    # def resolve_user_following(parent, info, username):
-    #     me = info.context.user
-    #     return (
-    #         UserProfile.objects
-    #         .get(user__username=username)
-    #         .following
-    #         )
 
     def resolve_user(parent, info, username):
-        me = info.context.user
+        user = info.context.user
+        if user.is_authenticated:
+            queryset = UserProfile.objects.filter(user=user)
+        else:
+            queryset = UserProfile.objects.none()
         return (get_user_model().objects
             .select_related('profile')
             .select_related('status')
             .filter(status__archived=False)
-            .prefetch_related(Prefetch('profile__followers', queryset=UserProfile.objects.filter(user=me), to_attr='followers_me'))
-            .prefetch_related(Prefetch('profile__following', queryset=UserProfile.objects.filter(user=me), to_attr='following_me'))
+            .prefetch_related(Prefetch('profile__followers', queryset=queryset, to_attr='followers_me'))
+            .prefetch_related(Prefetch('profile__following', queryset=queryset, to_attr='following_me'))
             .get(username=username))
     
 

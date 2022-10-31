@@ -44,19 +44,33 @@ export const USER_PROFILE = gql`
 `
 
 export const USER_FOLLOWERS = gql`
-    query userFollowers($username: String!) {
-        userFollowers(username: $username) {
-            edges {
-                node {
-                    id
-                    avatar
-                    amIFollowing
-                    isHeFollowing
-                    user {
-                        id
-                        username
-                        firstName
-                        lastName
+    query userFollowers(
+            $username: String!
+            $cursor: String
+            ) {
+        user(username: $username) {
+            id
+            profile {
+                id
+                followers(first: 10, after: $cursor) {
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                    edges {
+                        node {
+                            id
+                            avatar
+                            amIFollowing
+                            isHeFollowing
+                            user {
+                                id
+                                username
+                                firstName
+                                lastName
+                            }
+                        }
+                        cursor
                     }
                 }
             }

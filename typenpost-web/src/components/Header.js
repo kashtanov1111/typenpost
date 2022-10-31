@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import { Link, useLocation } from 'react-router-dom'
 
 import long_logo from '../assets/images/long_logo.jpg';
@@ -39,6 +39,7 @@ export function Header(props) {
       isAuthenticated,
       secondaryEmail, 
       handleLogout, 
+      clickedOutsideNavbar,
       handleAlert} = props
     const containerNavbar = useRef(null)
     
@@ -56,11 +57,16 @@ export function Header(props) {
         handleLogout()
         handleAlert('You have signed out.', 'success')
     }
+    useEffect(() => {
+      if (expanded === true) {
+        setExpanded(false)
+      }
+    }, [clickedOutsideNavbar])
 
     return (
       <div>
       <Navbar expanded={expanded} bg="white" expand="lg" className='py-0'>
-      <Container ref={containerNavbar} className='bottom-border pb-md-0 pb-2'>
+      <Container ref={containerNavbar} className='bottom-border pb-md-0'>
           <Navbar.Brand as={Link} to='/' className='me-2'>
             <ProgressiveImage 
               src={createImageSrcUrl(long_logo)} 
@@ -75,7 +81,7 @@ export function Header(props) {
                   alt="Logo" />}
             </ProgressiveImage>
           </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
+        <Navbar.Toggle className='no-border' aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
         <Navbar.Collapse  id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} onClick={() => setExpanded(false)} to='/'>Home</Nav.Link>
@@ -90,7 +96,7 @@ export function Header(props) {
             />
           </Form>
           {isAuthenticated ? 
-            <Dropdown>
+            <Dropdown className='mb-md-0 mb-2'>
               <Dropdown.Toggle 
                 as={CustomToggle} 
                 id="dropdown-menu-align-responsive-1">
@@ -140,7 +146,7 @@ export function Header(props) {
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown> :
-            <div>
+            <div className='mb-md-0 mb-2'>
                 <Button 
                   as={Link} 
                   to='/login'

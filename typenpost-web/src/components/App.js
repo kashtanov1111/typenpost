@@ -41,6 +41,8 @@ export function App(props) {
   const [textAlert, setTextAlert] = useState('')
   const [styleAlert, setStyleAlert] = useState('')
 
+  const [clickedOutsideNavbar, setClickedOutsideNavbar] = useState(false)
+
   function handleAlert(text, style) {
     setTextAlert(text)
     setStyleAlert(style)
@@ -49,7 +51,6 @@ export function App(props) {
       setShowAlert(false)
     }, 5000);
   }
-
   return (
     <>
     <Header 
@@ -57,12 +58,13 @@ export function App(props) {
       avatar={avatar} 
       isAuthenticated={isAuthenticated}
       handleLogout={handleLogout}
+      clickedOutsideNavbar={clickedOutsideNavbar}
       handleAlert={handleAlert} 
       secondaryEmail={secondaryEmail}
     />
-    <Container className='p-0'>
+    <Container className='px-2' onClick={() => setClickedOutsideNavbar(current => !current)}>
       {showAlert ? 
-      <Alert className='my-1' key={styleAlert} variant={styleAlert}>
+      <Alert className='marginx-8px' style={{'border-radius':'0%'}} key={styleAlert} variant={styleAlert}>
         {textAlert}
       </Alert> : 
       <></>}

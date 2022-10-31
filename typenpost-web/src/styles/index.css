@@ -41,6 +41,12 @@ a:hover {
     background-color: white;
     border-color: red;
 }
+.following-btn:hover span {
+    display: none;
+}
+.following-btn:hover:before {
+    content: 'Unfollow';
+}
 .fixed-btn-size {
     width: 95px;
 }
@@ -121,8 +127,8 @@ a:hover {
 .card:hover {
     background: rgb(248, 249, 250)}
 .follow-images {
-    height: 5rem;
-    width: 5rem;
+    height: 3rem;
+    width: 3rem;
 }
 .bottom-border {
     border-top: 0px;
@@ -132,4 +138,51 @@ a:hover {
     border-style: solid;
     border-color: #dee2e6;
     border-radius: 0%;
+}
+html, body {
+    overflow-x: hidden;
+}
+body {
+    position: relative
+}
+.marginx-8px {
+    margin-left: -8px; 
+    margin-right: -8px;
+}
+.tab-follow li button {
+    color: red;
+}
+.following-tab {
+    border-bottom: 1px;
+    border-right: 1px;
+    border-left: 0px;
+    border-style: solid;
+    border-color: #dee2e6;
+    border-top: 0px;
+    border-radius: 0%;
+}
+.followers-tab {
+    border-bottom: 1px;
+    border-right: 0px;
+    border-style: solid;
+    border-color: #dee2e6;
+    border-top: 0px;
+    border-left: 0px;
+    border-radius: 0%;
+}
+.active-tab-follow {
+    background-color: #0d6efd;
+    color: white; 
+}
+.inactive-tab-follow:hover {
+    background-color: rgb(248, 249, 250);
+}
+.active-tab-follow:hover {
+    color: white;
+    background-color: #0d6efd;
+}
+.navbar-toggler:focus {
+    text-decoration: none;
+    outline: none;
+    box-shadow: none;
 }
