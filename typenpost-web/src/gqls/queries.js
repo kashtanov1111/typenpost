@@ -44,7 +44,7 @@ export const USER_PROFILE = gql`
 `
 
 export const USER_FOLLOWERS = gql`
-    query userFollowers(
+    query UserFollowers(
             $username: String!
             $cursor: String
             ) {
@@ -52,10 +52,12 @@ export const USER_FOLLOWERS = gql`
             id
             profile {
                 id
-                followers(first: 10, after: $cursor) {
+                followers(first: 20, after: $cursor) {
                     pageInfo {
                         hasNextPage
                         endCursor
+                        startCursor
+                        hasPreviousPage
                     }
                     edges {
                         node {

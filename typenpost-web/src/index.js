@@ -20,10 +20,10 @@ const client = new ApolloClient({
   credentials: 'include',
   cache: new InMemoryCache({
     typePolicies: {
-      Query: {
-        fields: {
-          user: relayStylePagination(),
-        },
+      UserProfileNode: {
+          fields: {
+            followers: relayStylePagination(),
+          }
       },
     },
   }),

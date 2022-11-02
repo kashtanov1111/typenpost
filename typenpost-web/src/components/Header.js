@@ -96,7 +96,7 @@ export function Header(props) {
             />
           </Form>
           {isAuthenticated ? 
-            <Dropdown className='mb-md-0 mb-2'>
+            <Dropdown className='mb-lg-0 mb-2'>
               <Dropdown.Toggle 
                 as={CustomToggle} 
                 id="dropdown-menu-align-responsive-1">

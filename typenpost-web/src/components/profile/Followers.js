@@ -19,6 +19,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
 import Placeholder from 'react-bootstrap/Placeholder'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { 
     createImagePlaceholderUrl } from '../../functions/functions';
@@ -28,18 +29,17 @@ export function Followers(props) {
     const params = useParams()
     const userUsername = params.userUsername
     const navigate = useNavigate()
-    const [followingBtnText, setFollowingBtnText] = useState('Following')
     const [width, setWidth] = useState(window.innerWidth)
     
     useTitle('Typenpost - Followers')
 
     const { 
         data, 
-        loading: loadingUserFollowers, 
+        loading: loadingUserFollowers, fetchMore,
         error: errorUserFollowers,
-        refetch, fetchMore } = useQuery(USER_FOLLOWERS, {
+        refetch } = useQuery(USER_FOLLOWERS, {
             variables: { username: userUsername },
-            polling: 500,
+            // polling: 500,
             // onCompleted: (data) => {
             //     console.log(data)
             // }
@@ -76,7 +76,6 @@ export function Followers(props) {
         }
     }
     )
-    
 
     // function handleChangeFollowingBtnText() {
     //     if (followingBtnText == 'Following') {
@@ -90,9 +89,9 @@ export function Followers(props) {
     //     setIsImageOpen(true)
     // }
     
-    useEffect(() => {
-        refetch({username: userUsername})
-    },[data])
+    // useEffect(() => {
+    //     refetch({username: userUsername})
+    // },[data])
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -109,6 +108,40 @@ export function Followers(props) {
           }
     }, [window.innerWidth])
 
+    // useEffect(() => {
+    //     if (data && data.user.profile.followers.pageInfo.hasNextPage) {
+    //         window.addEventListener('scroll',() => {
+    //             handleScroll(data)
+    //         })
+    //     }
+    //     return () => {
+    //         window.removeEventListener('scroll', () => {
+    //             handleScroll(data)
+    //         })
+    //     } 
+
+    // }, [window.scrollY, data])
+    // function handleScroll(data) {
+    //     // if (data.user.profile.followers.pageInfo.hasNextPage) {
+    //     //     console.log('a')
+    //     //     console.log(Math.round(window.innerHeight + window.scrollY), document.body.clientHeight)
+    //         if ((Math.round(window.innerHeight + window.scrollY) === document.body.clientHeight + 1) ||
+    //         (Math.round(window.innerHeight + window.scrollY) === document.body.clientHeight - 1) ||
+    //         (Math.round(window.innerHeight + window.scrollY) === document.body.clientHeight)
+    //         ) {
+    //         // if ((document.body.clientHeight - 110 < Math.round(window.innerHeight + window.scrollY)) &&
+    //         // (Math.round(window.innerHeight + window.scrollY)> document.body.clientHeight - 90)) {
+    //                 console.log('yes')
+    //                 fetchMore({
+    //                     variables: {
+    //                         username: userUsername,
+    //                         cursor: data.user.profile.followers.pageInfo.endCursor,
+    //                     },
+    //                 })
+    //         }
+    //     // }
+    // }
+
 
     function handleWindowSizeChange() {
         setWidth(window.innerWidth)
@@ -120,8 +153,24 @@ export function Followers(props) {
     // if (data && data.user === null) {
     //     return <Error description='User is not found.' />
     // }
+
     return (
-        <>
+        <InfiniteScroll
+            dataLength={data ? data.user.profile.followers.edges.length : 1}
+            next={() => fetchMore({
+                        variables: {
+                            username: userUsername,
+                            cursor: data.user.profile.followers.pageInfo.endCursor,
+                        },
+                    })}
+            hasMore={data && data.user.profile.followers.pageInfo.hasNextPage}
+            loader={<h4>Loading...</h4>}
+            endMessage={
+                <p style={{ textAlign: 'center' }}>
+                <b>Yay! You have seen it all</b>
+                </p>
+            }
+        >
         {data && data.user.profile.followers.edges.map((el) => (el.node && 
         <Card key={el.node.id} as={Link} className='bottom-border p-2' to={'/profile/' + el.node.user.username}>
         <Row>
@@ -225,14 +274,16 @@ export function Followers(props) {
         </Row>
         </Card>
         ))}
-        <Button onClick={() => {
-            console.log('asdfs')
-            fetchMore({
-                variables: {
-                    cursor: data.user.profile.followers.pageInfo.endCursor
-                }
-            })
-        }}>Load more</Button>
-        </>
+        </InfiniteScroll>
+        // {/* {data && data.user.profile.followers.pageInfo.hasNextPage && 
+        // <Button onClick={() => {
+        //         fetchMore({
+        //             variables: {
+        //                 username: userUsername,
+        //                 cursor: data.user.profile.followers.pageInfo.endCursor,
+        //             },
+        //         })
+        // }}>Load more</Button>
+        // } */}
     )
 }
