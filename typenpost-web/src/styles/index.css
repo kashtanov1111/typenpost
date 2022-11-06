@@ -35,8 +35,20 @@ a:hover {
     color: black;
     background-color: white;
     border-color: black;
+    width: 100px;
 }
 .following-btn:hover {
+    color: red;
+    background-color: white;
+    border-color: red;
+    width: 100px;
+}
+.following-btn-list {
+    color: black;
+    background-color: white;
+    border-color: black;
+}
+.following-btn-list:hover {
     color: red;
     background-color: white;
     border-color: red;
@@ -48,7 +60,10 @@ a:hover {
     content: 'Unfollow';
 }
 .fixed-btn-size {
-    width: 95px;
+    width: 100px;
+}
+.fixed-btn-size-list {
+    width: 5.5rem;
 }
 .fixed-btn-size:hover {
     width: 95px;

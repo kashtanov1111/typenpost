@@ -10,11 +10,11 @@ from accounts.models import CustomUser
 
 me = CustomUser.objects.get(username='1kashtanov')
 
-def populate(N=20):
+def populate(N=50):
 
     for i in range(N):
-        email = str(i + 40) + '@gmail.com'
-        user = CustomUser.objects.create(username=i + 40, email=email, password='testpass123')
+        email = str(i + 60) + '@gmail.com'
+        user = CustomUser.objects.create(username=i + 60, email=email, password='testpass123')
         me.profile.followers.add(user.profile)
 
     # COMPANY = Company.objects.order_by('company_name')

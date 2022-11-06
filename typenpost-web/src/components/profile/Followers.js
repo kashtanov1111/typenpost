@@ -36,14 +36,20 @@ export function Followers(props) {
     const { 
         data, 
         loading: loadingUserFollowers, fetchMore,
-        error: errorUserFollowers,
-        refetch } = useQuery(USER_FOLLOWERS, {
-            variables: { username: userUsername },
-            // polling: 500,
-            // onCompleted: (data) => {
-            //     console.log(data)
-            // }
+        error: errorUserFollowers} = useQuery(USER_FOLLOWERS, {
+            variables: { username: userUsername }
     })
+    
+    const [handleFollow, {
+        error: errorFollowingUser}] = useMutation(FOLLOWING_USER
+            , {
+        onCompleted: (data) => {
+            if (data.followingUser.success === true) {
+                // refetch({username: userUsername})
+            }
+        }
+    }
+    )
 
     function handleUserFirstLastName(firstName, lastName, width) {
         if (width >= 992) {
@@ -65,38 +71,26 @@ export function Followers(props) {
         // return firstName + ' ' + lastName
     }   
 
-    const [handleFollow, {
-        loading: loadingFollowingUser, 
-        error: errorFollowingUser}] = useMutation(FOLLOWING_USER
-            , {
-        onCompleted: (data) => {
-            if (data.followingUser.success === true) {
-                refetch({username: userUsername})
-            }
-        }
+    function handleWindowSizeChange() {
+        setWidth(window.innerWidth)
     }
-    )
 
-    // function handleChangeFollowingBtnText() {
-    //     if (followingBtnText == 'Following') {
-    //         setFollowingBtnText('Unfollow')
-    //     } else {
-    //         setFollowingBtnText('Following')
-    //     }
-    // }
-
-    // function handleImageClick() {
-    //     setIsImageOpen(true)
-    // }
-    
-    // useEffect(() => {
-    //     refetch({username: userUsername})
-    // },[data])
+    function handleFollowBtnClicked(e, username) {
+        e.preventDefault()
+        console.log('ii', e.target)
+        // handleFollow({variables: {username: username}})
+        // if (e.target.className === 'fixed-btn-size-list following-btn-list btn btn-sm') {
+        //     e.target.className = 'fixed-btn-size-list btn-primary btn btn-sm'
+        //     e.target.children[0].textContent = 'Follow'
+        // } else {
+        //     e.target.className = 'fixed-btn-size-list following-btn-list btn btn-sm'
+        //     e.target.children[0].textContent = 'Following'
+        // }
+    }
 
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('../login', {
-                // replace: true, 
                 state: '/profile/' + userUsername + '/followers'})
         }
     }, [isAuthenticated])
@@ -108,53 +102,12 @@ export function Followers(props) {
           }
     }, [window.innerWidth])
 
-    // useEffect(() => {
-    //     if (data && data.user.profile.followers.pageInfo.hasNextPage) {
-    //         window.addEventListener('scroll',() => {
-    //             handleScroll(data)
-    //         })
-    //     }
-    //     return () => {
-    //         window.removeEventListener('scroll', () => {
-    //             handleScroll(data)
-    //         })
-    //     } 
-
-    // }, [window.scrollY, data])
-    // function handleScroll(data) {
-    //     // if (data.user.profile.followers.pageInfo.hasNextPage) {
-    //     //     console.log('a')
-    //     //     console.log(Math.round(window.innerHeight + window.scrollY), document.body.clientHeight)
-    //         if ((Math.round(window.innerHeight + window.scrollY) === document.body.clientHeight + 1) ||
-    //         (Math.round(window.innerHeight + window.scrollY) === document.body.clientHeight - 1) ||
-    //         (Math.round(window.innerHeight + window.scrollY) === document.body.clientHeight)
-    //         ) {
-    //         // if ((document.body.clientHeight - 110 < Math.round(window.innerHeight + window.scrollY)) &&
-    //         // (Math.round(window.innerHeight + window.scrollY)> document.body.clientHeight - 90)) {
-    //                 console.log('yes')
-    //                 fetchMore({
-    //                     variables: {
-    //                         username: userUsername,
-    //                         cursor: data.user.profile.followers.pageInfo.endCursor,
-    //                     },
-    //                 })
-    //         }
-    //     // }
-    // }
-
-
-    function handleWindowSizeChange() {
-        setWidth(window.innerWidth)
-    }
-
-    if (errorUserFollowers) {
+    if (errorUserFollowers || errorFollowingUser) {
         return <Error />
     }
-    // if (data && data.user === null) {
-    //     return <Error description='User is not found.' />
-    // }
 
-    return (
+    return (<>
+        
         <InfiniteScroll
             dataLength={data ? data.user.profile.followers.edges.length : 1}
             next={() => fetchMore({
@@ -164,12 +117,10 @@ export function Followers(props) {
                         },
                     })}
             hasMore={data && data.user.profile.followers.pageInfo.hasNextPage}
-            loader={<h4>Loading...</h4>}
-            endMessage={
-                <p style={{ textAlign: 'center' }}>
-                <b>Yay! You have seen it all</b>
-                </p>
-            }
+            loader={<div className='text-center my-3'>
+                    <Spinner variant='primary' animation='border' />
+                    </div>}
+            style={{'overflowX': 'hidden'}}
         >
         {data && data.user.profile.followers.edges.map((el) => (el.node && 
         <Card key={el.node.id} as={Link} className='bottom-border p-2' to={'/profile/' + el.node.user.username}>
@@ -222,14 +173,19 @@ export function Followers(props) {
                         <>
                         {el.node.amIFollowing ? 
                         <button 
-                            className='fixed-btn-size following-btn btn btn-sm'
-                            size='sm'
-                            onClick={(e) => {
-                                e.preventDefault()
-                                handleFollow({variables: {username: el.node.user.username}})
-                            }}
-                            // onMouseOver={handleChangeFollowingBtnText}
-                            // onMouseLeave={handleChangeFollowingBtnText}
+                            className='fixed-btn-size-list following-btn-list btn btn-sm'
+                            onClick={(e) => handleFollowBtnClicked(e, el.node.user.username)}
+                            // onClick={(e) => {
+                            //     e.preventDefault()
+                            //     handleFollow({variables: {username: el.node.user.username}})
+                            //     if (e.target.className === 'fixed-btn-size-list following-btn btn btn-sm') {
+                            //         e.target.className = 'fixed-btn-size-list follow-btn btn-primary btn btn-sm'
+                            //         e.target.children[0].textContent = 'Follow'
+                            //     } else {
+                            //         e.target.className = 'fixed-btn-size-list following-btn btn btn-sm'
+                            //         e.target.children[0].textContent = 'Following'
+                            //     }
+                            // }}
                             >
                             {1 !== 1 ? 
                                 <div><Spinner
@@ -244,14 +200,13 @@ export function Followers(props) {
                                 <span>Following</span>
                             }
                         </button> :
-                        <Button
-                            className='fixed-btn-size '
-                            variant='primary'
-                            size='sm'
-                            onClick={(e) => {
-                                e.preventDefault()
-                                handleFollow({variables: {username: el.node.user.username}})
-                            }}
+                        <button
+                            className='fixed-btn-size-list btn-primary btn btn-sm'
+                            onClick={(e) => handleFollowBtnClicked(e, el.node.user.username)}
+                            // onClick={(e) => {
+                            //     e.preventDefault()
+                            //     handleFollow({variables: {username: el.node.user.username}})
+                            // }}
                             >
                             {1 !== 1 ? 
                                 <div><Spinner
@@ -263,9 +218,9 @@ export function Followers(props) {
                                 <span className='visually-hidden'>
                                     Loading...</span>
                                 </div> : 
-                                el.node.isHeFollowing ? 'Follow back' : 'Follow'
+                                <span>Follow</span>
                             }
-                        </Button>}
+                        </button>}
                         </>
                         }
                     </Col>
@@ -275,15 +230,6 @@ export function Followers(props) {
         </Card>
         ))}
         </InfiniteScroll>
-        // {/* {data && data.user.profile.followers.pageInfo.hasNextPage && 
-        // <Button onClick={() => {
-        //         fetchMore({
-        //             variables: {
-        //                 username: userUsername,
-        //                 cursor: data.user.profile.followers.pageInfo.endCursor,
-        //             },
-        //         })
-        // }}>Load more</Button>
-        // } */}
+        </>
     )
 }

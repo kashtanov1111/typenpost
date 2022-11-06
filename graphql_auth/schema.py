@@ -62,6 +62,9 @@ class UserProfileNode(DjangoObjectType):
         filter_fields = ['about',]
         interfaces = (graphene.relay.Node, )
     
+    # def resolve_followers(root, info):
+    #     return root.followers.order_by('-id')
+    
     def resolve_avatar(root, info):
         if root.avatar:
             return root.avatar.url
@@ -102,8 +105,9 @@ class UserProfileNode(DjangoObjectType):
             queryset
             .filter(user__status__archived=False)
             .prefetch_related(Prefetch('followers', queryset=UserProfile.objects.filter(user=me), to_attr='followers_me'))
-            .prefetch_related(Prefetch('following', queryset=UserProfile.objects.filter(user=me), to_attr='following_me'))
+            # .prefetch_related(Prefetch('following', queryset=UserProfile.objects.filter(user=me), to_attr='following_me'))
             .select_related('user')
+            .order_by('-id')
         )
 
 

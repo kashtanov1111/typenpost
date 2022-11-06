@@ -64,7 +64,6 @@ export const USER_FOLLOWERS = gql`
                             id
                             avatar
                             amIFollowing
-                            isHeFollowing
                             user {
                                 id
                                 username
