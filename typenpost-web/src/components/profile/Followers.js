@@ -1,6 +1,4 @@
 import nobody from '../../assets/images/nobody.jpg'
-import {format, parseISO } from 'date-fns'
-
 import React, {useState, useEffect} from "react";
 import { useTitle } from "../../functions/functions";
 import { useParams, Link, useNavigate } from "react-router-dom";
@@ -10,9 +8,6 @@ import { Error } from "../Error";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { useMutation, useQuery } from "@apollo/client";
 import Lightbox from 'react-image-lightbox'
-import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
-import { useWidth } from '../../functions/functions';
-
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
@@ -172,55 +167,18 @@ export function Followers(props) {
                         <></> : 
                         <>
                         {el.node.amIFollowing ? 
-                        <button 
+                        <Button 
                             className='fixed-btn-size-list following-btn-list btn btn-sm'
                             onClick={(e) => handleFollowBtnClicked(e, el.node.user.username)}
-                            // onClick={(e) => {
-                            //     e.preventDefault()
-                            //     handleFollow({variables: {username: el.node.user.username}})
-                            //     if (e.target.className === 'fixed-btn-size-list following-btn btn btn-sm') {
-                            //         e.target.className = 'fixed-btn-size-list follow-btn btn-primary btn btn-sm'
-                            //         e.target.children[0].textContent = 'Follow'
-                            //     } else {
-                            //         e.target.className = 'fixed-btn-size-list following-btn btn btn-sm'
-                            //         e.target.children[0].textContent = 'Following'
-                            //     }
-                            // }}
                             >
-                            {1 !== 1 ? 
-                                <div><Spinner
-                                    as='span'
-                                    animation='border'
-                                    size='sm'
-                                    role='status'
-                                    aria-hidden='true' />
-                                <span className='visually-hidden'>
-                                    Loading...</span>
-                                </div> : 
-                                <span>Following</span>
-                            }
-                        </button> :
-                        <button
-                            className='fixed-btn-size-list btn-primary btn btn-sm'
+                            <span>Following</span>
+                        </Button> :
+                        <Button
+                            className='fixed-btn-size-list follow-btn-list btn btn-sm'
                             onClick={(e) => handleFollowBtnClicked(e, el.node.user.username)}
-                            // onClick={(e) => {
-                            //     e.preventDefault()
-                            //     handleFollow({variables: {username: el.node.user.username}})
-                            // }}
                             >
-                            {1 !== 1 ? 
-                                <div><Spinner
-                                    as='span'
-                                    animation='border'
-                                    size='sm'
-                                    role='status'
-                                    aria-hidden='true' />
-                                <span className='visually-hidden'>
-                                    Loading...</span>
-                                </div> : 
-                                <span>Follow</span>
-                            }
-                        </button>}
+                            <span>Follow</span>
+                        </Button>}
                         </>
                         }
                     </Col>

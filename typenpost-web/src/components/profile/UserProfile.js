@@ -167,7 +167,7 @@ export function UserProfile(props) {
                         <>
                         {amIFollowing ? 
                         <Button 
-                            className='following-btn'
+                            variant='following'
                             onClick={handleFollowButton}
                             >
                             {loadingFollowingUser ? 
@@ -184,7 +184,8 @@ export function UserProfile(props) {
                             }
                         </Button> :
                         <Button
-                            className='fixed-btn-size'
+                            className={!isHeFollowing ? 
+                                'fixed-btn-size' : ''}
                             variant='primary'
                             onClick={handleFollowButton}>
                             {loadingFollowingUser ? 

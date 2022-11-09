@@ -31,43 +31,63 @@ a:hover {
     background-color: white;
     border-left: None;
 }
-.following-btn {
+
+
+.btn-following {
     color: black;
     background-color: white;
     border-color: black;
     width: 100px;
 }
-.following-btn:hover {
+.btn-following:hover {
     color: red;
     background-color: white;
     border-color: red;
     width: 100px;
 }
-.following-btn-list {
-    color: black;
-    background-color: white;
-    border-color: black;
-}
-.following-btn-list:hover {
-    color: red;
-    background-color: white;
-    border-color: red;
-}
-.following-btn:hover span {
+.btn-following:hover span {
     display: none;
 }
-.following-btn:hover:before {
+.btn-following:hover:before {
     content: 'Unfollow';
 }
 .fixed-btn-size {
     width: 100px;
 }
+
+
+.btn-following-list {
+    color: black;
+    background-color: white;
+    border-color: black;
+}
+.btn-following-list:hover {
+    color: red;
+    background-color: white;
+    border-color: red;
+}
+.btn-following-list:hover span {
+    display: none;
+}
+.btn-following-list:hover:before {
+    content: 'Unfollow';
+}
+.follow-btn-list {
+    color: white;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.follow-btn-list:hover {
+    color: white;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
 .fixed-btn-size-list {
     width: 5.5rem;
 }
-.fixed-btn-size:hover {
-    width: 95px;
-}
+
+
+
 
 .dropdown-menu li {
     position: relative;
