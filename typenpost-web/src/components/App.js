@@ -127,7 +127,9 @@ export function App(props) {
                 username={username} />} />
             <Route 
               path='following' 
-              element={<Following isAuthenticated={isAuthenticated} />} />
+              element={<Following 
+                isAuthenticated={isAuthenticated}
+                username={username} />} />
         </Route>
         <Route 
           path='/profile/edit'

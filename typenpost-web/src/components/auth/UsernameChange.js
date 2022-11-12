@@ -43,6 +43,13 @@ export function UsernameChange(props) {
         }
     }, [isAuthenticated])
 
+    function handleUsernameType(e) {
+        const reg = /^[a-z0-9._]*$/
+        if (reg.test(e.target.value)) {
+            setNewUsername(e.target.value)
+        }
+    }
+
     if (error) {
         return <Error />
     }
@@ -68,8 +75,8 @@ export function UsernameChange(props) {
                             isValid={data && 
                                 !data.usernameChange.errors.username}
                             value={newUsername}
-                            onChange={(e) => 
-                                setNewUsername(e.target.value)
+                            onChange={(e) =>
+                                handleUsernameType(e)
                             }
                             placeholder='Username'
                             required

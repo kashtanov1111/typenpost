@@ -62,8 +62,8 @@ class UserProfileNode(DjangoObjectType):
         filter_fields = ['about',]
         interfaces = (graphene.relay.Node, )
     
-    # def resolve_followers(root, info):
-    #     return root.followers.order_by('-id')
+    # def resolve_following(root, info):
+    #     return root.following.all()
     
     def resolve_avatar(root, info):
         if root.avatar:

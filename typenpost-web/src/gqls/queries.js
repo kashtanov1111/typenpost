@@ -79,6 +79,42 @@ export const USER_FOLLOWERS = gql`
     }
 `
 
+export const USER_FOLLOWING = gql`
+    query UserFollowing(
+            $username: String!
+            $cursor: String
+            ) {
+        user(username: $username) {
+            id
+            profile {
+                id
+                following(first: 20, after: $cursor) {
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                        startCursor
+                        hasPreviousPage
+                    }
+                    edges {
+                        node {
+                            id
+                            avatar
+                            amIFollowing
+                            user {
+                                id
+                                username
+                                firstName
+                                lastName
+                            }
+                        }
+                        cursor
+                    }
+                }
+            }
+        }
+    }
+`
+
 export const POST_FEED = gql`
     query PostFeed {
         feed {

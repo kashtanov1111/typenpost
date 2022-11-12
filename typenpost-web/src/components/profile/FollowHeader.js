@@ -3,15 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from 'react-router-dom';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import Tab from 'react-bootstrap/Tab'
-import Tabs from 'react-bootstrap/Tabs'
 
 export function FollowHeader(props) {
     const location = useLocation()
     const [isFollowers, setIsFollowers] = useState(
         location.pathname.endsWith('followers') || 
         location.pathname.endsWith('followers/'))
-    const navigate = useNavigate()
     const userUsername = getUsernameFromUrl(location.pathname)
 
     function getUsernameFromUrl(pathname) {

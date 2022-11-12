@@ -108,7 +108,7 @@ export function Register(props) {
     
 
     function handleUsernameChange(e) {
-        const reg = /^[A-Za-z0-9._]*$/
+        const reg = /^[a-z0-9._]*$/
         if (reg.test(e.target.value)) {
             setFormState({
                 ...formState,

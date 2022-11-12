@@ -11,9 +11,9 @@ from django.db.models.signals import post_save, pre_save
 
 @deconstructible
 class CustomUnicodeUsernameValidator(validators.RegexValidator):
-    regex = r"^[\w.]+\Z"
+    regex = r"^[a-z0-9._]*$"
     message = _(
-        "Enter a valid username. This value may contain only letters, "
+        "Enter a valid username. This value may contain only small letters, "
         "numbers, and ./_ characters."
     )
     flags = 0

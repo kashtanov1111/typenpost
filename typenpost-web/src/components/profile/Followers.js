@@ -7,7 +7,6 @@ import { FOLLOWING_USER } from "../../gqls/mutations";
 import { Error } from "../Error";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { useMutation, useQuery } from "@apollo/client";
-import Lightbox from 'react-image-lightbox'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
@@ -31,20 +30,12 @@ export function Followers(props) {
     const { 
         data, 
         loading: loadingUserFollowers, fetchMore,
-        error: errorUserFollowers} = useQuery(USER_FOLLOWERS, {
+        error: errorUserFollowers, refetch} = useQuery(USER_FOLLOWERS, {
             variables: { username: userUsername }
     })
     
     const [handleFollow, {
-        error: errorFollowingUser}] = useMutation(FOLLOWING_USER
-            , {
-        onCompleted: (data) => {
-            if (data.followingUser.success === true) {
-                // refetch({username: userUsername})
-            }
-        }
-    }
-    )
+        error: errorFollowingUser}] = useMutation(FOLLOWING_USER)
 
     function handleUserFirstLastName(firstName, lastName, width) {
         if (width >= 992) {
@@ -52,18 +43,17 @@ export function Followers(props) {
         }
         var finalFirstName = ''
         var finalLastName = ''
-        if (firstName.length > 14) {
-            finalFirstName = firstName.slice(0, 13) + '...'
+        if (firstName.length > 15) {
+            finalFirstName = firstName.slice(0, 14) + '...'
         } else {
             finalFirstName = firstName
         }
-        if (lastName.length > 14) {
-            finalLastName = lastName.slice(0, 13) + '...'
+        if (lastName.length > 15) {
+            finalLastName = lastName.slice(0, 14) + '...'
         } else {
             finalLastName = lastName
         }
         return finalFirstName + ' ' + finalLastName
-        // return firstName + ' ' + lastName
     }   
 
     function handleWindowSizeChange() {
@@ -72,16 +62,25 @@ export function Followers(props) {
 
     function handleFollowBtnClicked(e, username) {
         e.preventDefault()
-        console.log('ii', e.target)
-        // handleFollow({variables: {username: username}})
-        // if (e.target.className === 'fixed-btn-size-list following-btn-list btn btn-sm') {
-        //     e.target.className = 'fixed-btn-size-list btn-primary btn btn-sm'
-        //     e.target.children[0].textContent = 'Follow'
-        // } else {
-        //     e.target.className = 'fixed-btn-size-list following-btn-list btn btn-sm'
-        //     e.target.children[0].textContent = 'Following'
-        // }
+        var mainElement = ''
+        if (e.target.tagName === 'SPAN') {
+            mainElement = e.target.parentElement
+        } else {
+            mainElement = e.target
+        }
+        if (mainElement.className.includes('following')) {
+            mainElement.className = mainElement.className.replace('following', 'primary')
+            mainElement.children[0].textContent = 'Follow'
+        } else {
+            mainElement.className = mainElement.className.replace('primary', 'following')
+            mainElement.children[0].textContent = 'Following'
+        }
+        handleFollow({variables: {username: username}})
     }
+    
+    useEffect(() => {
+        refetch({username: userUsername})
+    }, [navigate])
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -168,13 +167,17 @@ export function Followers(props) {
                         <>
                         {el.node.amIFollowing ? 
                         <Button 
-                            className='fixed-btn-size-list following-btn-list btn btn-sm'
+                            style={{width: '85px'}}
+                            variant='following'
+                            size='sm'
                             onClick={(e) => handleFollowBtnClicked(e, el.node.user.username)}
                             >
                             <span>Following</span>
                         </Button> :
                         <Button
-                            className='fixed-btn-size-list follow-btn-list btn btn-sm'
+                            style={{width: '85px'}}
+                            variant='primary'
+                            size='sm'
                             onClick={(e) => handleFollowBtnClicked(e, el.node.user.username)}
                             >
                             <span>Follow</span>

@@ -42,7 +42,6 @@ export function UserProfile(props) {
             variables: { username: userUsername },
             polling: 500,
             onCompleted: (data) => {
-                console.log(data)
                 if (username === data.user.username) {
                     setTitle('Typenpost - My profile')
                     setIsMyProfile(true)
