@@ -252,7 +252,8 @@ GRAPHQL_JWT = {
     "JWT_COOKIE_SAMESITE": (None if env('JWT_COOKIE_SAMESITE', default=False) else 'Lax')
 }
 GRAPHQL_AUTH = {
-    'ALLOW_LOGIN_NOT_VERIFIED': False,
+    # 'ALLOW_LOGIN_NOT_VERIFIED': False,
+    'ALLOW_LOGIN_NOT_VERIFIED': True,
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

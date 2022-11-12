@@ -28,6 +28,7 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html')),
     path('admin/', admin.site.urls),
     path('graphql/', jwt_cookie(csrf_exempt(GraphQLView.as_view(graphiql=True)))),
+    path('<str:path_name>/', TemplateView.as_view(template_name='home.html'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG: # new
