@@ -5,8 +5,6 @@ from django.core.files.base import ContentFile
 import graphene
 import graphql_jwt
 
-import graphene_django_optimizer as gql_optimizer
-
 from graphene_django import DjangoObjectType
 from graphene_django.utils import camelize
 from graphql_jwt.decorators import login_required
@@ -15,7 +13,7 @@ from graphql_auth.schema import UserNode, UserQuery, MeQuery
 from graphql_auth import mutations
 from graphene_django.filter.fields import DjangoFilterConnectionField
 
-from .models import CustomUser, UserProfile
+from .models import CustomUser
 from .forms import (
     CustomUserChangeForm, 
     UserProfileChangeForm,

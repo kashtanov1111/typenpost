@@ -1,5 +1,7 @@
 import graphene
 import django_filters
+from django.db.models import Prefetch
+from django.contrib.auth import get_user_model
 
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
@@ -7,6 +9,10 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required
 
 from .models import Post
+
+from graphene import relay
+
+from graphql_auth.schema import UserNode
 
 class PostFilter(django_filters.FilterSet):
     text = django_filters.CharFilter(lookup_expr='iexact')
@@ -25,12 +31,42 @@ class PostFilter(django_filters.FilterSet):
 
 
 class PostNode(DjangoObjectType):
+    user = graphene.Field(UserNode, required=False)
+    number_of_likes = graphene.Int()
+    has_i_liked = graphene.Boolean()
     class Meta:
         model = Post
         filterset_class = PostFilter
-        fields = ('id', 'text', 'created', 'updated', 'user', 'comments')
+        fields = ('id', 'text', 'created', 'updated', 'user', 'comments', 'likes')
         interfaces = (graphene.relay.Node, )
 
+    def resolve_has_i_liked(parent, info):
+        me = info.context.user
+        if me.is_authenticated:
+            username = me.username
+            if parent.likes.filter(username=username):
+                return True
+            else: 
+                return False
+        else:
+            return False
+
+    def resolve_number_of_likes(parent, info):
+        return parent.likes.count()
+
+    @classmethod
+    def get_queryset(cls, queryset, info, *args, **kwargs):
+        return (
+            queryset
+            .select_related('user')
+            .prefetch_related(
+                Prefetch(
+                    'likes', 
+                    queryset=(
+                        get_user_model().objects
+                            .filter(status__archived=False))
+            ))
+        )
         
 class Query(graphene.ObjectType):
     post = graphene.relay.Node.Field(PostNode)
@@ -38,12 +74,13 @@ class Query(graphene.ObjectType):
     feed = DjangoFilterConnectionField(PostNode)
 
     @login_required
-    def resolve_feed(parent, info):
+    def resolve_feed(parent, info, *args, **kwargs):
         user = info.context.user
-        return Post.objects.feed(user=user)
-
-    def resolve_posts(parent, info):
-        return Post.objects.select_related('user').prefetch_related('comments').all()
+        return (Post.objects
+            .feed(user=user)
+            .select_related('user__profile')
+            .filter(user__status__archived=False)
+            )
 
 
 class CreatePost(graphene.Mutation):

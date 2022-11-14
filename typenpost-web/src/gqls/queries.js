@@ -21,7 +21,9 @@ export const QUERY_ME = gql`
 `
 
 export const USER_PROFILE = gql`
-    query UserProfile($username: String!) {
+    query UserProfile(
+        $username: String!
+        $cursor: String ) {
         user(username: $username) {
             id
             username
@@ -38,6 +40,23 @@ export const USER_PROFILE = gql`
                 numberOfFollowing
                 amIFollowing
                 isHeFollowing
+            }
+            posts(first: 20, after: $cursor) {
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                    startCursor
+                    hasPreviousPage
+                }
+                edges {
+                    node {
+                        id
+                        text
+                        created
+                        numberOfLikes
+                    }
+                    cursor
+                }
             }
         }
     }
@@ -118,17 +137,31 @@ export const USER_FOLLOWING = gql`
 export const POST_FEED = gql`
     query PostFeed {
         feed {
+            pageInfo {
+                hasNextPage
+                endCursor
+                startCursor
+                hasPreviousPage
+            }
             edges {
                 node {
                     id
                     text
-                    updated
                     created
+                    numberOfLikes
                     user {
                         username
+                        firstName
+                        lastName
+                        profile {
+                            avatar
+                        }
                     }
                 }
+                cursor
             }
         }
     }
 `
+
+

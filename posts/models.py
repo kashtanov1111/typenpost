@@ -32,14 +32,25 @@ class PostManager(models.Manager):
     def feed(self, user):
         return self.get_queryset().feed(user)
 
+
+class PostLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey("Post", on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
 class Post(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
     text = models.TextField(max_length=100000)
     created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='posts')
+    likes = models.ManyToManyField(
+        User, 
+        related_name='likes', 
+        blank=True, 
+        null=True, 
+        through=PostLike)
 
     objects = PostManager()
 

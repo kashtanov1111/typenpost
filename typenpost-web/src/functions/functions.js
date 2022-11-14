@@ -41,3 +41,21 @@ export function convertBase64(file) {
     })
 }
 
+export function handleUserFirstLastName(firstName, lastName, width) {
+  if (width >= 1200) {
+      return firstName + ' ' + lastName
+  }
+  var finalFirstName = ''
+  var finalLastName = ''
+  if (firstName.length > 12) {
+      finalFirstName = firstName.slice(0, 11) + '...'
+  } else {
+      finalFirstName = firstName
+  }
+  if (lastName.length > 12) {
+      finalLastName = lastName.slice(0, 11) + '...'
+  } else {
+      finalLastName = lastName
+  }
+  return finalFirstName + ' ' + finalLastName
+}   

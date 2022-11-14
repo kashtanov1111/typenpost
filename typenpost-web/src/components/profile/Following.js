@@ -14,6 +14,7 @@ import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
 import Placeholder from 'react-bootstrap/Placeholder'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { handleUserFirstLastName } from '../../functions/functions';
 
 import { 
     createImagePlaceholderUrl } from '../../functions/functions';
@@ -36,25 +37,6 @@ export function Following(props) {
     
     const [handleFollow, {
         error: errorFollowingUser}] = useMutation(FOLLOWING_USER)
-
-    function handleUserFirstLastName(firstName, lastName, width) {
-        if (width >= 992) {
-            return firstName + ' ' + lastName
-        }
-        var finalFirstName = ''
-        var finalLastName = ''
-        if (firstName.length > 15) {
-            finalFirstName = firstName.slice(0, 14) + '...'
-        } else {
-            finalFirstName = firstName
-        }
-        if (lastName.length > 15) {
-            finalLastName = lastName.slice(0, 14) + '...'
-        } else {
-            finalLastName = lastName
-        }
-        return finalFirstName + ' ' + finalLastName
-    }   
 
     function handleWindowSizeChange() {
         setWidth(window.innerWidth)

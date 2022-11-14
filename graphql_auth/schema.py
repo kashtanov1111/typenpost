@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Prefetch
+
 
 import graphene
 
@@ -12,7 +14,8 @@ from accounts.models import UserProfile
 
 from graphql_jwt.decorators import login_required
 
-
+# from posts.schema import PostNode
+from posts.models import Post
 
 class UserNode(DjangoObjectType):
 
@@ -27,6 +30,7 @@ class UserNode(DjangoObjectType):
         exclude = app_settings.USER_NODE_EXCLUDE_FIELDS
         interfaces = (graphene.relay.Node,)
         # skip_registry = True
+
 
     def resolve_pk(parent, info):
         return parent.pk
@@ -44,7 +48,6 @@ class UserNode(DjangoObjectType):
     def get_queryset(cls, queryset, info):
         return queryset.select_related('profile').filter(status__archived=False)
 
-from django.db.models import Prefetch
 
 class UserProfileNode(DjangoObjectType):
     number_of_followers = graphene.Int()

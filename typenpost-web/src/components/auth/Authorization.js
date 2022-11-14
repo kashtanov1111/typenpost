@@ -52,7 +52,7 @@ export function Authorization() {
         refreshToken()
       }
     }
-    const interval = setInterval(intervalFunction, 55000)
+    const interval = setInterval(intervalFunction, 3000)
     return () => clearInterval(interval)
   }, [refreshTokenExists])
 
@@ -67,6 +67,7 @@ export function Authorization() {
     errorDeleteToken || 
     errorDeleteRefreshToken || 
     errorQueryMe) {
+      // localStorage.removeItem('refreshToken')
       return (
         <>
         <Header 

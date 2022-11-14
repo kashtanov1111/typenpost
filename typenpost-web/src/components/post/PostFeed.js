@@ -17,7 +17,10 @@ export function PostFeed(props) {
     const navigate = useNavigate()
     const { data, loading, error, refetch } = useQuery(
         POST_FEED, {
-            errorPolicy: 'ignore'
+            errorPolicy: 'ignore',
+            onCompleted: (data) => {
+                console.log(data)
+            }
         }
     )
     useEffect(() => {
