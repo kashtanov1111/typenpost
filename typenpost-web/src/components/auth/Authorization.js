@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../Header';
 import { Error } from '../Error';
 import { Loader } from '../Loader';
@@ -13,6 +13,7 @@ import {
   DELETE_TOKEN } from '../../gqls/mutations'; 
 
 export function Authorization() {
+  const navigate = useNavigate()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [username, setUsername] = useState('')
   const [avatar, setAvatar] = useState('')
@@ -52,7 +53,7 @@ export function Authorization() {
         refreshToken()
       }
     }
-    const interval = setInterval(intervalFunction, 3000)
+    const interval = setInterval(intervalFunction, 50000)
     return () => clearInterval(interval)
   }, [refreshTokenExists])
 
@@ -62,12 +63,15 @@ export function Authorization() {
     )
   }
 
+  if (errorRefreshToken) {
+    localStorage.removeItem('refreshToken')
+    navigate('../login', {replace: true, state: '/profile/' + username + '/'})
+  }
+
   if (
-    errorRefreshToken || 
     errorDeleteToken || 
     errorDeleteRefreshToken || 
     errorQueryMe) {
-      // localStorage.removeItem('refreshToken')
       return (
         <>
         <Header 

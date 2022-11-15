@@ -18,18 +18,8 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-from django.core import management
-from apscheduler.schedulers.background import BackgroundScheduler
- 
-def every_minute_delete_refresh_tokens():
-    management.call('cleartokens')
- 
-scheduler = BackgroundScheduler()
-scheduler.add_job(
-    every_minute_delete_refresh_tokens, 
-    'interval', seconds=5)
 
 
 if __name__ == '__main__':
     main()
-    scheduler.start()
+    

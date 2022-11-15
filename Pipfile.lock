@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "03b64aaba5cd20766dd71023823a4b9b6097281467a367d2563447d979560391"
+            "sha256": "456c708ba232917615fd09f5e69bac3ba872d02164e1d5fb5e5d3fd772695366"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -25,11 +25,11 @@
         },
         "apscheduler": {
             "hashes": [
-                "sha256:b2bea0309569da53a7261bfa0ce19c67ddbfe151bda776a6a907579fdbd3eb2a",
-                "sha256:c8c618241dbb2785ed5a687504b14cb1851d6f7b5a4edf3a51e39cc6a069967a"
+                "sha256:65e6574b6395498d371d045f2a8a7e4f7d50c6ad21ef7313d15b1c7cf20df1e3",
+                "sha256:ddc25a0ddd899de44d7f451f4375fb971887e65af51e41e5dcf681f59b8b2c9a"
             ],
-            "markers": "python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
-            "version": "==3.9.1.post1"
+            "index": "pypi",
+            "version": "==3.9.1"
         },
         "asgiref": {
             "hashes": [
@@ -76,14 +76,6 @@
             ],
             "index": "pypi",
             "version": "==4.1"
-        },
-        "django-apscheduler": {
-            "hashes": [
-                "sha256:60ced2c07b531b0477076dfef2d6de4790a983a4bbd75fae5e387ac360e9c8fd",
-                "sha256:d30a05be98e01c12aa50d0a7afd8d0fd529c874d1c75af20891b6417d2f36475"
-            ],
-            "index": "pypi",
-            "version": "==0.6.2"
         },
         "django-cache-url": {
             "hashes": [
@@ -162,7 +154,7 @@
         },
         "graphene-django": {
             "git": "https://github.com/graphql-python/graphene-django.git",
-            "ref": "86c5309c4537b8f898a4cf8f2b516efa14be18f8"
+            "ref": "a000d58514b1fd28b701cf3d159f8e5cafb28cae"
         },
         "graphql-core": {
             "hashes": [

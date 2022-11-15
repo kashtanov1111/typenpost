@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'django_filters',
     'graphql_auth',
-    'django_apscheduler',
     
     #Local
     'accounts',
@@ -246,8 +245,8 @@ GRAPHQL_JWT = {
     ],
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-    "JWT_EXPIRATION_DELTA": timedelta(seconds=5),
-    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(minutes=2),
+    "JWT_EXPIRATION_DELTA": timedelta(seconds=60),
+    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=7),
     "JWT_COOKIE_SECURE": env.bool('JWT_COOKIE_SECURE', default=True),
     "JWT_COOKIE_SAMESITE": (None if env('JWT_COOKIE_SAMESITE', default=False) else 'Lax')
 }
@@ -263,12 +262,26 @@ CSRF_TRUSTED_ORIGINS = [
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485761
 
 
-from django.dispatch import receiver
+# from django.dispatch import receiver
 
-from graphql_jwt.refresh_token.signals import refresh_token_rotated
+# from graphql_jwt.refresh_token.signals import refresh_token_rotated
 
 
-@receiver(refresh_token_rotated)
-def revoke_refresh_token(sender, request, refresh_token, **kwargs):
-    refresh_token.revoke(request)
+# @receiver(refresh_token_rotated)
+# def revoke_refresh_token(sender, request, refresh_token, **kwargs):
+#     refresh_token.revoke(request)
 
+# from django.core import management
+# from apscheduler.schedulers.background import BackgroundScheduler
+ 
+# def every_minute_delete_refresh_tokens():
+#     management.call_command('cleartokens')
+#     print('uuu')
+
+# def start():
+#     scheduler = BackgroundScheduler()
+#     scheduler.add_job(
+#         every_minute_delete_refresh_tokens, 
+#         'interval', seconds=60)
+#     scheduler.start()
+# start()
