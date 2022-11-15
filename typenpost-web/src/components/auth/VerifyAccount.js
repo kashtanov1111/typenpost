@@ -54,7 +54,7 @@ export function VerifyAccount(props) {
     }
 
     return (
-        <div className='centered'>
+        // <div className='centered'>
         <Row className=''>
             <Col md={6} className='my-auto mx-auto text-center'>
                 <h1>Confirm E-mail Address</h1>
@@ -63,6 +63,7 @@ export function VerifyAccount(props) {
                     Confirm
                 </Button>
             </Col>
-        </Row></div>
+        </Row>
+        // </div>
     )
 }

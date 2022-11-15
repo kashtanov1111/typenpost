@@ -78,7 +78,7 @@ export function UserProfile(props) {
         error: errorFollowingUser}] = useMutation(FOLLOWING_USER, {
         onCompleted: (data) => {
             if (data.followingUser.success === true) {
-                refetch({id: userUsername})
+                refetch({username: userUsername})
             }
         }
     })
@@ -112,10 +112,8 @@ export function UserProfile(props) {
             dateWithYear = true
         }
         if (width >= 992) {
-            console.log('asdd')
             return firstName + ' ' + lastName + ' ' + createdDate
         }
-        console.log(yearNow, createdDateYear)
         var finalFirstName = ''
         var finalLastName = ''
         if (firstName.length > 5) {
@@ -168,8 +166,8 @@ export function UserProfile(props) {
     
     useEffect(() => {
         setFollowingBtnText('Following')
-        refetch({id: userUsername})
-    },[userData])
+        refetch({username: userUsername})
+    },[userData, isAuthenticated])
 
     if (
         errorUserProfile ||
@@ -401,7 +399,7 @@ export function UserProfile(props) {
         <Col>
             <Row>
                 <Col xs={6} className='pointer text-center'>
-                    <BiLike />
+                    <BiLike /> <span>{el.node.numberOfLikes}</span>
                 </Col>
                 <Col xs={6} className='pointer text-center'>
                     <BiCommentAdd />

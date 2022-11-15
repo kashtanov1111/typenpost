@@ -47,3 +47,25 @@ if settings.DEBUG: # new
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
 
+from django.core import management
+from apscheduler.schedulers.background import BackgroundScheduler
+
+def every_minute_delete_refresh_tokens():
+    management.call_command('cleartokens', '--expired')
+
+def start():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(
+        every_minute_delete_refresh_tokens, 
+        'interval', seconds=120)
+    scheduler.start()
+
+from django.dispatch import receiver
+from graphql_jwt.refresh_token.signals import refresh_token_rotated
+
+@receiver(refresh_token_rotated)
+def revoke_refresh_token(sender, request, refresh_token, **kwargs):
+    refresh_token.revoke(request)
+
+
+start()
