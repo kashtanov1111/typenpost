@@ -15,14 +15,20 @@ import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
+import Dropdown from 'react-bootstrap/Dropdown'
 import Placeholder from 'react-bootstrap/Placeholder'
 import {BiLike} from 'react-icons/bi'
 import {BiCommentAdd} from 'react-icons/bi'
 import {BiCommentCheck} from 'react-icons/bi'
+import {BiTrash} from 'react-icons/bi'
+import { CustomToggle } from '../../CustomToggle';
+
+
 
 
 import { 
     createImagePlaceholderUrl } from '../../functions/functions';
+import { IconContext } from 'react-icons/lib';
 
 export function UserProfile(props) {
     const {isAuthenticated, username} = props
@@ -112,7 +118,16 @@ export function UserProfile(props) {
             dateWithYear = true
         }
         if (width >= 992) {
-            return firstName + ' ' + lastName + ' ' + createdDate
+            return (<>
+                    <h6 style={{display: 'inline'}}>
+                        {firstName + ' ' + lastName}
+                    </h6>
+                    <p 
+                        style={{display: 'inline'}} 
+                        className='text-muted'>
+                        {' · ' + createdDate}
+                    </p>
+                    </>)
         }
         var finalFirstName = ''
         var finalLastName = ''
@@ -142,7 +157,16 @@ export function UserProfile(props) {
         } else {
             finalLastName = lastName
         }
-        return finalFirstName + ' ' + finalLastName + ' ' + createdDate
+        return (<>
+                    <h6 style={{display: 'inline'}}>
+                        {finalFirstName + ' ' + finalLastName}
+                    </h6>
+                    <p 
+                        style={{display: 'inline'}} 
+                        className='text-muted'>
+                        {' · ' + createdDate}
+                    </p>
+                    </>)
     }
 
     function handleWindowSizeChange() {
@@ -344,7 +368,7 @@ export function UserProfile(props) {
         el.node && 
         <Card key={el.node.id} className='bottom-border p-2'>
         <Row>
-        <Col xs='auto' className='pe-1'>
+        <Col xs={2} md='auto' className='pe-1'>
                 <ProgressiveImage 
                   src={userData && userData.user.profile.avatar ? 
                     userData.user.profile.avatar : nobody} 
@@ -361,25 +385,22 @@ export function UserProfile(props) {
                       alt="mdo" />}
                 </ProgressiveImage>
         </Col>
-        <Col xs>
-            <Row>
-                <Col xs className='pe-0 ps-md-3 ps-1'>
+        <Col xs={10} md className='ps-1 pe-0'>
+            <Row className='justify-content-between'>
+                <Col xs={10} md className='pe-0 ps-md-3 ps-1'>
                         {(loadingUserProfile || userData.user.firstName || 
                             userData.user.lastName) && 
-                        <Placeholder as='h6' animation='glow' 
+                        <Placeholder as='span' animation='glow' 
                             className='mb-0'>
                             {loadingUserProfile ? 
                             <>
                                 <Placeholder xs={2} bg='secondary'/>{' '}
                                 <Placeholder xs={4} bg='secondary'/>
                             </> : 
-                            <>
-                            {handleUserFirstLastNamePostCreated(
-                                userData.user.firstName,
-                                userData.user.lastName,
-                                el.node.created,
-                                width)}
-                            </>}
+                            <p className='content-special'>
+                                WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWw
+                            </p>
+                            }
                         </Placeholder>}
                         <Placeholder as='p' animation='glow' 
                             className='text-muted mt-0 mb-1'>
@@ -388,8 +409,27 @@ export function UserProfile(props) {
                             '@' + userData.user.username}
                         </Placeholder>
                 </Col>
-                <Col xs='auto'>
-                    <h6 className='pointer'><b>···</b></h6>
+                <Col xs={2} md='auto'>
+                    <Dropdown>
+              <Dropdown.Toggle 
+                as={CustomToggle} 
+                id={"dropdown-menu-align-responsive-" + el.node.id}>
+                <h6><b>···</b></h6>
+              </Dropdown.Toggle>
+              <Dropdown.Menu >
+                <Dropdown.Item
+                //   as={Link}
+                //   to={'/profile/' + username}
+                //   onClick={() => setExpanded(false)} 
+                style={{color: 'rgb(237, 73, 86)'}}
+                  >
+                    <BiTrash style={{
+                            verticalAlign: 'text-bottom', 
+                            marginBottom: '2px'}}/>
+                    {' '}Delete
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
                 </Col>
             </Row>
         </Col>
@@ -399,16 +439,53 @@ export function UserProfile(props) {
         <Col>
             <Row>
                 <Col xs={6} className='pointer text-center'>
-                    <BiLike /> <span>{el.node.numberOfLikes}</span>
+                    <h6 className='mb-0'>
+                    <BiLike 
+                        style={{
+                            verticalAlign: 'text-bottom', 
+                            marginBottom: '2px'}} />
+                        {el.node.numberOfLikes === 0 ? '' : ' ' + el.node.numberOfLikes}
+                    </h6>
                 </Col>
                 <Col xs={6} className='pointer text-center'>
-                    <BiCommentAdd />
+                    <h6 className='mb-0'>
+                    <BiCommentAdd 
+                        style={{
+                            verticalAlign: 'text-bottom', 
+                            marginBottom: '1px'}} />
+                        {/* {el.node.numberOfLikes === 0 ? '' : ' ' + el.node.numberOfLikes} */}
+                        
+                    </h6>
                 </Col>
             </Row>
         </Col>
         </Row>
         </Card>
         ))}
+        <div className='container-special'>
+    <div className='content-special'>
+        5asdfas
+    </div>
+    <div className='content-special'>
+        Donec id elit non mi porta gravida at eget metus
+    </div>    
+</div>
+    <div style={{width: '100px'}}>
+    <div className='content-special'>
+        WWWWWWWWWWWWWWWWWWw WWWWWWWWWWWWWWWwww
+    </div>
+    <div className='content-special'>
+         · Nov 12, 2021
+    </div>
+    </div>
+    <div style={{width: "10rem"}}>
+                            <p className='content-special'>
+                                WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWw
+                            </p>
+                            {/* <div style={{float: 'right'}}>
+                                · Nov 12, 2021
+                            </div> */}
+                            </div>
         </div> :
         <Lightbox
             mainSrc={userData.user.profile.avatar ? 

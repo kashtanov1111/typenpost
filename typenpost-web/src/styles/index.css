@@ -162,8 +162,8 @@ a:hover {
 .card:hover {
     background: rgb(248, 249, 250)}
 .follow-images {
-    height: 3rem;
-    width: 3rem;
+    height: 2.8rem;
+    width: 2.8rem;
 }
 .bottom-border {
     border-top: 0px;
@@ -220,4 +220,15 @@ body {
     text-decoration: none;
     outline: none;
     box-shadow: none;
+}
+.card-icon {
+    margin-bottom: '2px';
+    vertical-align: 'text-bottom'; 
+}
+
+.content-special {    
+    text-overflow: ellipsis;
+    overflow: hidden;   
+    white-space:nowrap;
+    background-color: aqua; 
 }

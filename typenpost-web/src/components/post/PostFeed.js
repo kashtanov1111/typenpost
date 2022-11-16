@@ -22,7 +22,10 @@ export function PostFeed(props) {
     )
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate('../login/', {replace: true})
+            if (!JSON.parse(
+                localStorage.getItem('refreshToken'))) {
+                    navigate('../login/', {replace: true})
+                }
         }
     }, [isAuthenticated])
 
