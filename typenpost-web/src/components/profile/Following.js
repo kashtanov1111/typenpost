@@ -66,8 +66,9 @@ export function Following(props) {
 
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate('../login', {
-                state: '/profile/' + userUsername + '/following'})
+            navigate('../../login', {
+                state: '/profile/' + userUsername + '/following', 
+                replace: true})
         }
     }, [isAuthenticated])
 

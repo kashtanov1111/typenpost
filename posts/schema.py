@@ -119,6 +119,14 @@ class UpdatePost(graphene.Mutation):
         else:
             raise Exception('You have not provided id or text')
 
+# class DeletePost(graphene.Mutation):
+#     post = graphene.Field(PostNode, id=graphene.UUID())
+
+#     class Arguments:
+#         id = graphene.UUID(required=True)
+
+#     @login_required
+#     def mutate()
 
 class Mutation(graphene.ObjectType):
     create_post = CreatePost.Field()

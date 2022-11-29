@@ -229,6 +229,14 @@ body {
 .content-special {    
     text-overflow: ellipsis;
     overflow: hidden;   
-    white-space:nowrap;
-    background-color: aqua; 
+    white-space: nowrap;
 }
+.delete-btn {
+    color: rgb(237, 73, 86);
+}
+/* .delete-btn:hover {
+    color: rgb(237, 73, 86);
+}
+.delete-btn:checked {
+    color: white;
+} */

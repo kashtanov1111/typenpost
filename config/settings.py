@@ -212,12 +212,12 @@ django.utils.encoding.force_text = force_str
 django.utils.translation.ugettext = gettext
 django.utils.translation.ugettext_lazy = gettext_lazy
 
-
+CORS_ORIGIN_ALLOW_ALL=False #added
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
+    # 'http://localhost:3000', #remove in production
+    # 'http://127.0.0.1:3000',#remove in production
+    # 'http://localhost:8000',#remove in production
+    # 'http://127.0.0.1:8000', #remove in production
     'https://www.typenpost.com'
 ]
 
@@ -256,9 +256,11 @@ GRAPHQL_AUTH = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-]
+#remove in production
+# CSRF_TRUSTED_ORIGINS = [
+#     'http://localhost:3000',
+# ]
+#remove in production
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485761
 
 

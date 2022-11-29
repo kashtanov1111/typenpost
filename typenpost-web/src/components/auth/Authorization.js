@@ -42,6 +42,9 @@ export function Authorization() {
       }
     }
   )
+
+  // const onMessage = useEvent(() => {console.log('a')})
+
   useEffect(() => {
     if (refreshTokenExists) {
       refreshToken()
@@ -84,6 +87,7 @@ export function Authorization() {
     await deleteRefreshToken()
     localStorage.removeItem('refreshToken')
     setIsAuthenticated(false)
+    //client.resetStore()
   }
 
   return (

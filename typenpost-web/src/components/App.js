@@ -12,7 +12,7 @@ import { UsernameChange } from './auth/UsernameChange';
 import { VerifyAccount } from './auth/VerifyAccount';
 import { PasswordReset } from './auth/PasswordReset';
 import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
-import { UserProfile } from './profile/UserProfile';
+import { UserProfile } from './profile/user/UserProfile';
 import { EditProfile } from './profile/EditProfile';
 import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
 import { SwapEmails } from './auth/SwapEmails';
@@ -64,7 +64,7 @@ export function App(props) {
     />
     <Container className='px-2' onClick={() => setClickedOutsideNavbar(current => !current)}>
       {showAlert ? 
-      <Alert className='marginx-8px' style={{'border-radius':'0%'}} key={styleAlert} variant={styleAlert}>
+      <Alert className='marginx-8px' style={{'borderRadius':'0%'}} key={styleAlert} variant={styleAlert}>
         {textAlert}
       </Alert> : 
       <></>}
