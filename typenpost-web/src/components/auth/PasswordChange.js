@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useContext} from "react"
 import { useMutation } from "@apollo/client"
 import { useNavigate} from "react-router-dom"
 
-import { useTitle } from '../../functions/functions'
+import { useTitle } from '../../customHooks/hooks'
 
 import { Error } from "../Error"
 
@@ -17,9 +17,12 @@ import {BsEye} from 'react-icons/bs'
 import {BsEyeSlash} from 'react-icons/bs'
 
 import { PASSWORD_CHANGE } from "../../gqls/mutations"
+import { IsAuthContext } from "../../context/LoginContext"
 
 export function PasswordChange(props) {
-    const {handleAlert, isAuthenticated, handleLogout} = props
+    const {handleAlert, handleLogout} = props
+    const isAuthenticated = useContext(IsAuthContext)
+    
     const navigate = useNavigate()
     useTitle('Typenpost - Password Change')
     

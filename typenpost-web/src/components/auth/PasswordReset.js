@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useContext} from "react"
 import { useMutation } from "@apollo/client"
 import { useLocation } from "react-router-dom"
 
-import { useTitle } from '../../functions/functions'
+import { useTitle } from '../../customHooks/hooks'
 
 import { Error } from "../Error"
 import { useNavigate } from "react-router-dom"
@@ -15,11 +15,11 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
 
 import { SEND_PASSWORD_RESET_EMAIL } from "../../gqls/mutations"
+import { IsAuthContext } from "../../context/LoginContext"
 
-
-export function PasswordReset(props) {
+export function PasswordReset() {
+    const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
-    const {isAuthenticated} = props
     const location = useLocation()
     useTitle('Typenpost - Password Reset')
 

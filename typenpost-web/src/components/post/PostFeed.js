@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useContext } from "react"
 import { useQuery } from "@apollo/client"
 import { useTitle } from "../../functions/functions"
 import { useNavigate } from "react-router-dom"
@@ -10,9 +10,11 @@ import Col from 'react-bootstrap/Col'
 
 import { POST_FEED } from "../../gqls/queries"
 import { Error } from "../Error"
+import { IsAuthContext, UsernameContext } from "../../context/LoginContext"
 
-export function PostFeed(props) {
-    const {isAuthenticated, username} = props
+export function PostFeed() {
+    const isAuthenticated = useContext(IsAuthContext)
+    const username = useContext(UsernameContext)
     useTitle('Typenpost')
     const navigate = useNavigate()
     const { data, loading, error, refetch } = useQuery(

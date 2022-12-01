@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useContext} from "react"
 import { useMutation } from "@apollo/client"
 import { useParams, useNavigate } from "react-router-dom"
 
-import { useTitle } from '../../functions/functions'
+import { useTitle } from '../../customHooks/hooks'
 
 import { Error } from "../Error"
 
@@ -17,10 +17,11 @@ import {BsEye} from 'react-icons/bs'
 import {BsEyeSlash} from 'react-icons/bs'
 
 import { PASSWORD_RESET } from "../../gqls/mutations"
-
+import { IsAuthContext } from "../../context/LoginContext"
 
 export function PasswordResetWithToken(props) {
-    const {handleAlert, isAuthenticated} = props
+    const {handleAlert} = props
+    const isAuthenticated = useContext(IsAuthContext)
     const params = useParams()
     const token = params.confirmationToken
     const navigate = useNavigate()

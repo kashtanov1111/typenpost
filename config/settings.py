@@ -212,20 +212,15 @@ django.utils.encoding.force_text = force_str
 django.utils.translation.ugettext = gettext
 django.utils.translation.ugettext_lazy = gettext_lazy
 
-CORS_ORIGIN_ALLOW_ALL=False #added
+CORS_ORIGIN_ALLOW_ALL=False
 CORS_ORIGIN_WHITELIST = [
-    # 'http://localhost:3000', #remove in production
-    # 'http://127.0.0.1:3000',#remove in production
-    # 'http://localhost:8000',#remove in production
-    # 'http://127.0.0.1:8000', #remove in production
+    'http://localhost:3000', #remove in production
     'https://www.typenpost.com'
 ]
 
-# CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken', 'Authorization']
 CORS_ALLOW_CREDENTIALS = True
 
 AUTHENTICATION_BACKENDS = [
-    # 'graphql_jwt.backends.JSONWebTokenBackend',
     'graphql_auth.backends.GraphQLAuthBackend',
     'django.contrib.auth.backends.ModelBackend'
 ]
@@ -245,8 +240,8 @@ GRAPHQL_JWT = {
     ],
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-    "JWT_EXPIRATION_DELTA": timedelta(seconds=60),
-    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=7),
+    "JWT_EXPIRATION_DELTA": timedelta(seconds=10),
+    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(seconds=30),
     "JWT_COOKIE_SECURE": env.bool('JWT_COOKIE_SECURE', default=True),
     "JWT_COOKIE_SAMESITE": (None if env('JWT_COOKIE_SAMESITE', default=False) else 'Lax')
 }
@@ -256,11 +251,6 @@ GRAPHQL_AUTH = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-#remove in production
-# CSRF_TRUSTED_ORIGINS = [
-#     'http://localhost:3000',
-# ]
-#remove in production
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485761
 
 

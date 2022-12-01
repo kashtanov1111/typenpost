@@ -1,7 +1,7 @@
-import React, {useEffect} from "react"
+import React, {useContext} from "react"
 import { useMutation } from "@apollo/client"
 import { useParams, useNavigate } from "react-router-dom"
-import { useTitle } from "../../functions/functions"
+import { useTitle } from  '../../customHooks/hooks'
 
 import { Error } from "../Error"
 
@@ -10,9 +10,10 @@ import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 
 import { VERIFY_ACCOUNT, VERIFY_SECONDARY_EMAIL } from "../../gqls/mutations"
-
+import { UsernameContext } from "../../context/LoginContext"
 export function VerifyAccount(props) {
-    const {handleAlert, username, verified} = props
+    const {handleAlert, verified} = props
+    const username = useContext(UsernameContext)
     const params = useParams()
     const token = params.confirmationToken
     const navigate = useNavigate()

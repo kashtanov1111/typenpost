@@ -1,47 +1,265 @@
 import '../styles/App.css';
-import React, { useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
-
-import { CreatePost, PostDetail } from './post/Post';
-import { PostFeed } from './post/PostFeed';
-import { Header } from './Header';
-import { Login } from './auth/Login';
-import { Register } from './auth/Register';
-import { PasswordChange} from './auth/PasswordChange';
-import { UsernameChange } from './auth/UsernameChange';
-import { VerifyAccount } from './auth/VerifyAccount';
-import { PasswordReset } from './auth/PasswordReset';
-import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
-import { UserProfile } from './profile/user/UserProfile';
-import { EditProfile } from './profile/EditProfile';
-import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
-import { SwapEmails } from './auth/SwapEmails';
-import { RemoveSecondaryEmail } from './auth/RemoveSecondaryEmail';
-import { ArchiveAccount } from './auth/ArchiveAccount';
-import { Followers } from './profile/Followers';
-import { Following } from './profile/Following';
-import { FollowHeader } from './profile/FollowHeader';
+import React, { useState, useEffect } from 'react';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import { Header } from './header/Header';
 import { Error } from './Error';
-
 import Container from 'react-bootstrap/Container'
 import Alert from 'react-bootstrap/Alert'
+import { RoutesComponent } from './Routes';
+import { QUERY_ME } from '../gqls/queries';
+import {
+  REFRESH_TOKEN,
+  DELETE_REFRESH_TOKEN,
+  DELETE_TOKEN
+} from '../gqls/mutations';
+import { IsAuthContext, UsernameContext } from '../context/LoginContext'
 
-export function App(props) {
-  const {
-    avatar, 
-    username, 
-    email,
-    verified,
-    handleLogout, 
-    isAuthenticated, 
-    setIsAuthenticated,
-    secondaryEmail} = props
+// export function App({ client }) {
+//   const refreshTokenValueInLocalStorage = 
+//     JSON.parse(localStorage.getItem('refreshToken')) 
+//   const [showAlert, setShowAlert] = useState(false)
+//   const [textAlert, setTextAlert] = useState('')
+//   const [styleAlert, setStyleAlert] = useState('')
+//   const [avatar, setAvatar] = useState('')
+//   const [email, setEmail] = useState('')
+//   const [isAuthenticated, setIsAuthenticated] = useState(
+//     refreshTokenValueInLocalStorage ? null : false
+//   )
+//   const [secondaryEmail, setSecondaryEmail] = useState('')
+//   const [verified, setVerified] = useState(false)
+//   const [username, setUsername] = useState('')
+//   const [refreshTokenExists, setRefreshTokenExists] = useState(
+//     refreshTokenValueInLocalStorage)
 
+//   const [deleteToken, { error: errorDeleteToken }] =
+//     useMutation(DELETE_TOKEN)
+//   const [deleteRefreshToken, { error: errorDeleteRefreshToken }] =
+//     useMutation(DELETE_REFRESH_TOKEN)
+//   const [refreshToken, { error: errorRefreshToken }] =
+//     useMutation(REFRESH_TOKEN, {
+//       errorPolicy: 'ignore',
+//       onCompleted: (data) => {
+//         console.log('REFRESH TOKEN completed, data.refreshToken:', data.refreshToken)
+//         if (data.refreshToken === null) {
+//           localStorage.removeItem('refreshToken')
+//           setRefreshTokenExists(null)
+//         }
+//       }
+//     })
+
+//   const [queryMe, { error: errorQueryMe }] =
+//     useLazyQuery(QUERY_ME,
+//       {
+//         fetchPolicy: 'cache-and-network',
+//         onCompleted: (data) => {
+//           console.log('QUERY ME completed, data.me:', data.me)
+//           const me = data.me
+//           if (me !== null) {
+//             setIsAuthenticated(true)
+//             setUsername(me.username)
+//             setAvatar(me.profile.avatar)
+//             setEmail(me.email)
+//             setVerified(me.verified)
+//             setSecondaryEmail(me.secondaryEmail)
+//           }
+//         }
+//       }
+//     )
+
+//   useEffect(() => {
+//     console.log('The useEffect')
+//     async function getDataOnMount() {
+//       if (refreshTokenExists) {
+//         await refreshToken()
+//         queryMe()
+//       }
+//     }
+//     function intervalFunction() {
+//       console.log('inside intervalFunction')
+//       refreshToken()
+//     }
+//     getDataOnMount()
+//     const interval = refreshTokenExists ?
+//       setInterval(intervalFunction, 50000) : null
+//     return () => {
+//       console.log('inside second useEffect return')
+//       if (interval !== null) {
+//         console.log('inside second useEffect return and interval is not null')
+//         clearInterval(interval)
+//       }
+//     }
+//   }, [refreshTokenExists, refreshToken, queryMe])
+
+//   if (
+//     errorRefreshToken ||
+//     errorDeleteToken ||
+//     errorDeleteRefreshToken ||
+//     errorQueryMe) {
+//     return (
+//       <>
+//         <Header
+//           username={username}
+//           handleLogout={handleLogout}
+//           avatar={avatar}
+//           isAuthenticated={isAuthenticated} />
+//         <Error />
+//       </>
+//     )
+//   }
+
+//   function handleLogout() {
+//     deleteToken()
+//     deleteRefreshToken()
+//     localStorage.removeItem('refreshToken')
+//     setIsAuthenticated(false)
+//     setRefreshTokenExists(null)
+//     client.resetStore()
+//   }
+
+//   function handleAlert(text, style) {
+//     setTextAlert(text)
+//     setStyleAlert(style)
+//     setShowAlert(true)
+//     setTimeout(() => {
+//       setShowAlert(false)
+//     }, 5000);
+//   }
+
+//console.log('Render App Component,', 'refreshTokenExists:', refreshTokenExists, ', isAuthenticated:', isAuthenticated)
+
+//   return (
+//     <IsAuthContext.Provider value={isAuthenticated} >
+//       <UsernameContext.Provider value={username} >
+//         <Header
+//           avatar={avatar}
+//           handleLogout={handleLogout}
+//           handleAlert={handleAlert}
+//           secondaryEmail={secondaryEmail}
+//         />
+//         <Container className='px-2'>
+//           {showAlert ?
+//             <Alert 
+//               className='marginx-8px' 
+//               style={{ 'borderRadius': '0%' }} 
+//               key={styleAlert} 
+//               variant={styleAlert}>
+//               {textAlert}
+//             </Alert> :
+//             <></>}
+//           <RoutesComponent
+//             handleLogout={handleLogout}
+//             handleAlert={handleAlert}
+//             setIsAuthenticated={setIsAuthenticated}
+//             setRefreshTokenExists={setRefreshTokenExists}
+//             verified={verified}
+//             email={email}
+//             secondaryEmail={secondaryEmail}
+//           />
+//         </Container>
+//       </UsernameContext.Provider>
+//     </IsAuthContext.Provider>
+//   )
+// }
+export function App({ client }) {
   const [showAlert, setShowAlert] = useState(false)
   const [textAlert, setTextAlert] = useState('')
   const [styleAlert, setStyleAlert] = useState('')
+  const [avatar, setAvatar] = useState('')
+  const [email, setEmail] = useState('')
+  const [secondaryEmail, setSecondaryEmail] = useState('')
+  const [verified, setVerified] = useState(false)
+  const [username, setUsername] = useState('')
 
-  const [clickedOutsideNavbar, setClickedOutsideNavbar] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(null)
+
+  const [deleteToken, { error: errorDeleteToken }] =
+    useMutation(DELETE_TOKEN)
+  const [deleteRefreshToken, { error: errorDeleteRefreshToken }] =
+    useMutation(DELETE_REFRESH_TOKEN)
+  const [refreshToken, { error: errorRefreshToken }] =
+    useMutation(REFRESH_TOKEN, {
+      errorPolicy: 'ignore',
+      onCompleted: (data) => {
+        console.log('REFRESH TOKEN completed, data.refreshToken:', data.refreshToken)
+        if (data.refreshToken === null) {
+          setIsAuthenticated(false)
+        } else {
+          if (isAuthenticated === null) {
+            queryMe()
+          }
+          setIsAuthenticated(true)
+        }
+      }
+    })
+
+  const [queryMe, { error: errorQueryMe }] =
+    useLazyQuery(QUERY_ME,
+      {
+        fetchPolicy: 'cache-and-network',
+        onCompleted: (data) => {
+          console.log('QUERY ME completed, data.me:', data.me)
+          const me = data.me
+          if (me !== null) {
+            setUsername(me.username)
+            setAvatar(me.profile.avatar)
+            setEmail(me.email)
+            setVerified(me.verified)
+            setSecondaryEmail(me.secondaryEmail)
+          }
+        }
+      }
+    )
+  useEffect(() => {
+    console.log('The first useEffect')
+    // async function getDataOnMount() {
+    //   await refreshToken()
+    //   queryMe()
+    //   }
+    // getDataOnMount()
+    refreshToken()
+  },[refreshToken])
+  
+  useEffect(() => {
+    console.log('The second useEffect')
+    function intervalFunction() {
+      console.log('inside intervalFunction')
+      refreshToken()
+    }
+    const interval = isAuthenticated ?
+      setInterval(intervalFunction, 7000) : null
+    return () => {
+      console.log('inside second useEffect return')
+      if (interval !== null) {
+        console.log('inside second useEffect return and interval is not null')
+        clearInterval(interval)
+      }
+    }
+  }, [isAuthenticated, refreshToken, queryMe])
+
+  if (
+    errorRefreshToken ||
+    errorDeleteToken ||
+    errorDeleteRefreshToken ||
+    errorQueryMe) {
+    return (
+      <>
+        <Header
+          username={username}
+          handleLogout={handleLogout}
+          avatar={avatar}
+          isAuthenticated={isAuthenticated} />
+        <Error />
+      </>
+    )
+  }
+
+  function handleLogout() {
+    deleteToken()
+    deleteRefreshToken()
+    localStorage.removeItem('refreshToken')
+    setIsAuthenticated(false)
+    client.resetStore()
+  }
 
   function handleAlert(text, style) {
     setTextAlert(text)
@@ -51,125 +269,39 @@ export function App(props) {
       setShowAlert(false)
     }, 5000);
   }
+
+  console.log('Render App Component,', ', isAuthenticated:', isAuthenticated)
+
   return (
-    <>
-    <Header 
-      username={username} 
-      avatar={avatar} 
-      isAuthenticated={isAuthenticated}
-      handleLogout={handleLogout}
-      clickedOutsideNavbar={clickedOutsideNavbar}
-      handleAlert={handleAlert} 
-      secondaryEmail={secondaryEmail}
-    />
-    <Container className='px-2' onClick={() => setClickedOutsideNavbar(current => !current)}>
-      {showAlert ? 
-      <Alert className='marginx-8px' style={{'borderRadius':'0%'}} key={styleAlert} variant={styleAlert}>
-        {textAlert}
-      </Alert> : 
-      <></>}
-      <Routes>
-        <Route index element={<PostFeed
-          isAuthenticated={isAuthenticated} 
-          username={username}
-          />} />
-        <Route 
-          path='/login' 
-          element={<Login 
+    <IsAuthContext.Provider value={isAuthenticated} >
+      <UsernameContext.Provider value={username} >
+        <Header
+          avatar={avatar}
+          handleLogout={handleLogout}
+          handleAlert={handleAlert}
+          secondaryEmail={secondaryEmail}
+        />
+        <Container className='px-2'>
+          {showAlert ?
+            <Alert 
+              className='marginx-8px' 
+              style={{ 'borderRadius': '0%' }} 
+              key={styleAlert} 
+              variant={styleAlert}>
+              {textAlert}
+            </Alert> :
+            <></>}
+          <RoutesComponent
+            handleLogout={handleLogout}
             handleAlert={handleAlert}
             setIsAuthenticated={setIsAuthenticated}
-            isAuthenticated={isAuthenticated} />} />
-        <Route 
-          path='/register' 
-          element={<Register 
-            handleAlert={handleAlert}
-            isAuthenticated={isAuthenticated} />} />
-        <Route path='posts/:postId' element={<PostDetail />} />
-        <Route 
-          path='/activate/:confirmationToken' 
-          element={<VerifyAccount 
             verified={verified}
-            handleAlert={handleAlert} 
-            username={username}
-            isAuthenticated={isAuthenticated} />} />
-        <Route 
-          path='/password-reset/:confirmationToken' 
-          element={<PasswordResetWithToken 
-            handleAlert={handleAlert} 
-            isAuthenticated={isAuthenticated} />} 
-        />
-        <Route path='/create' element={<CreatePost />} />
-        <Route path='/password_reset' element={<PasswordReset 
-          isAuthenticated={isAuthenticated} />} />
-        <Route 
-          path='/password_change' 
-          element={<PasswordChange 
-            handleAlert={handleAlert} 
-            handleLogout={handleLogout}
-            isAuthenticated={isAuthenticated} />} />
-        <Route 
-          path='/username_change' 
-          element={<UsernameChange 
-            handleAlert={handleAlert} 
-            handleLogout={handleLogout}
-            isAuthenticated={isAuthenticated} />} />
-        <Route path='/profile/:userUsername' element={<UserProfile
-        isAuthenticated={isAuthenticated}
-        username={username} />} /> 
-        <Route 
-          path='/profile/:userUsername'
-          element={<FollowHeader />}
-           >
-            <Route 
-              path='followers' 
-              element={<Followers 
-                isAuthenticated={isAuthenticated}
-                username={username} />} />
-            <Route 
-              path='following' 
-              element={<Following 
-                isAuthenticated={isAuthenticated}
-                username={username} />} />
-        </Route>
-        <Route 
-          path='/profile/edit'
-          element={<EditProfile 
-            isAuthenticated={isAuthenticated}
-            handleAlert={handleAlert}
-          />} />
-        <Route 
-          path='/add_email'
-          element={<AddSecondaryEmail 
-            isAuthenticated={isAuthenticated}
-            handleAlert={handleAlert}
             email={email}
-          />} />
-        <Route 
-          path='/swap_emails'
-          element={<SwapEmails 
-            isAuthenticated={isAuthenticated}
-            handleAlert={handleAlert}
+            queryMe={queryMe}
             secondaryEmail={secondaryEmail}
-          />} />
-        <Route 
-          path='/remove_secondary_email'
-          element={<RemoveSecondaryEmail 
-            isAuthenticated={isAuthenticated}
-            handleAlert={handleAlert}
-            secondaryEmail={secondaryEmail}
-          />} />
-        <Route 
-          path='/archive_account'
-          element={<ArchiveAccount 
-            isAuthenticated={isAuthenticated}
-            handleAlert={handleAlert}
-            handleLogout={handleLogout}
-          />} />
-        <Route 
-          path='*'
-          element={<Error description="The page doesn't exist." />} />
-      </Routes>
-    </Container>
-    </>
+          />
+        </Container>
+      </UsernameContext.Provider>
+    </IsAuthContext.Provider>
   )
 }

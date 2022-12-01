@@ -1,6 +1,6 @@
+import React, {useState, useEffect, useContext} from "react";
 import nobody from '../../../assets/images/nobody.jpg'
-import React, {useState, useEffect} from "react";
-import { useTitle } from "../../../functions/functions";
+import { useTitle } from "../../../customHooks/hooks";
 import { useParams, useNavigate } from "react-router-dom";
 import { USER_PROFILE } from "../../../gqls/queries";
 import { FOLLOWING_USER } from '../../../gqls/mutations';
@@ -11,9 +11,13 @@ import { UserProfileTop } from './UserProfileTop';
 import { PostCard } from '../../post/card/PostCard';
 
 import { experimental_useEvent as useEvent } from 'react';
+import { 
+    UsernameContext, 
+    IsAuthContext } from '../../../context/LoginContext';
 
 export function UserProfile(props) {
-    const {isAuthenticated, username} = props
+    const username = useContext(UsernameContext)
+    const isAuthenticated = useContext(IsAuthContext)
     const params = useParams()
     const userUsername = params.userUsername
     const navigate = useNavigate()

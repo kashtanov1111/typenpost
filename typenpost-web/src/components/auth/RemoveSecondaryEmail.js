@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useContext} from "react"
 import { useMutation } from "@apollo/client"
 import { useNavigate, useLocation} from "react-router-dom"
 
-import { useTitle } from '../../functions/functions'
+import { useTitle } from '../../customHooks/hooks'
 
 import { Error } from "../Error"
 
@@ -17,9 +17,11 @@ import {BsEye} from 'react-icons/bs'
 import {BsEyeSlash} from 'react-icons/bs'
 
 import { REMOVE_SECONDARY_EMAIL } from "../../gqls/mutations"
+import { IsAuthContext } from "../../context/LoginContext"
 
 export function RemoveSecondaryEmail(props) {
-    const {handleAlert, isAuthenticated, secondaryEmail} = props
+    const isAuthenticated = useContext(IsAuthContext)
+    const {handleAlert, secondaryEmail} = props
     const navigate = useNavigate()
     const location = useLocation()
     useTitle('Typenpost - Remove Secondary Email')

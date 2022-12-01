@@ -1,11 +1,8 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useContext} from "react"
 import { useMutation } from "@apollo/client"
 import { useNavigate} from "react-router-dom"
-
-import { useTitle } from '../../functions/functions'
-
+import { useTitle } from '../../customHooks/hooks'
 import { Error } from "../Error"
-
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
@@ -15,12 +12,13 @@ import Spinner from 'react-bootstrap/Spinner'
 import InputGroup from 'react-bootstrap/InputGroup'
 import {BsEye} from 'react-icons/bs'
 import {BsEyeSlash} from 'react-icons/bs'
-
 import {SEND_SECONDARY_EMAIL_ACTIVATION} from "../../gqls/mutations"
-
+import { IsAuthContext } from "../../context/LoginContext"
+import { Loader } from "../Loader"
 
 export function AddSecondaryEmail(props) {
-    const {handleAlert, isAuthenticated, email} = props
+    const {handleAlert, email} = props
+    const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
     useTitle('Typenpost - Add secondary email')
     
@@ -29,7 +27,6 @@ export function AddSecondaryEmail(props) {
         email: '',
         password: '',
     }) 
-    const [emailSent, setEmailSent] = useState(false)                                           
     const [handleAddSecondaryEmail, { data, loading, error }] = 
         useMutation(SEND_SECONDARY_EMAIL_ACTIVATION, {
             variables: { 
@@ -41,7 +38,6 @@ export function AddSecondaryEmail(props) {
                         'Confirmation e-mail sent to ' + 
                         formState.email
                         handleAlert(message, 'primary')
-                        setEmailSent(true)
                     }
                 }
             }
@@ -56,16 +52,19 @@ export function AddSecondaryEmail(props) {
     }
 
     useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('../login', {replace: true, state: '/profile/edit'})
+        if (isAuthenticated === false) {
+            navigate('../login', {replace: true, state: '/add_email'})
         }
-    },[isAuthenticated])
+    },[isAuthenticated, navigate])
 
     if (error) {
         return <Error />
     }
-    
-    return (!emailSent ?
+    console.log('AddSecondaryEmail render')
+    if (isAuthenticated === null) {
+        return <Loader />
+    }
+    return ((data === undefined || data.sendSecondaryEmailActivation.errors) ?
         <Row>
             <Col md={6} className='mx-auto'>
                 <h1 className='text-center mb-3'>Set Secondary Email</h1>
@@ -106,6 +105,7 @@ export function AddSecondaryEmail(props) {
                                     email: e.target.value,
                                 })
                             }
+                            disabled={loading}
                             placeholder='Secondary Email'
                             required
                         />    
@@ -141,6 +141,7 @@ export function AddSecondaryEmail(props) {
                                     password: e.target.value
                                 })
                             }
+                            disabled={loading}
                             placeholder='Password'
                             required
                         />
@@ -169,7 +170,7 @@ export function AddSecondaryEmail(props) {
                     className='login-signup-button py-2 col-12 mb-2' 
                     type='submit'
                     disabled={!(formState.email && 
-                                formState.password)}>
+                                formState.password) || loading}>
                     {loading ? 
                     <div><Spinner
                         as='span'

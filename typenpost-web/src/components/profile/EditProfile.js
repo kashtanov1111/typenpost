@@ -1,7 +1,7 @@
 import nobody from '../../assets/images/nobody.jpg'
 
-import React, {useState, useEffect, useRef} from "react";
-import { useTitle } from "../../functions/functions";
+import React, {useState, useEffect, useRef, useContext} from "react";
+import { useTitle } from '../../customHooks/hooks';
 import { Link, useNavigate } from "react-router-dom";
 import { QUERY_ME } from "../../gqls/queries";
 import { 
@@ -24,9 +24,11 @@ import {
     convertBase64,
     createImagePlaceholderUrl } from '../../functions/functions';
 import FormLabel from 'react-bootstrap/esm/FormLabel';
+import { IsAuthContext } from '../../context/LoginContext';
 
 export function EditProfile(props) {
-    const {isAuthenticated, handleAlert} = props
+    const {handleAlert} = props
+    const isAuthenticated = useContext(IsAuthContext)
     const location = useLocation()
     const navigate = useNavigate()
     const textareaRef = React.createRef()

@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useContext} from "react"
 import { useMutation } from "@apollo/client"
 import { useNavigate} from "react-router-dom"
 
-import { useTitle } from '../../functions/functions'
+import { useTitle } from '../../customHooks/hooks'
 
 import { Error } from "../Error"
 
@@ -14,9 +14,11 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Spinner from 'react-bootstrap/Spinner'
 
 import { USERNAME_CHANGE } from "../../gqls/mutations"
+import { IsAuthContext } from "../../context/LoginContext"
 
 export function UsernameChange(props) {
-    const {handleAlert, isAuthenticated, handleLogout} = props
+    const {handleAlert, handleLogout} = props
+    const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
     useTitle('Typenpost - Username Change')
     

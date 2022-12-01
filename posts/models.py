@@ -10,6 +10,7 @@ from django.template.defaultfilters import slugify
 
 User = get_user_model()
 
+
 class PostQueryset(models.QuerySet):
 
     def feed(self, user):
@@ -17,7 +18,7 @@ class PostQueryset(models.QuerySet):
         followed_users_ids = []
         if user_following.exists():
             followed_users_ids = (user_following
-                                .values_list('user__id', flat=True))
+                                  .values_list('user__id', flat=True))
         return self.filter(
             Q(user__id__in=followed_users_ids) |
             Q(user=user)
@@ -25,7 +26,7 @@ class PostQueryset(models.QuerySet):
 
 
 class PostManager(models.Manager):
-    
+
     def get_queryset(self):
         return PostQueryset(self.model, using=self._db)
 
@@ -38,6 +39,7 @@ class PostLike(models.Model):
     post = models.ForeignKey("Post", on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+
 class Post(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
@@ -46,10 +48,10 @@ class Post(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='posts')
     likes = models.ManyToManyField(
-        User, 
-        related_name='likes', 
-        blank=True, 
-        null=True, 
+        User,
+        related_name='likes',
+        blank=True,
+        null=True,
         through=PostLike)
 
     objects = PostManager()

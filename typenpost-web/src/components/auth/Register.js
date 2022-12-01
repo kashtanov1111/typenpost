@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useMutation } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -15,15 +15,16 @@ import { Error } from "../Error";
 import {BsEye} from 'react-icons/bs'
 import {BsEyeSlash} from 'react-icons/bs'
 
-import { useTitle } from '../../functions/functions'
-
+import { useTitle } from '../../customHooks/hooks'
+import { IsAuthContext } from "../../context/LoginContext";
 import { 
     REGISTER_MUTATION,
     RESEND_ACTIVATION_EMAIL } from "../../gqls/mutations";
 
 
 export function Register(props) {
-    const {handleAlert, isAuthenticated} = props
+    const {handleAlert} = props
+    const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
     useTitle('Typenpost - Sign up')
 

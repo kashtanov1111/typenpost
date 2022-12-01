@@ -26,9 +26,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html')),
-    path('admin/', admin.site.urls),
+    path('admin-2281953/', admin.site.urls),
     path('graphql/', 
-        # jwt_cookie(GraphQLView.as_view(graphiql=True))),
         jwt_cookie(csrf_exempt(GraphQLView.as_view(graphiql=True)))),
     path('<str:path_name1>/', 
         TemplateView.as_view(template_name='home.html')),

@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useContext} from "react"
 import { useMutation } from "@apollo/client"
 import { useNavigate} from "react-router-dom"
 
-import { useTitle } from '../../functions/functions'
+import { useTitle } from '../../customHooks/hooks'
 
 import { Error } from "../Error"
 
@@ -17,9 +17,11 @@ import {BsEye} from 'react-icons/bs'
 import {BsEyeSlash} from 'react-icons/bs'
 
 import { ARCHIVE_ACCOUNT } from "../../gqls/mutations"
+import { IsAuthContext } from "../../context/LoginContext"
 
 export function ArchiveAccount(props) {
-    const {handleAlert, isAuthenticated, handleLogout} = props
+    const isAuthenticated =  useContext(IsAuthContext)
+    const {handleAlert, handleLogout} = props
     const navigate = useNavigate()
     useTitle('Typenpost - Archive Account')
 

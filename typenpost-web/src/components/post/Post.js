@@ -3,9 +3,9 @@ import { useQuery, useMutation, gql } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { Loader } from '../Loader'
-import ccc from '../../assets/images/ccc.jpg';
 
-import { useTitle, createImageSrcUrl } from '../../functions/functions'
+import { createImageSrcUrl } from '../../functions/functions'
+import { useTitle } from '../../customHooks/hooks'
 
 const QUERY_POSTS = gql`
     query GetAllPosts {
@@ -59,7 +59,6 @@ export function PostDetail() {
     }
     return (
         <React.Fragment>
-        <img src={createImageSrcUrl(ccc)} alt='sdfsd' />
         <p>{data.post.id}</p>
         <p>{data.post.text}</p>
         </React.Fragment>

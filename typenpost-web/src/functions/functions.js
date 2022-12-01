@@ -1,10 +1,3 @@
-import { useEffect } from "react"
-
-export function useTitle(title) {
-    useEffect(() => {
-      document.title = title
-    },[title])
-}
   
 export function createImagePlaceholderUrl(path, size) {
     if (path.indexOf('cloudfront.net') > -1) {
