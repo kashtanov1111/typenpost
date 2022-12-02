@@ -22,7 +22,6 @@ export function AddSecondaryEmail(props) {
     const { handleAlert, email } = props
     const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
-    const location = useLocation()
     useTitle('Typenpost - Add secondary email')
 
     const [showPassword, setShowPassword] = useState(false)
@@ -42,19 +41,17 @@ export function AddSecondaryEmail(props) {
                         'Confirmation e-mail sent to ' +
                         formState.email
                     handleAlert(message, 'primary')
-                    if (location.state === null) {
-                        navigate('../', { replace: true })
-                    } else {
-                        navigate('..' + location.state, { replace: true })
-                    }
-
                 }
             }
         }
         )
 
-    const emailError = data && data.sendSecondaryEmailActivation.errors.email
-    const passwordError = data && data.sendSecondaryEmailActivation.errors.password
+    const emailError = data &&
+        data.sendSecondaryEmailActivation.errors &&
+        data.sendSecondaryEmailActivation.errors.email
+    const passwordError = data && 
+        data.sendSecondaryEmailActivation.errors &&
+        data.sendSecondaryEmailActivation.errors.password
 
     useEffect(() => {
         if (isAuthenticated === false) {
@@ -172,7 +169,7 @@ export function AddSecondaryEmail(props) {
             </Row> :
             <Row>
                 <Col md={8} className='mx-auto'>
-                    <h1 className='text-center'>Verify Your New E-mail Address</h1>
+                    <h1 className='my-2'>Verify Your New E-mail Address</h1>
                     <p>We have sent an e-mail to you for verification.
                         Follow the link provided to finalize the process.
                         If you do not see the verification e-mail in your main inbox,

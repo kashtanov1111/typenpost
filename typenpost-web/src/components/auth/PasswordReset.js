@@ -57,7 +57,7 @@ export function PasswordReset() {
         <Row>
             <Col md={6} className='mx-auto'>
                 {(data === undefined || data.sendPasswordResetEmail.errors) ? <div>
-                    <h1 className='text-center mt-2 mb-3'>Password Reset</h1>
+                    <h1 className='my-2'>Password Reset</h1>
                     <p>
                         Forgotten your password?
                         Enter your e-mail address below,
@@ -113,7 +113,7 @@ export function PasswordReset() {
                     </Form>
                 </div> :
                     <div>
-                        <h1 className='text-center mt-2 mb-3'>Password Reset</h1>
+                        <h1 className='my-2'>Password Reset</h1>
                         <p>
                             We have sent you an e-mail.
                             If you have not received it

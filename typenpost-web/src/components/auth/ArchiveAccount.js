@@ -65,7 +65,7 @@ export function ArchiveAccount(props) {
     return (isAuthenticated === true &&
         <Row>
             <Col md={6} className='mx-auto'>
-                <h1 className='text-center mt-2 mb-3'>Archive Account</h1>
+                <h1 className='my-2'>Archive Account</h1>
                 <p>You are about to archive your Typenpost account.
                     All information related to your account will
                     no longer be viewable on Typenpost. Your username

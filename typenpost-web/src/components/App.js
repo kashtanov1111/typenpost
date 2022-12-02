@@ -49,6 +49,7 @@ export function App({ client }) {
   const [queryMe, { error: errorQueryMe }] =
     useLazyQuery(QUERY_ME,
       {
+        fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
           // console.log('QUERY ME completed, data.me:', data.me)
           const me = data.me
@@ -65,8 +66,8 @@ export function App({ client }) {
   useEffect(() => {
     // console.log('The first useEffect')
     refreshToken()
-  },[refreshToken])
-  
+  }, [refreshToken])
+
   useEffect(() => {
     // console.log('The second useEffect')
     function intervalFunction() {
@@ -83,7 +84,7 @@ export function App({ client }) {
       }
     }
   }, [isAuthenticated, refreshToken, queryMe])
-
+  // console.log('username', username)
   if (
     errorRefreshToken ||
     errorDeleteToken ||
@@ -117,7 +118,6 @@ export function App({ client }) {
       setShowAlert(false)
     }, 5000);
   }
-
   console.log('Render App Component,', ', isAuthenticated:', isAuthenticated)
 
   return (
@@ -131,10 +131,10 @@ export function App({ client }) {
         />
         <Container className='px-2'>
           {showAlert ?
-            <Alert 
-              className='marginx-8px' 
-              style={{ 'borderRadius': '0%' }} 
-              key={styleAlert} 
+            <Alert
+              className='marginx-8px'
+              style={{ 'borderRadius': '0%' }}
+              key={styleAlert}
               variant={styleAlert}>
               {textAlert}
             </Alert> :

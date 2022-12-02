@@ -54,8 +54,8 @@ export function Login({handleAlert, queryMe, setIsAuthenticated }) {
                     } else {
                         navigate('../', { replace: true })
                     }
-                    setIsAuthenticated(true)
                     queryMe()
+                    setIsAuthenticated(true)
                 }
             }
         }
