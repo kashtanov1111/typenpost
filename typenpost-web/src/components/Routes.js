@@ -25,10 +25,10 @@ import { TestTest } from './TestTest';
 export function RoutesComponent({
     handleLogout,
     handleAlert,
-    setIsAuthenticated,
     verified,
     email,
     secondaryEmail,
+    setIsAuthenticated,
     queryMe
 }) {
     return (

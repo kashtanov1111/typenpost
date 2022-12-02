@@ -95,7 +95,7 @@ export function Header(props) {
                 aria-label="Search"
               />
             </Form>
-            {isAuthenticated ?
+            {!(isAuthenticated === false) ?
               <HeaderDropdown
                 avatar={avatar}
                 setExpanded={setExpanded}

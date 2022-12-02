@@ -14,152 +14,6 @@ import {
 } from '../gqls/mutations';
 import { IsAuthContext, UsernameContext } from '../context/LoginContext'
 
-// export function App({ client }) {
-//   const refreshTokenValueInLocalStorage = 
-//     JSON.parse(localStorage.getItem('refreshToken')) 
-//   const [showAlert, setShowAlert] = useState(false)
-//   const [textAlert, setTextAlert] = useState('')
-//   const [styleAlert, setStyleAlert] = useState('')
-//   const [avatar, setAvatar] = useState('')
-//   const [email, setEmail] = useState('')
-//   const [isAuthenticated, setIsAuthenticated] = useState(
-//     refreshTokenValueInLocalStorage ? null : false
-//   )
-//   const [secondaryEmail, setSecondaryEmail] = useState('')
-//   const [verified, setVerified] = useState(false)
-//   const [username, setUsername] = useState('')
-//   const [refreshTokenExists, setRefreshTokenExists] = useState(
-//     refreshTokenValueInLocalStorage)
-
-//   const [deleteToken, { error: errorDeleteToken }] =
-//     useMutation(DELETE_TOKEN)
-//   const [deleteRefreshToken, { error: errorDeleteRefreshToken }] =
-//     useMutation(DELETE_REFRESH_TOKEN)
-//   const [refreshToken, { error: errorRefreshToken }] =
-//     useMutation(REFRESH_TOKEN, {
-//       errorPolicy: 'ignore',
-//       onCompleted: (data) => {
-//         console.log('REFRESH TOKEN completed, data.refreshToken:', data.refreshToken)
-//         if (data.refreshToken === null) {
-//           localStorage.removeItem('refreshToken')
-//           setRefreshTokenExists(null)
-//         }
-//       }
-//     })
-
-//   const [queryMe, { error: errorQueryMe }] =
-//     useLazyQuery(QUERY_ME,
-//       {
-//         fetchPolicy: 'cache-and-network',
-//         onCompleted: (data) => {
-//           console.log('QUERY ME completed, data.me:', data.me)
-//           const me = data.me
-//           if (me !== null) {
-//             setIsAuthenticated(true)
-//             setUsername(me.username)
-//             setAvatar(me.profile.avatar)
-//             setEmail(me.email)
-//             setVerified(me.verified)
-//             setSecondaryEmail(me.secondaryEmail)
-//           }
-//         }
-//       }
-//     )
-
-//   useEffect(() => {
-//     console.log('The useEffect')
-//     async function getDataOnMount() {
-//       if (refreshTokenExists) {
-//         await refreshToken()
-//         queryMe()
-//       }
-//     }
-//     function intervalFunction() {
-//       console.log('inside intervalFunction')
-//       refreshToken()
-//     }
-//     getDataOnMount()
-//     const interval = refreshTokenExists ?
-//       setInterval(intervalFunction, 50000) : null
-//     return () => {
-//       console.log('inside second useEffect return')
-//       if (interval !== null) {
-//         console.log('inside second useEffect return and interval is not null')
-//         clearInterval(interval)
-//       }
-//     }
-//   }, [refreshTokenExists, refreshToken, queryMe])
-
-//   if (
-//     errorRefreshToken ||
-//     errorDeleteToken ||
-//     errorDeleteRefreshToken ||
-//     errorQueryMe) {
-//     return (
-//       <>
-//         <Header
-//           username={username}
-//           handleLogout={handleLogout}
-//           avatar={avatar}
-//           isAuthenticated={isAuthenticated} />
-//         <Error />
-//       </>
-//     )
-//   }
-
-//   function handleLogout() {
-//     deleteToken()
-//     deleteRefreshToken()
-//     localStorage.removeItem('refreshToken')
-//     setIsAuthenticated(false)
-//     setRefreshTokenExists(null)
-//     client.resetStore()
-//   }
-
-//   function handleAlert(text, style) {
-//     setTextAlert(text)
-//     setStyleAlert(style)
-//     setShowAlert(true)
-//     setTimeout(() => {
-//       setShowAlert(false)
-//     }, 5000);
-//   }
-
-//console.log('Render App Component,', 'refreshTokenExists:', refreshTokenExists, ', isAuthenticated:', isAuthenticated)
-
-//   return (
-//     <IsAuthContext.Provider value={isAuthenticated} >
-//       <UsernameContext.Provider value={username} >
-//         <Header
-//           avatar={avatar}
-//           handleLogout={handleLogout}
-//           handleAlert={handleAlert}
-//           secondaryEmail={secondaryEmail}
-//         />
-//         <Container className='px-2'>
-//           {showAlert ?
-//             <Alert 
-//               className='marginx-8px' 
-//               style={{ 'borderRadius': '0%' }} 
-//               key={styleAlert} 
-//               variant={styleAlert}>
-//               {textAlert}
-//             </Alert> :
-//             <></>}
-//           <RoutesComponent
-//             handleLogout={handleLogout}
-//             handleAlert={handleAlert}
-//             setIsAuthenticated={setIsAuthenticated}
-//             setRefreshTokenExists={setRefreshTokenExists}
-//             verified={verified}
-//             email={email}
-//             secondaryEmail={secondaryEmail}
-//           />
-//         </Container>
-//       </UsernameContext.Provider>
-//     </IsAuthContext.Provider>
-//   )
-// }
 export function App({ client }) {
   const [showAlert, setShowAlert] = useState(false)
   const [textAlert, setTextAlert] = useState('')
@@ -180,7 +34,7 @@ export function App({ client }) {
     useMutation(REFRESH_TOKEN, {
       errorPolicy: 'ignore',
       onCompleted: (data) => {
-        console.log('REFRESH TOKEN completed, data.refreshToken:', data.refreshToken)
+        // console.log('REFRESH TOKEN completed, data.refreshToken:', data.refreshToken)
         if (data.refreshToken === null) {
           setIsAuthenticated(false)
         } else {
@@ -195,9 +49,8 @@ export function App({ client }) {
   const [queryMe, { error: errorQueryMe }] =
     useLazyQuery(QUERY_ME,
       {
-        fetchPolicy: 'cache-and-network',
         onCompleted: (data) => {
-          console.log('QUERY ME completed, data.me:', data.me)
+          // console.log('QUERY ME completed, data.me:', data.me)
           const me = data.me
           if (me !== null) {
             setUsername(me.username)
@@ -210,27 +63,22 @@ export function App({ client }) {
       }
     )
   useEffect(() => {
-    console.log('The first useEffect')
-    // async function getDataOnMount() {
-    //   await refreshToken()
-    //   queryMe()
-    //   }
-    // getDataOnMount()
+    // console.log('The first useEffect')
     refreshToken()
   },[refreshToken])
   
   useEffect(() => {
-    console.log('The second useEffect')
+    // console.log('The second useEffect')
     function intervalFunction() {
-      console.log('inside intervalFunction')
+      // console.log('inside intervalFunction')
       refreshToken()
     }
     const interval = isAuthenticated ?
-      setInterval(intervalFunction, 7000) : null
+      setInterval(intervalFunction, 50000) : null
     return () => {
-      console.log('inside second useEffect return')
+      // console.log('inside second useEffect return')
       if (interval !== null) {
-        console.log('inside second useEffect return and interval is not null')
+        // console.log('inside second useEffect return and interval is not null')
         clearInterval(interval)
       }
     }
@@ -294,8 +142,8 @@ export function App({ client }) {
           <RoutesComponent
             handleLogout={handleLogout}
             handleAlert={handleAlert}
-            setIsAuthenticated={setIsAuthenticated}
             verified={verified}
+            setIsAuthenticated={setIsAuthenticated}
             email={email}
             queryMe={queryMe}
             secondaryEmail={secondaryEmail}

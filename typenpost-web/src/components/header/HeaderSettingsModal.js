@@ -59,6 +59,7 @@ export function HeaderSettingsModal({
                             as={Link}
                             onClick={handleCloseSettingsModal}
                             to='/add_email'
+                            state={pathname}
                             action>
                             <div className='centered-label'>
                                 &nbsp;&nbsp;<IoMdAddCircle />

@@ -60,7 +60,7 @@ export function VerifyAccount(props) {
             <Col md={6} className='my-auto mx-auto text-center'>
                 <h1>Confirm E-mail Address</h1>
                 <p>Please confirm that this is your email address.</p>
-                <Button variant='success' onClick={handleClickBtn}>
+                <Button className='mb-3' variant='success' onClick={handleClickBtn}>
                     Confirm
                 </Button>
             </Col>

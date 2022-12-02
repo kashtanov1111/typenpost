@@ -240,8 +240,8 @@ GRAPHQL_JWT = {
     ],
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-    "JWT_EXPIRATION_DELTA": timedelta(seconds=10),
-    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(seconds=30),
+    "JWT_EXPIRATION_DELTA": timedelta(seconds=60),
+    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=7),
     "JWT_COOKIE_SECURE": env.bool('JWT_COOKIE_SECURE', default=True),
     "JWT_COOKIE_SAMESITE": (None if env('JWT_COOKIE_SAMESITE', default=False) else 'Lax')
 }
