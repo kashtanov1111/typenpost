@@ -56,8 +56,8 @@ export function UserProfileTop(props) {
             <Col md xs={12}>
                 <Row>
                     <Col xs={8} md={8} className='me-auto pe-0'>
-                        {(loadingUserProfile || userData.user.firstName || 
-                            userData.user.lastName) && 
+                        {(loadingUserProfile || userData && userData.user.firstName || 
+                            userData && userData.user.lastName) && 
                         <Placeholder as='h4' animation='glow' 
                             className='mb-0'>
                             {loadingUserProfile ? 
@@ -65,14 +65,14 @@ export function UserProfileTop(props) {
                                 <Placeholder xs={2} bg='secondary'/>{' '}
                                 <Placeholder xs={4} bg='secondary'/>
                             </> : 
-                            userData.user.firstName + ' ' + 
-                            userData.user.lastName}
+                            userData && userData.user.firstName + ' ' + 
+                            userData && userData.user.lastName}
                         </Placeholder>}
                         <Placeholder as='p' animation='glow' 
                             className='text-muted mt-0 mb-1'>
                             {loadingUserProfile ? 
                             <Placeholder xs={3} bg='secondary'/> :
-                            '@' + userData.user.username}
+                            '@' + userData && userData.user.username}
                         </Placeholder>
                     </Col>
                     {isAuthenticated &&
@@ -82,7 +82,7 @@ export function UserProfileTop(props) {
                             variant='outline-dark'
                             as={Link}
                             to='/profile/edit'
-                            state={userData}>Edit profile
+                            state={userData && userData}>Edit profile
                         </Button> : 
                         <>
                         {amIFollowing ? 
@@ -129,7 +129,7 @@ export function UserProfileTop(props) {
                     <Placeholder as='b' animation='glow'>
                         {loadingUserProfile ? 
                         <Placeholder xs={1} bg='secondary'/> :
-                        userData.user.profile.numberOfFollowing}
+                        userData && userData.user.profile.numberOfFollowing}
                     </Placeholder>
                     <Link to='following' className='follow-text-profile'>
                     &nbsp;Following&nbsp;&nbsp;
@@ -137,13 +137,13 @@ export function UserProfileTop(props) {
                     <Placeholder as='b' animation='glow'>
                         {loadingUserProfile ? 
                         <Placeholder xs={1} bg='secondary'/>:
-                        userData.user.profile.numberOfFollowers}
+                        userData && userData.user.profile.numberOfFollowers}
                     </Placeholder>
                     <Link to='followers' className='follow-text-profile'> 
                     &nbsp;Followers
                     </Link>
                 </p>
-                {(loadingUserProfile || userData.user.profile.about) && 
+                {(loadingUserProfile || (userData && userData.user.profile.about)) && 
                 <Placeholder as='p' className='mb-2' animation='glow'>
                     {loadingUserProfile ? 
                     <>
@@ -161,24 +161,25 @@ export function UserProfileTop(props) {
                     Joined:{' '}
                     {loadingUserProfile ? 
                     <Placeholder xs={2} bg='secondary'/> :
-                    format(parseISO(userData.user.dateJoined), 
+                    format(parseISO(userData && userData.user.dateJoined), 
                         'MMMM d, yyyy')}
                 </Placeholder>
                 {isMyProfile && 
                     <>
                     <div>
-                    <a
+                    <div
                     onClick={() => setShowMore(prev => !prev)}
-                    style={{'cursor': 'pointer'}}>
+                    style={{cursor: 'pointer'}}
+                    >
                     <div className='centered-label follow-text-profile'>
                     {!showMore && <>More...</>} 
                     </div>
-                    </a>
+                    </div>
                     </div>
                     {showMore ? 
                     <>
                     <p className='mb-1 text-muted'>
-                        Email: {userData.user.email}
+                        Email: {userData && userData.user.email}
                     </p>
                     {userData && userData.user.secondaryEmail &&
                     <p animation='glow' className='mb-1 text-muted'>

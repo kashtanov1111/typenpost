@@ -21,7 +21,6 @@ export function App({ client }) {
   const [avatar, setAvatar] = useState('')
   const [email, setEmail] = useState('')
   const [secondaryEmail, setSecondaryEmail] = useState('')
-  const [verified, setVerified] = useState(false)
   const [username, setUsername] = useState('')
 
   const [isAuthenticated, setIsAuthenticated] = useState(null)
@@ -51,13 +50,12 @@ export function App({ client }) {
       {
         fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
-          console.log('QUERY ME completed, data.me:', data.me)
+          // console.log('QUERY ME completed, data.me:', data.me)
           const me = data.me
           if (me !== null) {
             setUsername(me.username)
             setAvatar(me.profile.avatar)
             setEmail(me.email)
-            setVerified(me.verified)
             if (me.secondaryEmail === null) {
               setSecondaryEmail(false)
             } else {
@@ -111,6 +109,10 @@ export function App({ client }) {
     deleteRefreshToken()
     localStorage.removeItem('refreshToken')
     setIsAuthenticated(false)
+    setUsername('')
+    setAvatar('')
+    setEmail('')
+    setSecondaryEmail('')
     client.resetStore()
   }
 
@@ -122,7 +124,7 @@ export function App({ client }) {
       setShowAlert(false)
     }, 5000);
   }
-console.log('Render App Component,', ', isAuthenticated:', isAuthenticated, 'secondaryEmail', secondaryEmail)
+console.log('Render App Component,', ', isAuthenticated:', isAuthenticated)
 
   return (
     <IsAuthContext.Provider value={isAuthenticated} >
@@ -146,7 +148,6 @@ console.log('Render App Component,', ', isAuthenticated:', isAuthenticated, 'sec
           <RoutesComponent
             handleLogout={handleLogout}
             handleAlert={handleAlert}
-            verified={verified}
             setIsAuthenticated={setIsAuthenticated}
             email={email}
             queryMe={queryMe}
