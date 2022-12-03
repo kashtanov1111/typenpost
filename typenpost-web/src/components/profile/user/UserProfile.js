@@ -10,7 +10,6 @@ import Lightbox from 'react-image-lightbox'
 import { UserProfileTop } from './UserProfileTop';
 import { PostCard } from '../../post/card/PostCard';
 
-import { experimental_useEvent as useEvent } from 'react';
 import { 
     UsernameContext, 
     IsAuthContext } from '../../../context/LoginContext';

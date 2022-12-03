@@ -34,7 +34,7 @@ export function App({ client }) {
     useMutation(REFRESH_TOKEN, {
       errorPolicy: 'ignore',
       onCompleted: (data) => {
-        // console.log('REFRESH TOKEN completed, data.refreshToken:', data.refreshToken)
+        //console.log('REFRESH TOKEN completed, data.refreshToken:', data.refreshToken)
         if (data.refreshToken === null) {
           setIsAuthenticated(false)
         } else {
@@ -51,40 +51,44 @@ export function App({ client }) {
       {
         fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
-          // console.log('QUERY ME completed, data.me:', data.me)
+          console.log('QUERY ME completed, data.me:', data.me)
           const me = data.me
           if (me !== null) {
             setUsername(me.username)
             setAvatar(me.profile.avatar)
             setEmail(me.email)
             setVerified(me.verified)
-            setSecondaryEmail(me.secondaryEmail)
+            if (me.secondaryEmail === null) {
+              setSecondaryEmail(false)
+            } else {
+              setSecondaryEmail(me.secondaryEmail)
+            }
           }
         }
       }
     )
   useEffect(() => {
-    // console.log('The first useEffect')
+    //console.log('The first useEffect')
     refreshToken()
   }, [refreshToken])
 
   useEffect(() => {
-    // console.log('The second useEffect')
+    //console.log('The second useEffect')
     function intervalFunction() {
-      // console.log('inside intervalFunction')
+      //console.log('inside intervalFunction')
       refreshToken()
     }
     const interval = isAuthenticated ?
       setInterval(intervalFunction, 50000) : null
     return () => {
-      // console.log('inside second useEffect return')
+      //console.log('inside second useEffect return')
       if (interval !== null) {
-        // console.log('inside second useEffect return and interval is not null')
+        //console.log('inside second useEffect return and interval is not null')
         clearInterval(interval)
       }
     }
   }, [isAuthenticated, refreshToken, queryMe])
-  // console.log('username', username)
+  //console.log('username', username)
   if (
     errorRefreshToken ||
     errorDeleteToken ||
@@ -118,7 +122,7 @@ export function App({ client }) {
       setShowAlert(false)
     }, 5000);
   }
-  console.log('Render App Component,', ', isAuthenticated:', isAuthenticated)
+console.log('Render App Component,', ', isAuthenticated:', isAuthenticated, 'secondaryEmail', secondaryEmail)
 
   return (
     <IsAuthContext.Provider value={isAuthenticated} >

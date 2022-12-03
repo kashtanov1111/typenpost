@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext } from "react"
 import { useMutation } from "@apollo/client"
 import { useParams, useNavigate } from "react-router-dom"
 import { useTitle } from '../../customHooks/hooks'
@@ -9,32 +9,29 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import { Loader } from "../Loader"
-import { VERIFY_ACCOUNT } from "../../gqls/mutations"
+import { VERIFY_SECONDARY_EMAIL } from "../../gqls/mutations"
 import { IsAuthContext } from "../../context/LoginContext"
 import { SpinnerForButton } from "../SpinnerForButton"
 
-export function VerifyAccount({ handleAlert }) {
+export function VerifySecondaryEmail({ handleAlert, queryMe }) {
     const isAuthenticated = useContext(IsAuthContext)
     const params = useParams()
     const token = params.confirmationToken
     const navigate = useNavigate()
     useTitle('Typenpost - Verify Account')
 
-    const [verifyAccount, { loading, error }] = useMutation(VERIFY_ACCOUNT, {
+    const [verifySecondaryEmail, { loading, error }] = useMutation(VERIFY_SECONDARY_EMAIL, {
         variables: { token: token },
         onCompleted: (data) => {
-            if (data.verifyAccount.success) {
-                handleAlert('Your account has been verified.', 'success')
-                navigate('../login', { replace: true })
+            if (data.verifySecondaryEmail.success) {
+                handleAlert('Your email has been verified.', 'success')
+                navigate('../', { replace: true })
+                if (isAuthenticated === true) {
+                    queryMe()
+                }
             }
         }
     })
-
-    useEffect(() => {
-        if (isAuthenticated === true) {
-            navigate('../', { replace: true })
-        }
-    }, [isAuthenticated, navigate])
 
     if (error) {
         return <Error />
@@ -52,7 +49,7 @@ export function VerifyAccount({ handleAlert }) {
                 <Button
                     className='mb-3'
                     variant='success'
-                    onClick={verifyAccount}>
+                    onClick={verifySecondaryEmail}>
                     {loading ?
                         <SpinnerForButton /> :
                         <>Confirm</>}

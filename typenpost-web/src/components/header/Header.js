@@ -61,12 +61,12 @@ export function Header(props) {
           <Navbar.Brand as={Link} to='/' className='me-2'>
             <ProgressiveImage
               src={createImageSrcUrl(long_logo)}
-              placeholder={createImagePlaceholderUrl(long_logo, '20x20')}>
+              placeholder={createImagePlaceholderUrl(long_logo, '60x60')}>
               {(src, loading) =>
                 <img
                   style={{
-                    filter: loading && 'blur(8px}',
-                    'WebkitFilter': loading && 'blur(8px)'
+                    filter: loading && 'blur(1px}',
+                    'WebkitFilter': loading && 'blur(1px)'
                   }}
                   height='40px'
                   onClick={() => setExpanded(false)}
@@ -95,15 +95,15 @@ export function Header(props) {
                 aria-label="Search"
               />
             </Form>
-            {!(isAuthenticated === false) ?
+            {(isAuthenticated === true) &&
               <HeaderDropdown
                 avatar={avatar}
                 setExpanded={setExpanded}
                 handleShowSettingsModal={handleShowSettingsModal}
                 pathname={pathname}
                 handleShowLogoutModal={handleShowLogoutModal}
-              />
-              :
+              />}
+            {(isAuthenticated === false) &&
               <div className='mb-md-0 mb-2'>
                 <Button
                   as={Link}

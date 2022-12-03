@@ -4,7 +4,7 @@ import nobody from '../../assets/images/nobody.jpg'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { CustomToggle } from '../../CustomToggle'
 import ProgressiveImage from 'react-progressive-graceful-image'
-import {createImagePlaceholderUrl} from '../../functions/functions'
+import { createImagePlaceholderUrl } from '../../functions/functions'
 import { UsernameContext } from "../../context/LoginContext";
 
 export function HeaderDropdown({
@@ -25,12 +25,12 @@ export function HeaderDropdown({
                     <ProgressiveImage
                         src={avatar ? avatar : nobody}
                         placeholder={avatar ?
-                            createImagePlaceholderUrl(avatar, '16x16') : nobody}>
+                            createImagePlaceholderUrl(avatar, '50x50') : nobody}>
                         {(src, loading) =>
                             <img
                                 style={{
-                                    filter: loading && 'blur(8px}',
-                                    'WebkitFilter': loading && 'blur(8px)'
+                                    filter: loading && 'blur(1px}',
+                                    'WebkitFilter': loading && 'blur(1px)'
                                 }}
                                 height='32'
                                 width='32'

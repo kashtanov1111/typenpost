@@ -17,6 +17,8 @@ from environs import Env
 env = Env()
 env.read_env()
 
+is_production = False
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,9 +32,15 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
-ALLOWED_HOSTS = [
-    '.herokuapp.com', 'localhost', '127.0.0.1', '.typenpost.com',
-    'testserver']
+if is_production:
+    ALLOWED_HOSTS = ['.herokuapp.com', '.typenpost.com']
+else:
+    ALLOWED_HOSTS = [
+        '.herokuapp.com', 
+        'localhost', 
+        '127.0.0.1', 
+        '.typenpost.com',
+        'testserver']
 
 # Application definition
 
@@ -213,10 +221,13 @@ django.utils.translation.ugettext = gettext
 django.utils.translation.ugettext_lazy = gettext_lazy
 
 CORS_ORIGIN_ALLOW_ALL=False
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000', #remove in production
-    'https://www.typenpost.com'
-]
+if is_production:
+    CORS_ORIGIN_WHITELIST = ['https://www.typenpost.com',]
+else:
+    CORS_ORIGIN_WHITELIST = [
+        'http://localhost:3000',
+        'https://www.typenpost.com'
+    ]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -247,6 +258,7 @@ GRAPHQL_JWT = {
 }
 GRAPHQL_AUTH = {
     'ALLOW_LOGIN_NOT_VERIFIED': False,
+    'ACTIVATION_SECONDARY_EMAIL_PATH_ON_EMAIL' : 'activate2email',
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -11,6 +11,7 @@ import { PasswordReset } from './auth/PasswordReset';
 import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
 import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
 import { RemoveSecondaryEmail } from './auth/RemoveSecondaryEmail';
+import { VerifySecondaryEmail } from './auth/VerifySecondaryEmail';
 import { ArchiveAccount } from './auth/ArchiveAccount';
 import { SwapEmails } from './auth/SwapEmails';
 import { UserProfile } from './profile/user/UserProfile';
@@ -25,7 +26,6 @@ import { TestTest } from './TestTest';
 export function RoutesComponent({
   handleLogout,
   handleAlert,
-  verified,
   email,
   secondaryEmail,
   setIsAuthenticated,
@@ -49,8 +49,11 @@ export function RoutesComponent({
       <Route path='posts/:postId' element={<PostDetail />} />
       <Route
         path='/activate/:confirmationToken'
-        element={<VerifyAccount
-          verified={verified}
+        element={<VerifyAccount handleAlert={handleAlert} />} />
+      <Route
+        path='/activate2email/:confirmationToken'
+        element={<VerifySecondaryEmail
+          queryMe={queryMe}
           handleAlert={handleAlert} />} />
       <Route
         path='/password-reset/:confirmationToken'
@@ -103,6 +106,7 @@ export function RoutesComponent({
       <Route
         path='/remove_secondary_email'
         element={<RemoveSecondaryEmail
+          queryMe={queryMe}
           handleAlert={handleAlert}
           secondaryEmail={secondaryEmail}
         />} />

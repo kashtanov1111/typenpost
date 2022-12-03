@@ -38,7 +38,7 @@ export function Login({handleAlert, queryMe, setIsAuthenticated }) {
                     // console.log('LOGIN MUTATION completed and succeed')
                     handleAlert(
                         'Successfully signed in as ' +
-                        formState.usernameOrEmail, 'success')
+                        formState.usernameOrEmail.toLowerCase(), 'success')
                     if (location.state) {
                         if (
                             location.state.startsWith('/login') ||

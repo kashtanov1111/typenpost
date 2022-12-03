@@ -71,7 +71,7 @@ export function HeaderSettingsModal({
                             onClick={handleCloseSettingsModal}
                             to='/swap_emails'
                             state={pathname}
-                            disabled={secondaryEmail ? false : true}
+                            disabled={secondaryEmail === false ? true : false}
                             action>
                             <div className='centered-label'>
                                 &nbsp;&nbsp;<IoMdSwap />
@@ -83,7 +83,7 @@ export function HeaderSettingsModal({
                             as={Link}
                             onClick={handleCloseSettingsModal}
                             to='/remove_secondary_email'
-                            disabled={secondaryEmail ? false : true}
+                            disabled={secondaryEmail === false ? true : false}
                             state={pathname}
                             action>
                             <div className='centered-label'>

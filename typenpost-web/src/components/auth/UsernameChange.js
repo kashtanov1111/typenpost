@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useContext} from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { useMutation } from "@apollo/client"
-import { useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import { useTitle } from '../../customHooks/hooks'
 
@@ -11,42 +11,46 @@ import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import Spinner from 'react-bootstrap/Spinner'
+import { SpinnerForButton } from "../SpinnerForButton"
+import { Loader } from "../Loader"
 
 import { USERNAME_CHANGE } from "../../gqls/mutations"
 import { IsAuthContext } from "../../context/LoginContext"
 
-export function UsernameChange(props) {
-    const {handleAlert, handleLogout} = props
+export function UsernameChange({ handleAlert, handleLogout }) {
     const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
-    useTitle('Typenpost - Username Change')
-    
+    useTitle('Typenpost - Change Username')
+
     const [newUsername, setNewUsername] = useState('')
-                                                
+
     const [handleUsernameChange, { data, loading, error }] = useMutation(
         USERNAME_CHANGE, {
-        variables: { username: newUsername },
+        variables: { username: newUsername.toLowerCase() },
         onCompleted: async (data) => {
-                if (data.usernameChange.success) {
-                    handleAlert(
-                        'Your username has been changed. Please log in.', 
-                        'success')
-                    await handleLogout()
-                    navigate('../login', {replace: true})
-                }
+            if (data.usernameChange.success) {
+                handleAlert(
+                    'Your username has been changed. Please log in.',
+                    'success')
+                await handleLogout()
+                navigate('../login', { replace: true })
             }
         }
+    }
     )
 
+    const usernameError = data &&
+        data.usernameChange.errors &&
+        data.usernameChange.errors.username
+    console.log('usernameError', usernameError)
     useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('../login', {replace: true, state: '/username_change'})
+        if (isAuthenticated === false) {
+            navigate('../login', { replace: true, state: '/username_change' })
         }
-    }, [isAuthenticated])
+    }, [isAuthenticated, navigate])
 
     function handleUsernameType(e) {
-        const reg = /^[a-z0-9._]*$/
+        const reg = /^[A-Za-z0-9._]*$/
         if (reg.test(e.target.value)) {
             setNewUsername(e.target.value)
         }
@@ -55,67 +59,54 @@ export function UsernameChange(props) {
     if (error) {
         return <Error />
     }
-    
+
+    if (isAuthenticated === null) {
+        return <Loader />
+    }
+
     return (
         <Row>
             <Col md={6} className='mx-auto'>
-                <h1 className='text-center mb-3'>Change Username</h1>
+                <h1 className='text-center mt-2 mb-3'>Change Username</h1>
                 <Form onSubmit={(event) => {
                     event.preventDefault()
                     handleUsernameChange()
                 }}>
-                <Form.Group className='mb-2'>
-                    <FloatingLabel
-                        label='Username'
-                        controlId='floatingUsername'
-                    >
-                        <Form.Control 
-                            type="text"
-                            maxLength={20}
-                            isInvalid={data && 
-                                data.usernameChange.errors.username}
-                            isValid={data && 
-                                !data.usernameChange.errors.username}
-                            value={newUsername}
-                            onChange={(e) =>
-                                handleUsernameType(e)
-                            }
-                            placeholder='Username'
-                            required
-                        />    
-                        <Form.Control.Feedback>
-                            Looks good!
-                        </Form.Control.Feedback>
-                        {data && 
-                        data.usernameChange.errors.username &&
-                        data.usernameChange.errors.username.map(
-                            (el) => (
-                                <Form.Control.Feedback
-                                    key={el.message} type='invalid'>
-                                        {el}
+                    <Form.Group className='mb-3'>
+                        <FloatingLabel
+                            label='Username'
+                            controlId='floatingUsername'
+                        >
+                            <Form.Control
+                                type="text"
+                                maxLength={20}
+                                isInvalid={usernameError}
+                                value={newUsername}
+                                onChange={(e) =>
+                                    handleUsernameType(e)
+                                }
+                                disabled={loading}
+                                placeholder='Username'
+                                required
+                            />
+                            {usernameError &&
+                                <Form.Control.Feedback type='invalid'>
+                                    {usernameError[0]}
                                 </Form.Control.Feedback>
-                            )
-                        )}
-                    </FloatingLabel>
-                </Form.Group>
-                <Button 
-                    variant='primary' 
-                    className='login-signup-button py-2 col-12 mb-2' 
-                    type='submit'
-                    disabled={!newUsername}
-                                >
-                    {loading ? 
-                    <div><Spinner
-                        as='span'
-                        animation='border'
-                        size='sm'
-                        role='status'
-                        aria-hidden='true' />
-                    <span className='visually-hidden'>Loading...</span>
-                    </div> :
-                    <b>Save</b>
-                    }
-                </Button>
+                            }
+                        </FloatingLabel>
+                    </Form.Group>
+                    <Button
+                        variant='primary'
+                        className='login-signup-button py-2 col-12 mb-2'
+                        type='submit'
+                        disabled={!newUsername || loading}
+                    >
+                        {loading ?
+                            <SpinnerForButton /> :
+                            <b>Save</b>
+                        }
+                    </Button>
                 </Form>
             </Col>
         </Row>
