@@ -41,6 +41,7 @@ class CustomUser(AbstractUser):
     )
     first_name = models.CharField(_("first name"), max_length=30, blank=True)
     last_name = models.CharField(_("last name"), max_length=40, blank=True)
+    name = models.CharField(max_length=55, blank=True, null=True)
 
 
 class Follow(models.Model):

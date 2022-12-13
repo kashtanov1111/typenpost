@@ -53,22 +53,26 @@ class AuthMutation(graphene.ObjectType):
 
 class FollowingUser(graphene.Mutation):
     success = graphene.Boolean()
+    action = graphene.String()
 
     class Arguments:
         username = graphene.String(required=True)
 
     @login_required
     def mutate(root, info, username):
+        action = ''
         from_user = info.context.user
         from_user_profile = from_user.profile
         to_user = CustomUser.objects.get(username=username)
         to_user_followers = to_user.profile.followers
         if to_user_followers.filter(user=from_user).exists():
             to_user_followers.remove(from_user_profile)
+            action = 'unfollowed'
         else:
             to_user_followers.add(from_user_profile)
+            action = 'followed'
         to_user.save()
-        return FollowingUser(success=True)
+        return FollowingUser(success=True, action=action)
 
 class ErrorType(graphene.Scalar):
     @staticmethod
