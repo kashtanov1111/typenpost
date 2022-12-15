@@ -134,7 +134,7 @@ export function UserProfile({handleAlert}) {
                 className="me-2">
                 1 user
             </Button> */}
-                <LogoBanner />
+                <LogoBanner extraClass='banner-user-profile'/>
                 <UserProfileTop
                     setIsImageOpen={setIsImageOpen}
                     loadingUserProfile={loadingUserProfile}

@@ -279,6 +279,10 @@ p {
 
 /* || USER HEADER */
 
+.user-header-lg {
+  display: none;
+}
+
 .user-header {
   display: flex;
   flex-wrap: wrap;
@@ -298,7 +302,7 @@ p {
   border-radius: 50%;
 }
 
-.user-header-top-left {
+.user-header-stats {
   text-align: center;
   flex: 75%;
   display: flex;
@@ -333,6 +337,10 @@ p {
   width: 100%;
   display: flex;
   justify-content: space-between;
+}
+
+.user-header__date-joined {
+  width: 100%;
 }
 
 .user-header__buttons button {
@@ -424,6 +432,42 @@ p {
     width: 75%;
     max-width: 10em;
   }
+
+  /* || USER HEADER */
+
+  .user-header {
+    display: none;
+  }
+
+  .user-header-lg {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .user-header-stats {
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+
+  .user-header-lg__top-right {
+    flex: 75%;
+    padding-left: 1rem;
+  }
+
+  .user-header-lg-top-right__first-line {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .user-header__avatar img {
+    width: 8rem;
+    height: 8rem;
+  }
+
+  .user-header-lg__edit-button {
+    max-width: 7rem;
+  }
+  
 }
 
 /* || MEDIUM */
@@ -447,10 +491,6 @@ p {
   .header-auth__nav {
     padding-left: 3vw;
   }
-
-  /* .header-auth__ul li:first-child {
-    position: relative;
-  } */
 
   .header-auth__first-image {
     display: none;
@@ -489,5 +529,20 @@ p {
   .header-unauth__btns {
     flex-direction: row;
     justify-content: flex-end;
+  }
+
+  /* || USER PROFILE */
+  
+  .banner-user-profile {
+    display: none;
+  }
+
+  .user-header-lg {
+    margin-top: 1.75rem;
+  }
+
+  .user-header__avatar img {
+    height: 10rem;
+    width: 10rem;
   }
 }
