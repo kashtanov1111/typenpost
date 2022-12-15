@@ -2,6 +2,8 @@ import long_logo from '../assets/images/long_logo.jpg'
 
 import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
+import Button from 'react-bootstrap/Button'
+import Container from 'react-bootstrap/Container'
 import { IsAuthContext, UsernameContext } from '../context/LoginContext'
 import { Loader } from './Loader'
 export function TestTest({ handleLogout }) {
@@ -30,6 +32,7 @@ export function TestTest({ handleLogout }) {
             <button onClick={() => {
                 return setCount(count + 1)
             }}>{count}</button>
+            <Button>asdf</Button>
             </>
     )
 }

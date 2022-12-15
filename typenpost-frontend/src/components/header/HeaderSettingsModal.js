@@ -3,19 +3,22 @@ import { Link } from 'react-router-dom'
 import Accordion from 'react-bootstrap/Accordion'
 import Modal from 'react-bootstrap/Modal'
 import ListGroup from 'react-bootstrap/ListGroup'
-import { RiLockPasswordFill } from 'react-icons/ri'
-import { BiRename } from 'react-icons/bi'
-import { IoMdAddCircle } from 'react-icons/io'
-import { IoMdSwap } from 'react-icons/io'
-import { AiFillDelete } from 'react-icons/ai'
-import { MdEmail } from 'react-icons/md'
+import cursor_text from '../../assets/images/cursor-text.svg'
+import fingerprint from '../../assets/images/fingerprint.svg'
+import envelope from '../../assets/images/envelope.svg'
+import trash3 from '../../assets/images/trash3.svg'
 
 export function HeaderSettingsModal({
     showSettingsModal,
-    handleCloseSettingsModal,
+    setShowSettingsModal,
     pathname,
     secondaryEmail,
 }) {
+
+    function handleCloseSettingsModal() {
+        setShowSettingsModal(false)
+    }
+
     return (
         <Modal
             size='sm'
@@ -34,8 +37,9 @@ export function HeaderSettingsModal({
                     as={Link}
                     onClick={handleCloseSettingsModal}
                     to='/password_change'>
-                    <div className='centered-label'>
-                        <RiLockPasswordFill />&nbsp;Change password
+                    <div className='listgroupitem-settings-modal'>
+                        <img src={fingerprint} alt="" width='20' height='20' />
+                        <span>Change password</span>
                     </div>
                 </ListGroup.Item>
                 <ListGroup.Item
@@ -43,14 +47,16 @@ export function HeaderSettingsModal({
                     as={Link}
                     onClick={handleCloseSettingsModal}
                     to='/username_change'>
-                    <div className='centered-label'>
-                        <BiRename />&nbsp;Change username
+                    <div className='listgroupitem-settings-modal'>
+                        <img src={cursor_text} alt="" width='20' height='20' />
+                        <span>Change username</span>
                     </div>
                 </ListGroup.Item>
-                <Accordion.Item className="only-top-border" eventKey='0'>
-                    <Accordion.Header className='innerBtn'>
-                        <div className='centered-label'>
-                            <MdEmail />&nbsp;Change email
+                <Accordion.Item className="no-top-border" eventKey='0'>
+                    <Accordion.Header>
+                        <div className='listgroupitem-settings-modal'>
+                            <img src={envelope} alt="" width='20' height='20' />
+                            <span>Change email</span>
                         </div>
                     </Accordion.Header>
                     <Accordion.Body className='p-0'>
@@ -60,9 +66,8 @@ export function HeaderSettingsModal({
                             onClick={handleCloseSettingsModal}
                             to='/add_email'
                             action>
-                            <div className='centered-label'>
-                                &nbsp;&nbsp;<IoMdAddCircle />
-                                &nbsp;Set secondary email
+                            <div>
+                                Set secondary email
                             </div>
                         </ListGroup.Item>
                         <ListGroup.Item
@@ -73,9 +78,8 @@ export function HeaderSettingsModal({
                             state={pathname}
                             disabled={secondaryEmail === false ? true : false}
                             action>
-                            <div className='centered-label'>
-                                &nbsp;&nbsp;<IoMdSwap />
-                                &nbsp;Make secondary email primary
+                            <div>
+                                Make secondary email primary
                             </div>
                         </ListGroup.Item>
                         <ListGroup.Item
@@ -86,9 +90,8 @@ export function HeaderSettingsModal({
                             disabled={secondaryEmail === false ? true : false}
                             state={pathname}
                             action>
-                            <div className='centered-label'>
-                                &nbsp;&nbsp;<AiFillDelete />
-                                &nbsp;Remove secondary email
+                            <div>
+                                Remove secondary email
                             </div>
                         </ListGroup.Item>
                     </Accordion.Body>
@@ -99,8 +102,9 @@ export function HeaderSettingsModal({
                     to='/archive_account'
                     state={pathname}
                     action>
-                    <div className='centered-label'>
-                        <AiFillDelete />&nbsp;Archive account
+                    <div className='listgroupitem-settings-modal'>
+                        <img src={trash3} alt="" width='20' height='20' />
+                        <span>Archive account</span>
                     </div>
                 </ListGroup.Item>
             </ListGroup>

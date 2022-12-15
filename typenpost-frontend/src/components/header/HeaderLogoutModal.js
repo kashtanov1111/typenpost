@@ -5,11 +5,11 @@ import Modal from 'react-bootstrap/Modal'
 
 export function HeaderLogoutModal({
     showLogoutModal,
-    handleCloseLogoutModal,
+    setShowLogoutModal,
     handleLogoutButtonClicked
 }) {
     return (
-        <Modal show={showLogoutModal} onHide={handleCloseLogoutModal} centered>
+        <Modal show={showLogoutModal} onHide={() => setShowLogoutModal(false)} centered>
             <Modal.Header closeButton >
                 <Modal.Title>Log Out</Modal.Title>
             </Modal.Header>
@@ -17,7 +17,7 @@ export function HeaderLogoutModal({
             <Modal.Footer>
                 <Button
                     variant="outline-secondary"
-                    onClick={handleCloseLogoutModal} >
+                    onClick={() => setShowLogoutModal(false)} >
                     Close
                 </Button>
                 <Button

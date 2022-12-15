@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { NewHeader } from './header/NewHeader';
+import { Header } from './header/Header';
 import { Error } from './Error';
 import { RoutesComponent } from './Routes';
 import { QUERY_ME } from '../gqls/queries';
@@ -9,17 +9,20 @@ import {
   DELETE_REFRESH_TOKEN,
   DELETE_TOKEN
 } from '../gqls/mutations';
+import Container from 'react-bootstrap/Container'
 import {
   IsAuthContext,
   UsernameContext,
   IdContext,
   ProfileIdContext
 } from '../context/LoginContext'
-import { TestTest } from './TestTest';
-import { Alert } from './Alert';
+import { useLocation } from 'react-router-dom';
+import Alert from 'react-bootstrap/Alert'
 import { Loader } from './Loader';
 
 export function App({ client }) {
+  const location = useLocation()
+  const pathname = location.pathname
   const [showAlert, setShowAlert] = useState(false)
   const [textAlert, setTextAlert] = useState('')
   const [styleAlert, setStyleAlert] = useState('')
@@ -109,12 +112,17 @@ export function App({ client }) {
     errorQueryMe) {
     return (
       <>
-        <NewHeader
-          username={username}
-          handleLogout={handleLogout}
-          avatar={avatar}
-          isAuthenticated={isAuthenticated} />
-        <Error />
+        <div className='unauth'>
+          <main className='main'>
+            <Error />
+          </main>
+          <Header
+            avatar={avatar}
+            handleLogout={handleLogout}
+            handleAlert={handleAlert}
+            secondaryEmail={secondaryEmail}
+          />
+        </div>
       </>
     )
   }
@@ -141,9 +149,11 @@ export function App({ client }) {
   }
 
   if (isAuthenticated === null) {
-    return <Loader />
+    return (
+      <Loader />
+    )
   }
-  
+
   console.log('Render App Component,', ', isAuthenticated:', isAuthenticated)
 
   return (
@@ -151,25 +161,29 @@ export function App({ client }) {
       <UsernameContext.Provider value={username} >
         <IdContext.Provider value={authenticatedUserId} >
           <ProfileIdContext.Provider value={authenticatedUserProfileId} >
-            {showAlert ?
-              <Alert
-                key={styleAlert}
-                type={styleAlert}>
-                {textAlert}
-              </Alert> :
-              <></>}
             <div className={isAuthenticated === true ? 'auth' : 'unauth'}>
               <main className='main'>
-                <RoutesComponent
-                  handleLogout={handleLogout}
-                  handleAlert={handleAlert}
-                  setIsAuthenticated={setIsAuthenticated}
-                  email={email}
-                  queryMe={queryMe}
-                  secondaryEmail={secondaryEmail}
-                />
+                {showAlert ?
+                  <Alert
+                    className='marginx-8px'
+                    style={{ 'borderRadius': '0%' }}
+                    key={styleAlert}
+                    variant={styleAlert}>
+                    {textAlert}
+                  </Alert> :
+                  <></>}
+                <Container>
+                  <RoutesComponent
+                    handleLogout={handleLogout}
+                    handleAlert={handleAlert}
+                    setIsAuthenticated={setIsAuthenticated}
+                    email={email}
+                    queryMe={queryMe}
+                    secondaryEmail={secondaryEmail}
+                  />
+                </Container>
               </main>
-              <NewHeader
+              <Header
                 avatar={avatar}
                 handleLogout={handleLogout}
                 handleAlert={handleAlert}

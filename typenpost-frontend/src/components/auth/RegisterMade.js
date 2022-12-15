@@ -6,6 +6,7 @@ import { SpinnerForButton } from "../SpinnerForButton";
 import { RESEND_ACTIVATION_EMAIL } from "../../gqls/mutations";
 import { useMutation } from "@apollo/client";
 import { Error } from "../Error";
+import { LogoBanner } from "../LogoBanner";
 
 export function RegisterMade({
     formState,
@@ -34,6 +35,7 @@ export function RegisterMade({
     return (
         <Row>
             <Col md={8} className='mx-auto'>
+                <LogoBanner />
                 <h1 className='mt-2 mb-2'>Verify Your E-mail Address</h1>
                 <p>We have sent an e-mail to you for verification.
                     Follow the link provided to finalize the signup process.

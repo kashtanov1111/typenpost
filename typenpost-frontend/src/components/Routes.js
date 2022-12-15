@@ -1,25 +1,25 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-// import { CreatePost, PostDetail } from './post/Post';
+import { CreatePost, PostDetail } from './post/Post';
 import { Login } from './auth/Login';
-// import { Register } from './auth/Register';
-// import { PasswordChange } from './auth/PasswordChange';
-// import { UsernameChange } from './auth/UsernameChange';
-// import { VerifyAccount } from './auth/VerifyAccount';
-// import { PasswordReset } from './auth/PasswordReset';
-// import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
-// import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
-// import { RemoveSecondaryEmail } from './auth/RemoveSecondaryEmail';
-// import { VerifySecondaryEmail } from './auth/VerifySecondaryEmail';
-// import { ArchiveAccount } from './auth/ArchiveAccount';
-// import { SwapEmails } from './auth/SwapEmails';
-// import { UserProfile } from './profile/user/UserProfile';
+import { Register } from './auth/Register';
+import { PasswordChange } from './auth/PasswordChange';
+import { PasswordReset } from './auth/PasswordReset';
+import { UsernameChange } from './auth/UsernameChange';
+import { VerifyAccount } from './auth/VerifyAccount';
+import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
+import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
+import { RemoveSecondaryEmail } from './auth/RemoveSecondaryEmail';
+import { VerifySecondaryEmail } from './auth/VerifySecondaryEmail';
+import { ArchiveAccount } from './auth/ArchiveAccount';
+import { SwapEmails } from './auth/SwapEmails';
+import { UserProfile } from './profile/user/UserProfile';
 // import { EditProfile } from './profile/EditProfile';
 // import { Followers } from './profile/Followers';
 // import { Following } from './profile/Following';
 // import { FollowHeader } from './profile/FollowHeader';
-// import { Error } from './Error';
+import { Error } from './Error';
 import { TestTest } from './TestTest';
 
 
@@ -42,7 +42,7 @@ export function RoutesComponent({
           setIsAuthenticated={setIsAuthenticated}
           queryMe={queryMe}
         />} />
-      {/* <Route
+      <Route
         path='/register'
         element={<Register
           handleAlert={handleAlert} />} />
@@ -75,7 +75,7 @@ export function RoutesComponent({
       <Route
         path='/profile/:userUsername'
         element={<UserProfile handleAlert={handleAlert}/>} />
-      <Route
+      {/* <Route
         path='/profile/:userUsername'
         element={<FollowHeader />}
       >
@@ -85,12 +85,12 @@ export function RoutesComponent({
         <Route
           path='following'
           element={<Following />} />
-      </Route>
-      <Route
+      </Route> */}
+      {/* <Route
         path='/edit_profile'
         element={<EditProfile
           handleAlert={handleAlert}
-        />} />
+        />} /> */}
       <Route
         path='/add_email'
         element={<AddSecondaryEmail
@@ -117,12 +117,8 @@ export function RoutesComponent({
           handleLogout={handleLogout}
         />} />
       <Route
-        path='/testtest'
-        element={<TestTest
-        />} />
-      <Route
         path='*'
-        element={<Error description="The page doesn't exist." />} /> */}
+        element={<Error description="The page doesn't exist." />} />
     </Routes>
   )
 }
