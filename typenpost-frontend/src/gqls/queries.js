@@ -3,9 +3,23 @@ import { CORE_USER_FIELDS } from "./fragments"
 
 export const QUERY_ME = gql`
     ${CORE_USER_FIELDS}
-    query CheckIfUserIsAuthenticated {
+    query profoundUserQuery {
         me {
             ...CoreUserFields
+        }
+    }
+`
+
+export const QUERY_ME_FOR_EDIT_PROFILE = gql`
+    query userQueryForEditProfile {
+        me {
+            id
+            name
+            profile {
+                id
+                about
+                avatar
+            }
         }
     }
 `
@@ -18,6 +32,7 @@ export const USER_PROFILE = gql`
         user(username: $username) {
             ...CoreUserFields
             name
+            numberOfPosts
             dateJoined
             profile {
                 about
@@ -68,11 +83,11 @@ export const USER_FOLLOWERS = gql`
                             id
                             avatar
                             amIFollowing
+                            isHeFollowing
                             user {
                                 id
                                 username
-                                firstName
-                                lastName
+                                name
                             }
                         }
                         cursor
@@ -104,11 +119,11 @@ export const USER_FOLLOWING = gql`
                             id
                             avatar
                             amIFollowing
+                            isHeFollowing
                             user {
                                 id
                                 username
-                                firstName
-                                lastName
+                                name
                             }
                         }
                         cursor

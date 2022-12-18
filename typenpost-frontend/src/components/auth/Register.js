@@ -134,13 +134,15 @@ export function Register(props) {
 
                                 <Form.Control
                                     type="text"
-                                    isInvalid={usernameError}
+                                    isInvalid={
+                                        usernameError || 
+                                        formState.username.length > 20}
                                     isValid={data && !usernameError}
                                     value={formState.username}
                                     onChange={(e) =>
                                         handleUsernameChange(e)
                                     }
-                                    maxLength={20}
+                                    // maxLength={20}
                                     disabled={loading}
                                     placeholder='Username'
                                     required
@@ -153,6 +155,10 @@ export function Register(props) {
                                         {usernameError[0].message}
                                     </Form.Control.Feedback>
                                 }
+                                {formState.username.length > 20 &&
+                                    <Form.Control.Feedback type='invalid'>
+                                        Must not exceed 20 characters.
+                                    </Form.Control.Feedback>}
                             </FloatingLabel>
                         </Form.Group>
                         <Form.Group className='mb-2 show-password'>
@@ -176,7 +182,7 @@ export function Register(props) {
                                     placeholder='Password'
                                     required
                                 />
-                                <HideShowButton 
+                                <HideShowButton
                                     handleShowPassword={() => setShowPassword1(!showPassword1)}
                                     password={formState.password1}
                                     showPassword={showPassword1}
@@ -215,7 +221,7 @@ export function Register(props) {
                                     placeholder='Password (again)'
                                     required
                                 />
-                                <HideShowButton 
+                                <HideShowButton
                                     handleShowPassword={() => setShowPassword2(!showPassword2)}
                                     password={formState.password2}
                                     showPassword={showPassword2}
@@ -239,7 +245,8 @@ export function Register(props) {
                             disabled={!(formState.email &&
                                 formState.username &&
                                 formState.password1 &&
-                                formState.password2) || loading}
+                                formState.password2) || loading ||
+                                formState.username.length > 20}
                         >
                             {loading ?
                                 <SpinnerForButton /> :

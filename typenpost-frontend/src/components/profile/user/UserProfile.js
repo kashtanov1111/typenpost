@@ -1,7 +1,7 @@
 import nobody from '../../../assets/images/nobody.jpg'
 import white from '../../../assets/images/white.png'
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import { USER_PROFILE } from "../../../gqls/queries";
 import { Error } from "../../Error";
 import { useQuery } from "@apollo/client";
@@ -16,13 +16,17 @@ import {
     createImagePlaceholderUrl
 } from '../../../functions/functions';
 import { LogoBanner } from '../../LogoBanner';
+import { HeaderSettingsModal } from '../../header/HeaderSettingsModal';
+import ProgressiveImage from 'react-progressive-graceful-image';
+import { HeaderLogoutModal } from '../../header/HeaderLogoutModal';
 
-
-export function UserProfile({handleAlert}) {
+export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }) {
     console.log('User Profile render')
 
     const username = useContext(UsernameContext)
     const isAuthenticated = useContext(IsAuthContext)
+    const location = useLocation()
+    const pathname = location.pathname
     const params = useParams()
     const userUsername = params.userUsername
 
@@ -30,6 +34,9 @@ export function UserProfile({handleAlert}) {
     const [amIFollowing, setAmIFollowing] = useState(null)
     const [isHeFollowing, setIsHeFollowing] = useState(null)
     const [isImageOpen, setIsImageOpen] = useState(false)
+    const [showSettingsModal, setShowSettingsModal] = useState(false)
+    const [showLogoutModal, setShowLogoutModal] = useState(false)
+
     // const yearNow = new Date().getFullYear()
     var improvedUserData = null
     var placeholderProfileSrc = null
@@ -48,23 +55,24 @@ export function UserProfile({handleAlert}) {
         setIsMyProfile(false)
     }
 
-    const {data, loading: loadingUserProfile, error } = useQuery(USER_PROFILE, {
-            variables: { username: userUsername },
-            onCompleted: (data) => {
-                const amIFollowing = data.user.profile.amIFollowing
-                if (amIFollowing) {
-                    setAmIFollowing(true)
-                } else {
-                    setAmIFollowing(false)
-                }
-                const isHeFollowing = data.user.profile.isHeFollowing
-                if (isHeFollowing) {
-                    setIsHeFollowing(true)
-                } else {
-                    setIsHeFollowing(false)
-                }
-            },
-        })
+    const { data, loading: loadingUserProfile, error } = useQuery(USER_PROFILE, {
+        variables: { username: userUsername },
+        onCompleted: (data) => {
+            // console.log('Data from user profile', data)
+            const amIFollowing = data.user.profile.amIFollowing
+            if (amIFollowing) {
+                setAmIFollowing(true)
+            } else {
+                setAmIFollowing(false)
+            }
+            const isHeFollowing = data.user.profile.isHeFollowing
+            if (isHeFollowing) {
+                setIsHeFollowing(true)
+            } else {
+                setIsHeFollowing(false)
+            }
+        },
+    })
 
     useEffect(() => {
         if (isMyProfile === false) {
@@ -89,6 +97,7 @@ export function UserProfile({handleAlert}) {
                 about: user.profile.about,
                 numberOfFollowers: user.profile.numberOfFollowers,
                 numberOfFollowing: user.profile.numberOfFollowing,
+                numberOfPosts: user.numberOfPosts,
             }
         }
     }
@@ -96,7 +105,7 @@ export function UserProfile({handleAlert}) {
         placeholderProfileSrc = white
         avatarSrc = white
     } else {
-        if (improvedUserData.avatar === null ) {
+        if (improvedUserData.avatar === null) {
             placeholderProfileSrc = nobody
             avatarSrc = nobody
         } else {
@@ -106,39 +115,38 @@ export function UserProfile({handleAlert}) {
         }
     }
 
+    function handleLogoutButtonClicked() {
+        setShowLogoutModal(false)
+        handleLogout()
+        handleAlert('You have signed out.', 'success')
+    }
+
     if (error) {
         return <Error />
     }
 
     return (
         !isImageOpen ?
-        <>
-            {/* <Button
-                as={Link}
-                to='/profile/1kashtanov'
-                variant='outline-dark'
-                className="me-2">
-                1kashtanov
-            </Button>
-            <Button
-                as={Link}
-                to='/profile/0'
-                variant='outline-dark'
-                className="me-2">
-                0 user
-            </Button>
-            <Button
-                as={Link}
-                to='/profile/1'
-                variant='outline-dark'
-                className="me-2">
-                1 user
-            </Button> */}
-                <LogoBanner extraClass='banner-user-profile'/>
+            <>
+
+                <HeaderSettingsModal
+                    pathname={pathname}
+                    secondaryEmail={secondaryEmail}
+                    showSettingsModal={showSettingsModal}
+                    setShowSettingsModal={setShowSettingsModal}
+                    setShowLogoutModal={setShowLogoutModal}
+                />
+                <HeaderLogoutModal
+                    handleLogoutButtonClicked={handleLogoutButtonClicked}
+                    showLogoutModal={showLogoutModal}
+                    setShowLogoutModal={setShowLogoutModal}
+                />
+                <LogoBanner extraClass={
+                    isAuthenticated === true ?
+                        'banner-user-profile' : ''} />
                 <UserProfileTop
                     setIsImageOpen={setIsImageOpen}
                     loadingUserProfile={loadingUserProfile}
-                    isAuthenticated={isAuthenticated}
                     isMyProfile={isMyProfile}
                     amIFollowing={amIFollowing}
                     isHeFollowing={isHeFollowing}
@@ -147,15 +155,34 @@ export function UserProfile({handleAlert}) {
                     placeholderProfileSrc={placeholderProfileSrc}
                     avatarSrc={avatarSrc}
                     handleAlert={handleAlert}
+                    setShowSettingsModal={setShowSettingsModal}
+                    email={email}
+                    secondaryEmail={secondaryEmail}
+                    showSettingsModal={showSettingsModal}
                 />
-            {/* <Button
-                as={Link}
-                to='/profile/wwwwwwwwwwwwwwwwwwww'
-                variant='outline-dark'
-                className="me-2">
-                www user
-            </Button> */}
-            {/* {data && data.user.posts.edges.map((el) => (
+                <Button
+                    as={Link}
+                    to='/profile/wwwwwwwwwwwwwwwwwwww'
+                    variant='outline-dark'
+                    className="me-2">
+                    www user
+                </Button>
+                <Button
+                    as={Link}
+                    to='/profile/0'
+                    variant='outline-dark'
+                    className="me-2">
+                    0 user
+                </Button>
+                <Button
+                    as={Link}
+                    to='/profile/1'
+                    variant='outline-dark'
+                    className="me-2">
+                    1 user
+                </Button>
+
+                {/* {data && data.user.posts.edges.map((el) => (
          el.node && 
          <PostCard
              key={el.node.id}
@@ -167,13 +194,23 @@ export function UserProfile({handleAlert}) {
          />
      ))} */}
 
-        </>
-        :
-        // <Lightbox
-        //     mainSrc={improvedUserData.avatar ?
-        //         improvedUserData.avatar : nobody}
-        //     onCloseRequest={() => setIsImageOpen(false)}
-        // />
-        <h1>alal</h1>
+            </>
+            :
+            <div className='avatar-opened' onClick={() => setIsImageOpen(false)}>
+                <ProgressiveImage
+                    src={avatarSrc}
+                    placeholder={placeholderProfileSrc}
+                >
+                    {(src, loading) =>
+                        <img
+                            style={{
+                                filter: loading && 'blur(1px}',
+                                'WebkitFilter': loading && 'blur(1px)'
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                            src={src}
+                            alt="mdo" />}
+                </ProgressiveImage>
+            </div>
     )
 }

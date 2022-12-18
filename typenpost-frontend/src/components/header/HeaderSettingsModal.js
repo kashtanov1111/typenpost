@@ -1,3 +1,4 @@
+import logout from '../../assets/images/box-arrow-left.svg'
 import React from "react";
 import { Link } from 'react-router-dom'
 import Accordion from 'react-bootstrap/Accordion'
@@ -11,6 +12,7 @@ import trash3 from '../../assets/images/trash3.svg'
 export function HeaderSettingsModal({
     showSettingsModal,
     setShowSettingsModal,
+    setShowLogoutModal,
     pathname,
     secondaryEmail,
 }) {
@@ -105,6 +107,17 @@ export function HeaderSettingsModal({
                     <div className='listgroupitem-settings-modal'>
                         <img src={trash3} alt="" width='20' height='20' />
                         <span>Archive account</span>
+                    </div>
+                </ListGroup.Item>
+                <ListGroup.Item
+                    onClick={() => {
+                        setShowLogoutModal(true)
+                        setShowSettingsModal(false)
+                    }}
+                    >
+                    <div className='listgroupitem-settings-modal'>
+                        <img src={logout} alt="" height='20' width='20' />
+                        <span >Log out</span>
                     </div>
                 </ListGroup.Item>
             </ListGroup>

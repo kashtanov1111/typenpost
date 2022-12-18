@@ -87,15 +87,15 @@ class EditProfile(graphene.Mutation):
     success = graphene.Boolean()
     errors_user = graphene.Field(ErrorType)
     errors_user_profile = graphene.Field(ErrorType)
+    user = graphene.Field(UserNode)
 
     class Arguments:
-        firstName = graphene.String()
-        lastName = graphene.String()
+        name = graphene.String()
         about = graphene.String()
         avatar = graphene.String()
         
     @login_required
-    def mutate(root, info, firstName='', lastName='', about='', avatar=''):
+    def mutate(root, info, name='', about='', avatar=''):
         user = info.context.user
         user_profile = user.profile
         if avatar:
@@ -109,9 +109,7 @@ class EditProfile(graphene.Mutation):
             user_profile.save()
         form_user = CustomUserChangeForm(
             instance=user, 
-            data={ 
-                'first_name': firstName, 
-                'last_name': lastName})
+            data={'name': name})
         form_user_profile = UserProfileChangeForm(
             instance=user_profile,
             data={
@@ -122,10 +120,12 @@ class EditProfile(graphene.Mutation):
             form_user.save()
             form_user_profile.save()
             return EditProfile(
+                user=user,
                 success=True, 
                 errors_user=form_user.errors,
                 errors_user_profile=form_user_profile.errors)
         return EditProfile(
+            user=user,
             success=False, 
             errors_user=form_user.errors,
             errors_user_profile=form_user_profile.errors)

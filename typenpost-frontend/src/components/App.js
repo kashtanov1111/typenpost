@@ -16,13 +16,10 @@ import {
   IdContext,
   ProfileIdContext
 } from '../context/LoginContext'
-import { useLocation } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert'
 import { Loader } from './Loader';
 
 export function App({ client }) {
-  const location = useLocation()
-  const pathname = location.pathname
   const [showAlert, setShowAlert] = useState(false)
   const [textAlert, setTextAlert] = useState('')
   const [styleAlert, setStyleAlert] = useState('')

@@ -51,7 +51,6 @@ export function Header({
         src = avatar
         placeholderSrc = createImagePlaceholderUrl(avatar, '50x50')
     }
-    console.log('pathname', pathname)
 
     return (isAuthenticated === true ?
         <>  

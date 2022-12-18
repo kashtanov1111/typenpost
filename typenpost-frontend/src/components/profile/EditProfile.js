@@ -1,324 +1,303 @@
-// import nobody from '../../assets/images/nobody.jpg'
+import nobody from '../../assets/images/nobody.jpg'
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { useTitle } from '../../customHooks/hooks';
+import { useNavigate } from "react-router-dom";
+import { QUERY_ME_FOR_EDIT_PROFILE } from "../../gqls/queries";
+import {
+    EDIT_PROFILE,
+    DELETE_USER_PROFILE_AVATAR
+} from '../../gqls/mutations';
+import { Error } from "../Error";
+import ProgressiveImage from 'react-progressive-graceful-image'
+import { useMutation, useLazyQuery } from "@apollo/client";
+import { useLocation } from 'react-router-dom';
 
-// import React, {useState, useEffect, useRef, useContext} from "react";
-// import { useTitle } from '../../customHooks/hooks';
-// import { useNavigate } from "react-router-dom";
-// import { QUERY_ME } from "../../gqls/queries";
-// import { 
-//     EDIT_PROFILE, 
-//     DELETE_USER_PROFILE_AVATAR } from '../../gqls/mutations';
-// import { Error } from "../Error";
-// import ProgressiveImage from 'react-progressive-graceful-image'
-// import { useMutation, useLazyQuery } from "@apollo/client";
-// import { Loader } from "../Loader";
-// import { useLocation } from 'react-router-dom';
+import Button from 'react-bootstrap/Button'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Spinner from 'react-bootstrap/Spinner'
+import Form from 'react-bootstrap/Form'
+import FloatingLabel from 'react-bootstrap/FloatingLabel'
+import { LogoBanner } from '../LogoBanner';
 
-// import Button from 'react-bootstrap/Button'
-// import Row from 'react-bootstrap/Row'
-// import Col from 'react-bootstrap/Col'
-// import Spinner from 'react-bootstrap/Spinner'
-// import Form from 'react-bootstrap/Form'
-// import FloatingLabel from 'react-bootstrap/FloatingLabel'
+import {
+    convertBase64,
+    createImagePlaceholderUrl
+} from '../../functions/functions';
+import FormLabel from 'react-bootstrap/esm/FormLabel';
+import { 
+    IsAuthContext, 
+    UsernameContext,
+    ProfileIdContext } from '../../context/LoginContext';
 
-// import { 
-//     convertBase64,
-//     createImagePlaceholderUrl } from '../../functions/functions';
-// import FormLabel from 'react-bootstrap/esm/FormLabel';
-// import { IsAuthContext } from '../../context/LoginContext';
+export function EditProfile({ handleAlert }) {
+    console.log('Edit Profile render')
 
-// export function EditProfile(props) {
-//     console.log('Edit Profile render')
-    
-//     const {handleAlert} = props
-//     const isAuthenticated = useContext(IsAuthContext)
-//     const navigate = useNavigate()
-//     const location = useLocation()
-//     console.log(location.state)
-//     // const textareaRef = React.createRef()
-//     // const hasTextareaInitiallyChanged = useRef(false)
-//     useTitle('Typenpost - Edit Profile')
+    const isAuthenticated = useContext(IsAuthContext)
+    const authenticatedUserProfileId = useContext(ProfileIdContext)
+    const username = useContext(UsernameContext)
+    const navigate = useNavigate()
+    const location = useLocation()
+    useTitle('Typenpost - Edit Profile')
 
-//     // const [userData, setUserData] = useState('')
-//     // const [userProfileData, setUserProfileData] = useState('')
-//     // const [errorImage, setErrorImage] = useState({
-//     //     error: false,
-//     //     message: ''
-//     // })
+    const [userData, setUserData] = useState(location.state)
+    const [errorImage, setErrorImage] = useState({
+        error: false,
+        message: ''
+    })
 
-//     // const [getUserProfile, {
-//     //     loading: loadingQueryMe, 
-//     //     error: errorQueryMe}] = useLazyQuery(
-//     //     QUERY_ME, {
-//     //         onCompleted: (data) => {
-//     //             setUserData(data.me)
-//     //             setUserProfileData(data.me.profile)
-//     //         }
-//     //     }     
-//     // )
-//     // const [handleEditProfile, {
-//     //     loading: loadingEditProfile,
-//     //     error: errorEditProfile}] = useMutation(
-//     //     EDIT_PROFILE, {
-//     //         variables: {
-//     //             about: userProfileData.about,
-//     //             firstName: userData.firstName,
-//     //             lastName: userData.lastName,
-//     //             avatar: (
-//     //                 userProfileData.avatar && 
-//     //                 userProfileData.avatar.startsWith('http') ? 
-//     //                 '' : userProfileData.avatar),
-//     //         },
-//     //         onCompleted: (data) => {
-//     //             if (data.editProfile.success) {
-//     //                 hasTextareaInitiallyChanged.current = false
-//     //                 handleAlert(
-//     //                     'Your profile has been successfully changed.',
-//     //                      'success')
-//     //                 navigate('../profile/' + userData.username, {replace: true})
-//     //             }
-//     //         }
-//     //     }
-//     // )
-//     // const [handleDeleteUserProfileAvatar, {
-//     //     error: errorDeleteUserProfileAvatar,
-//     //     loading: loadingDeleteUserProfileAvatar
-//     // }] = useMutation(DELETE_USER_PROFILE_AVATAR, {
-//     //     onCompleted: (data) => {
-//     //         if (data.deleteUserProfileAvatar.success) {
-//     //             setUserProfileData({
-//     //                 ...userProfileData,
-//     //                 avatar: ''
-//     //             })
-//     //         }
-//     //     }
-//     // })
+    const nameLimitExceeded = (userData && userData.name.length > 55) ? true : false
+    const aboutLimitExceeded = (userData && userData.about.length > 350) ? true : false
 
-//     useEffect(() => {
-//         if (isAuthenticated === false) {
-//             navigate('../login', {replace: true, state: '/edit_profile'})
-//         }
-//     },[isAuthenticated, navigate])
-    
-//     // useEffect(() => {
-//     //     if (location.state !== null) {
-//     //         setUserData(location.state.user)
-//     //         setUserProfileData(location.state.user.profile)
-//     //     } else {
-//     //         getUserProfile()
-//     //     }
-//     // }, [])
+    const [getUserProfile, { error: errorQueryMe }] = useLazyQuery(
+        QUERY_ME_FOR_EDIT_PROFILE,
+        {
+            onCompleted: (data) => {
+                setUserData({
+                    avatar: data.me.profile.avatar,
+                    name: data.me.name,
+                    about: data.me.profile.about,
+                })
+            }
+        }
+    )
 
-//     // useEffect(() => {
-//     //     if (
-//     //         textareaRef.current && 
-//     //         hasTextareaInitiallyChanged.current === false) {
-//     //             textareaRef.current.style.height = 
-//     //             (`${textareaRef.current.scrollHeight}px`)
-//     //             hasTextareaInitiallyChanged.current = true
-//     //     }
-//     // }, [textareaRef])
+    const [handleEditProfile, {
+        loading: loadingEditProfile,
+        error: errorEditProfile}] = useMutation(
+        EDIT_PROFILE, {
+            variables: {
+                about: userData && userData.about,
+                name: userData && userData.name,
+                avatar: userData && (
+                    (userData.avatar && 
+                    userData.avatar.startsWith('http')) ? 
+                    '' : userData.avatar),
+            },
+            onCompleted: (data) => {
+                if (data.editProfile.success) {
+                    handleAlert(
+                        'Your profile has been successfully changed.',
+                         'success')
+                    navigate('../profile/' + username, {replace: true})
+                }
+            },
+        }
+    )
 
-//     // function handleKeyDown(e) {
-//     //     e.target.style.height = 'inherit'
-//     //     e.target.style.height= `${e.target.scrollHeight}px`
-//     // }
+    const [handleDeleteUserProfileAvatar, {
+        error: errorDeleteUserProfileAvatar,
+        loading: loadingDeleteUserProfileAvatar
+    }] = useMutation(DELETE_USER_PROFILE_AVATAR, {
+        onCompleted: (data) => {
+            if (data.deleteUserProfileAvatar.success) {
+                setUserData({
+                    ...userData,
+                    avatar: ''
+                })
+            }
+        },
+        update(cache) {
+            cache.modify({
+                id: 'UserProfileNode:' + authenticatedUserProfileId,
+                fields: {
+                    avatar() {
+                        return null
+                    }
+                }
+            })
+        }
+    })
 
-//     // async function handleSubmit(event) {
-//     //     event.preventDefault()
-//     //     handleEditProfile()
-//     // }
+    useEffect(() => {
+        if (isAuthenticated === false) {
+            navigate('../login', { replace: true, state: '/edit_profile' })
+        }
+    }, [isAuthenticated, navigate])
 
-//     // async function handleImageChange(e) {
-//     //     const file = e.target.files[0]
-//     //     if (file.size > 10485760) {
-//     //         setErrorImage({
-//     //             error: true, 
-//     //             message: 'File size exceeds 10 Mb. Please choose another image.'})
-//     //         setTimeout(() => {
-//     //             setErrorImage({error: false, message: ''})}, 3000)
-//     //         e.target.value = ''
-//     //     } else {
-//     //         setErrorImage({error: false, message: 'Good'})
-//     //         const base64 = await convertBase64(file)
-//     //         setUserProfileData({
-//     //             ...userProfileData,
-//     //             avatar: base64
-//     //         })
-//     //     }
-//     // }
+    useEffect(() => {
+        if (location.state === null) {
+            getUserProfile()
+        }
+    }, [location.state, getUserProfile])
 
-//     // function handleDeleteBtn() {
-//     //     handleDeleteUserProfileAvatar()
-//     // }
+    async function handleImageChange(e) {
+        const file = e.target.files[0]
+        if (file.size > 10485760) {
+            setErrorImage({
+                error: true,
+                message: 'File size exceeds 10 Mb. Please choose another image.'
+            })
+            setTimeout(() => {
+                setErrorImage({ error: false, message: '' })
+            }, 3000)
+            e.target.value = ''
+        } else {
+            setErrorImage({ error: false, message: 'Good' })
+            const base64 = await convertBase64(file)
+            setUserData({
+                ...userData,
+                avatar: base64
+            })
+        }
+    }
 
-//     // if (loadingQueryMe) {
-//     //     return <Loader />
-//     // }
+    if (
+        errorQueryMe || 
+        errorDeleteUserProfileAvatar || 
+        errorEditProfile) {
+        return <Error />
+    }
 
-//     // if (errorQueryMe ||
-//     //     errorEditProfile) {
-//     //         return <Error />
-//     // }
-
-//     if (isAuthenticated === null) {
-//         return <Loader />
-//     }
-
-//     return (
-//         <h1>asdf</h1>
-//     )
-    
-//     // return (userData && userProfileData ?
-//     //     <Row>
-//     //     <Col md={6} className='mx-auto' >
-//     //         <h1 className='text-center mb-3'>
-//     //             Edit Profile
-//     //         </h1>
-//     //         <Form 
-//     //             onSubmit={handleSubmit} 
-//     //             noValidate>
-//     //             <div className='text-center container-image'>
-//     //             <ProgressiveImage 
-//     //               src={userProfileData && userProfileData.avatar ? 
-//     //                 userProfileData.avatar : nobody} 
-//     //               placeholder={userProfileData && 
-//     //                 userProfileData.avatar ? 
-//     //                 createImagePlaceholderUrl(
-//     //                     userProfileData.avatar, '16x16') : nobody}
-//     //             >
-//     //               {(src, loading) => 
-//     //                 <img 
-//     //                   style={{filter: loading && 'blur(8px}', 
-//     //                     'WebkitFilter': loading && 'blur(8px)',}} 
-//     //                   height='150' 
-//     //                   width='150' 
-//     //                   className={userProfileData.avatar ? 'darkened-img rounded-circle' : 'rounded-circle'}
-//     //                   src={src}
-//     //                   alt="mdo" />}
-//     //             </ProgressiveImage>
-//     //             <div className='centered'>
-//     //                 {userProfileData.avatar &&
-//     //                 <p 
-//     //                     className='pointer mb-0'
-//     //                     onClick={handleDeleteBtn}>
-//     //                 {loadingDeleteUserProfileAvatar ? 
-//     //                 <div><Spinner
-//     //                     as='span'
-//     //                     animation='border'
-//     //                     size='sm'
-//     //                     role='status'
-//     //                     aria-hidden='true' />
-//     //                 <span className='visually-hidden'>Loading...</span>
-//     //                 </div> :
-//     //                 'Delete'
-//     //                 }
-//     //                 </p>}
-//     //             </div>
-//     //             </div>
-//     //             <Form.Group controlId="formFile" className="mb-2 mt-0">
-//     //                 <FormLabel className='mb-1'>New Image</FormLabel>
-//     //                 <Form.Control
-//     //                     type="file"
-//     //                     accept="image/jpeg,image/png"
-//     //                     isInvalid={errorImage.error}
-//     //                     isValid={errorImage.message === 'Good'}
-//     //                     onChange={(e) => handleImageChange(e)}
-//     //                 />
-//     //                 <Form.Control.Feedback>
-//     //                         Looks good!
-//     //                 </Form.Control.Feedback>
-//     //                 <Form.Control.Feedback type='invalid'>
-//     //                         {errorImage.message}
-//     //                 </Form.Control.Feedback>
-//     //                 {errorImage.message === '' && <Form.Text muted>
-//     //                     File size should not exceed 10 Mb.
-//     //                 </Form.Text>}
-//     //             </Form.Group>
-//     //             <Form.Group className='mb-2'>
-//     //                 <FloatingLabel
-//     //                     label='First name'
-//     //                     controlId='floatingFirstName'
-//     //                 >
-//     //                     <Form.Control 
-//     //                         type="text"
-//     //                         maxLength={30}
-//     //                         value={userData.firstName}
-                            
-//     //                         onChange={(e) => 
-//     //                             setUserData({
-//     //                                 ...userData,
-//     //                                 firstName: e.target.value
-//     //                             })
-//     //                         }
-//     //                         placeholder='First name'
-//     //                         required
-//     //                     />  
-                        
-//     //                 </FloatingLabel>
-//     //             </Form.Group>
-//     //             <Form.Group className='mb-2'>
-//     //                 <FloatingLabel
-//     //                     label='Last name'
-//     //                     controlId='floatingLastName'
-//     //                 >
-//     //                     <Form.Control 
-//     //                         type="text"
-//     //                         maxLength={40}
-//     //                         value={userData.lastName}
-//     //                         onChange={(e) => 
-//     //                             setUserData({
-//     //                                 ...userData,
-//     //                                 lastName: e.target.value
-//     //                             })
-//     //                         }
-//     //                         placeholder='Last name'
-//     //                         required
-//     //                     />    
-//     //                 </FloatingLabel>
-//     //             </Form.Group>
-//     //             <Form.Group className='mb-2'>
-//     //                 <FloatingLabel
-//     //                     label='About me'
-//     //                     controlId='floatingAboutMe'
-//     //                 >
-//     //                     <Form.Control 
-//     //                         as='textarea'
-//     //                         maxLength={350}
-//     //                         ref={textareaRef}
-//     //                         onKeyDown={handleKeyDown}
-//     //                         value={userProfileData.about}
-//     //                         onChange={(e) => {
-//     //                             setUserProfileData({
-//     //                                 ...userProfileData,
-//     //                                 about: e.target.value
-//     //                             })
-//     //                         }
-//     //                         }
-//     //                         placeholder='About me'
-//     //                         required
-//     //                     />    
-//     //                 </FloatingLabel>
-//     //             </Form.Group>
-//     //             <Button 
-//     //                 variant='primary' 
-//     //                 className='login-signup-button py-2 col-12 mb-2' 
-//     //                 type='submit'
-//     //                 >
-//     //                 {loadingEditProfile ? 
-//     //                 <div><Spinner
-//     //                     as='span'
-//     //                     animation='border'
-//     //                     size='sm'
-//     //                     role='status'
-//     //                     aria-hidden='true' />
-//     //                 <span className='visually-hidden'>Loading...</span>
-//     //                 </div> :
-//     //                 <b>Save</b>
-//     //                 }
-//     //             </Button>
-//     //         </Form>
-//     //     </Col>
-//     //     </Row> :
-//     //     <Loader />
-//     // )
-// }
+    return (userData &&
+        <Row>
+            <Col md={8} className='mx-auto' >
+                <LogoBanner />
+                <h1 className='text-center mb-3'>
+                    Edit Profile
+                </h1>
+                <Form
+                    onSubmit={(event) => {
+                        event.preventDefault()
+                        handleEditProfile()
+                    }}
+                    noValidate>
+                    <div className='avatar-edit'>
+                        <ProgressiveImage
+                            src={(userData && userData.avatar) ?
+                                userData.avatar : nobody}
+                            placeholder={(userData &&
+                                userData.avatar) ?
+                                createImagePlaceholderUrl(
+                                    userData.avatar, '250x250') : nobody}
+                        >
+                            {(src, loading) =>
+                                <img
+                                    style={{
+                                        filter: loading && 'blur(1px}',
+                                        'WebkitFilter': loading && 'blur(1px)',
+                                    }}
+                                    className={
+                                        (userData && userData.avatar) ? 
+                                        'darkened-avatar' : ''}
+                                    height='112'
+                                    width='112'
+                                    src={src}
+                                    alt="mdo" />}
+                        </ProgressiveImage>
+                        <div className='avatar-edit__div-delete'>
+                            {userData.avatar &&
+                                <p
+                                    className='pointer mb-0'
+                                    onClick={() => handleDeleteUserProfileAvatar()}
+                                >
+                                    {loadingDeleteUserProfileAvatar ?
+                                        <span><Spinner
+                                            as='span'
+                                            animation='border'
+                                            size='sm'
+                                            role='status'
+                                            aria-hidden='true' />
+                                            <span className='visually-hidden'>Loading...</span>
+                                        </span> :
+                                        'Delete'
+                                    }
+                                </p>}
+                        </div>
+                    </div>
+                    <Form.Group controlId="formFile" className="mb-2 mt-0">
+                        <FormLabel className='mb-1'>New Image</FormLabel>
+                        <Form.Control
+                            type="file"
+                            accept="image/jpeg,image/png"
+                            isInvalid={errorImage.error}
+                            isValid={errorImage.message === 'Good'}
+                            onChange={(e) => handleImageChange(e)}
+                            disabled={loadingEditProfile}
+                        />
+                        <Form.Control.Feedback>
+                            Looks good!
+                        </Form.Control.Feedback>
+                        <Form.Control.Feedback type='invalid'>
+                            {errorImage.message}
+                        </Form.Control.Feedback>
+                        {errorImage.message === '' && <Form.Text muted>
+                            File size should not exceed 10 Mb.
+                        </Form.Text>}
+                    </Form.Group>
+                    <Form.Group className='mb-2'>
+                        <FloatingLabel
+                            label='Name'
+                            controlId='floatingName'
+                        >
+                            <Form.Control
+                                type="text"
+                                value={userData.name}
+                                isInvalid={nameLimitExceeded}
+                                onChange={(e) =>
+                                    setUserData({
+                                        ...userData,
+                                        name: e.target.value
+                                    })
+                                }
+                                placeholder='Name'
+                                disabled={loadingEditProfile}
+                                required
+                            />
+                            {nameLimitExceeded &&
+                                <Form.Control.Feedback type='invalid'>
+                                    Must not exceed 55 characters.
+                                </Form.Control.Feedback>}
+                        </FloatingLabel>
+                    </Form.Group>
+                    <Form.Group className='mb-2 textarea-edit'>
+                        <FloatingLabel
+                            label='Bio'
+                            controlId='floatingAboutMe'
+                        >
+                            <Form.Control
+                                as='textarea'
+                                isInvalid={aboutLimitExceeded}
+                                value={userData.about}
+                                onChange={(e) =>
+                                    setUserData({
+                                        ...userData,
+                                        about: e.target.value
+                                    })
+                                }
+                                placeholder='Bio'
+                                disabled={loadingEditProfile}
+                                required
+                            />
+                            {aboutLimitExceeded &&
+                                <Form.Control.Feedback type='invalid'>
+                                    Must not exceed 350 characters.
+                                </Form.Control.Feedback>}
+                        </FloatingLabel>
+                    </Form.Group>
+                    <Button
+                        variant='primary'
+                        className='big-button py-2 col-12 mb-2'
+                        disabled={
+                            aboutLimitExceeded || 
+                            nameLimitExceeded || 
+                            loadingEditProfile}
+                        type='submit'
+                    >
+                        {loadingEditProfile ?
+                            <div><Spinner
+                                as='span'
+                                animation='border'
+                                size='sm'
+                                role='status'
+                                aria-hidden='true' />
+                                <span className='visually-hidden'>Loading...</span>
+                            </div> :
+                            <b>Save</b>
+                        }
+                    </Button>
+                </Form>
+            </Col>
+        </Row>
+    )
+}

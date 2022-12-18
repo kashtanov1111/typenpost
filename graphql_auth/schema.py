@@ -23,6 +23,7 @@ class UserNode(DjangoObjectType):
     archived = graphene.Boolean()
     verified = graphene.Boolean()
     secondary_email = graphene.String()
+    number_of_posts = graphene.Int()
 
     class Meta:
         model = get_user_model()
@@ -31,6 +32,8 @@ class UserNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
         # skip_registry = True
 
+    def resolve_number_of_posts(parent, info):
+        return parent.posts.count()
 
     def resolve_pk(parent, info):
         return parent.pk
@@ -108,7 +111,7 @@ class UserProfileNode(DjangoObjectType):
             queryset
             .filter(user__status__archived=False)
             .prefetch_related(Prefetch('followers', queryset=UserProfile.objects.filter(user=me), to_attr='followers_me'))
-            # .prefetch_related(Prefetch('following', queryset=UserProfile.objects.filter(user=me), to_attr='following_me'))
+            .prefetch_related(Prefetch('following', queryset=UserProfile.objects.filter(user=me), to_attr='following_me'))
             .select_related('user')
             .order_by('-id')
         )

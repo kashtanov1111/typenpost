@@ -15,10 +15,10 @@ import { VerifySecondaryEmail } from './auth/VerifySecondaryEmail';
 import { ArchiveAccount } from './auth/ArchiveAccount';
 import { SwapEmails } from './auth/SwapEmails';
 import { UserProfile } from './profile/user/UserProfile';
-// import { EditProfile } from './profile/EditProfile';
-// import { Followers } from './profile/Followers';
-// import { Following } from './profile/Following';
-// import { FollowHeader } from './profile/FollowHeader';
+import { EditProfile } from './profile/EditProfile';
+import { Followers } from './profile/follow/Followers';
+import { Following } from './profile/follow/Following';
+import { FollowHeader } from './profile/follow/FollowHeader';
 import { Error } from './Error';
 import { TestTest } from './TestTest';
 
@@ -74,8 +74,13 @@ export function RoutesComponent({
           handleLogout={handleLogout} />} />
       <Route
         path='/profile/:userUsername'
-        element={<UserProfile handleAlert={handleAlert}/>} />
-      {/* <Route
+        element={<UserProfile 
+          handleAlert={handleAlert}
+          handleLogout={handleLogout}
+          secondaryEmail={secondaryEmail}
+          email={email}
+          />} />
+      <Route
         path='/profile/:userUsername'
         element={<FollowHeader />}
       >
@@ -85,12 +90,12 @@ export function RoutesComponent({
         <Route
           path='following'
           element={<Following />} />
-      </Route> */}
-      {/* <Route
+      </Route>
+      <Route
         path='/edit_profile'
         element={<EditProfile
           handleAlert={handleAlert}
-        />} /> */}
+        />} />
       <Route
         path='/add_email'
         element={<AddSecondaryEmail

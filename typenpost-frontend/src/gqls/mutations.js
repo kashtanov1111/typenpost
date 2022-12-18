@@ -123,19 +123,26 @@ export const FOLLOWING_USER = gql`
 export const EDIT_PROFILE = gql`
     mutation EditProfile(
         $about: String
-        $firstName: String
-        $lastName: String
+        $name: String
         $avatar: String
         ) {
         editProfile(
             about: $about
-            firstName: $firstName
-            lastName: $lastName
+            name: $name
             avatar: $avatar
             ) {
             success
             errorsUser
             errorsUserProfile
+            user {
+                id
+                name
+                profile {
+                    id
+                    about
+                    avatar
+                }
+            }
         }
     }
 `
