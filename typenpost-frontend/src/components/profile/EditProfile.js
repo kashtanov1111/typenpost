@@ -1,5 +1,5 @@
 import nobody from '../../assets/images/nobody.jpg'
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useTitle } from '../../customHooks/useTitle';
 import { useNavigate } from "react-router-dom";
 import { QUERY_ME_FOR_EDIT_PROFILE } from "../../gqls/queries";
@@ -25,10 +25,11 @@ import {
     createImagePlaceholderUrl
 } from '../../functions/functions';
 import FormLabel from 'react-bootstrap/esm/FormLabel';
-import { 
-    IsAuthContext, 
+import {
+    IsAuthContext,
     UsernameContext,
-    ProfileIdContext } from '../../context/LoginContext';
+    ProfileIdContext
+} from '../../context/LoginContext';
 import { createImageSrcUrl } from '../../functions/functions';
 
 export function EditProfile({ handleAlert }) {
@@ -40,15 +41,23 @@ export function EditProfile({ handleAlert }) {
     const navigate = useNavigate()
     const location = useLocation()
     useTitle('Typenpost - Edit Profile')
-
     const [userData, setUserData] = useState(location.state)
     const [errorImage, setErrorImage] = useState({
         error: false,
         message: ''
     })
+    const nameLimitExceeded = false
+    const aboutLimitExceeded = false
+    
+    if (userData) {
+        if (userData.name.length > 55) {
+            const nameLimitExceeded = true
+        }
+        if (userData.about.length > 350) {
+            const aboutLimitExceeded = true
+        }
 
-    const nameLimitExceeded = (userData && userData.name.length > 55) ? true : false
-    const aboutLimitExceeded = (userData && userData.about.length > 350) ? true : false
+    }
 
     const [getUserProfile, { error: errorQueryMe }] = useLazyQuery(
         QUERY_ME_FOR_EDIT_PROFILE,
@@ -65,26 +74,26 @@ export function EditProfile({ handleAlert }) {
 
     const [handleEditProfile, {
         loading: loadingEditProfile,
-        error: errorEditProfile}] = useMutation(
-        EDIT_PROFILE, {
+        error: errorEditProfile }] = useMutation(
+            EDIT_PROFILE, {
             variables: {
                 about: userData && userData.about,
                 name: userData && userData.name,
                 avatar: userData && (
-                    (userData.avatar && 
-                    userData.avatar.startsWith('http')) ? 
-                    '' : userData.avatar),
+                    (userData.avatar &&
+                        userData.avatar.startsWith('http')) ?
+                        '' : userData.avatar),
             },
             onCompleted: (data) => {
                 if (data.editProfile.success) {
                     handleAlert(
                         'Your profile has been successfully changed.',
-                         'success')
-                    navigate('../profile/' + username, {replace: true})
+                        'success')
+                    navigate('../profile/' + username, { replace: true })
                 }
             },
         }
-    )
+        )
 
     const [handleDeleteUserProfileAvatar, {
         error: errorDeleteUserProfileAvatar,
@@ -144,8 +153,8 @@ export function EditProfile({ handleAlert }) {
     }
 
     if (
-        errorQueryMe || 
-        errorDeleteUserProfileAvatar || 
+        errorQueryMe ||
+        errorDeleteUserProfileAvatar ||
         errorEditProfile) {
         return <Error />
     }
@@ -178,9 +187,9 @@ export function EditProfile({ handleAlert }) {
                                         filter: loading && 'blur(1px}',
                                         'WebkitFilter': loading && 'blur(1px)',
                                     }}
-                                    className={"img-shadowed " + 
-                                        ((userData && userData.avatar) ? 
-                                        'darkened-avatar' : '')}
+                                    className={"img-shadowed " +
+                                        ((userData && userData.avatar) ?
+                                            'darkened-avatar' : '')}
                                     height='112'
                                     width='112'
                                     src={src}
@@ -280,8 +289,8 @@ export function EditProfile({ handleAlert }) {
                         variant='primary'
                         className='big-button py-2 col-12 mb-2'
                         disabled={
-                            aboutLimitExceeded || 
-                            nameLimitExceeded || 
+                            aboutLimitExceeded ||
+                            nameLimitExceeded ||
                             loadingEditProfile}
                         type='submit'
                     >
