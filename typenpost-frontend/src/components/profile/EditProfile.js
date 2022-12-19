@@ -175,11 +175,11 @@ export function EditProfile({ handleAlert }) {
                     <div className='avatar-edit'>
                         <ProgressiveImage
                             src={((userData && userData.avatar) ?
-                                userData.avatar : createImageSrcUrl(nobody))}
+                                userData.avatar : nobody)}
                             placeholder={(userData &&
                                 userData.avatar) ?
                                 createImagePlaceholderUrl(
-                                    userData.avatar, '250x250') : createImageSrcUrl(nobody)}
+                                    userData.avatar, '250x250') : nobody}
                         >
                             {(src, loading) =>
                                 <img
