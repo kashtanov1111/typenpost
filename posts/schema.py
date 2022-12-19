@@ -34,11 +34,15 @@ class PostNode(DjangoObjectType):
     user = graphene.Field(UserNode, required=False)
     number_of_likes = graphene.Int()
     has_i_liked = graphene.Boolean()
+    uuid = graphene.UUID()
     class Meta:
         model = Post
         filterset_class = PostFilter
-        fields = ('id', 'text', 'created', 'updated', 'user', 'comments', 'likes')
+        fields = ('id', 'text', 'created', 'updated', 'user', 'comments', 'likes', 'uuid')
         interfaces = (graphene.relay.Node, )
+
+    def resolve_uuid(parent, info):
+        return parent.pk
 
     def resolve_has_i_liked(parent, info):
         me = info.context.user
@@ -92,6 +96,27 @@ class Query(graphene.ObjectType):
             .filter(user__status__archived=False)
             )
 
+class LikePost(graphene.Mutation):
+    post = graphene.Field(PostNode)
+    action = graphene.String()
+
+    class Arguments:
+        uuid = graphene.UUID(required=True)
+    
+    @login_required
+    def mutate(root, info, uuid=None):
+        user = info.context.user
+        username = user.username
+        post = Post.objects.get(id=uuid)
+        if post.likes.filter(username=username).exists():
+            post.likes.remove(user)
+            action = 'unliked'
+        else:
+            post.likes.add(user)
+            action = 'liked'
+        post.save()
+        return LikePost(post=post, action=action)
+
 
 class CreatePost(graphene.Mutation):
     post = graphene.Field(PostNode)
@@ -141,3 +166,4 @@ class UpdatePost(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     create_post = CreatePost.Field()
     update_post = UpdatePost.Field()
+    like_post = LikePost.Field()

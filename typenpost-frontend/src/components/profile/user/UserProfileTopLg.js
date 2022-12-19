@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import Button from 'react-bootstrap/Button'
-import Spinner from 'react-bootstrap/Spinner'
+import { SpinnerForButton } from "../../SpinnerForButton";
 import Placeholder from 'react-bootstrap/Placeholder'
 import { useNavigate } from "react-router-dom";
 import gear from '../../../assets/images/gear.svg'
@@ -73,15 +73,7 @@ export function UserProfileTopLg({
                                     onClick={handleFollow}
                                 >
                                     {loadingFollowingUser ?
-                                        <div><Spinner
-                                            as='span'
-                                            animation='border'
-                                            size='sm'
-                                            role='status'
-                                            aria-hidden='true' />
-                                            <span className='visually-hidden'>
-                                                Loading...</span>
-                                        </div> :
+                                        <SpinnerForButton /> :
                                         <span>Following</span>
                                     }
                                 </Button> :
@@ -90,15 +82,7 @@ export function UserProfileTopLg({
                                     variant='primary'
                                     onClick={handleFollow}>
                                     {loadingFollowingUser ?
-                                        <div><Spinner
-                                            as='span'
-                                            animation='border'
-                                            size='sm'
-                                            role='status'
-                                            aria-hidden='true' />
-                                            <span className='visually-hidden'>
-                                                Loading...</span>
-                                        </div> :
+                                        <SpinnerForButton /> :
                                         (isHeFollowing ? 'Follow back' : 'Follow')
                                     }
                                 </Button>

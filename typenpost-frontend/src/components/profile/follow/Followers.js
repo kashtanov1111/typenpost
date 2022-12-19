@@ -6,8 +6,9 @@ import { Error } from "../../Error";
 import { useQuery } from "@apollo/client";
 import Spinner from 'react-bootstrap/Spinner'
 import InfiniteScroll from 'react-infinite-scroll-component'
-
+import { Loader } from "../../Loader";
 import { UserFollowCard } from "./UserFollowCard"
+import { SpinnerForPages } from "../../SpinnerForPages";
 
 import { IsAuthContext, UsernameContext } from '../../../context/LoginContext';
 
@@ -22,7 +23,9 @@ export function Followers({ handleAlert }) {
     var message = ''
 
     useTitle('Typenpost - Followers')
-    const { data, fetchMore, error: errorUserFollowers } = useQuery(USER_FOLLOWERS, {
+    const { data, fetchMore,
+        loading: loadingUserFollowers,
+        error: errorUserFollowers } = useQuery(USER_FOLLOWERS, {
         variables: { username: userUsername }
     })
 
@@ -43,6 +46,10 @@ export function Followers({ handleAlert }) {
 
     if (errorUserFollowers) {
         return <Error />
+    }
+
+    if (loadingUserFollowers) {
+        return <SpinnerForPages />
     }
 
     return (<div className='no-padding'>

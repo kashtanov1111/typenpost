@@ -20,6 +20,7 @@ import { HeaderSettingsModal } from '../../header/HeaderSettingsModal';
 import ProgressiveImage from 'react-progressive-graceful-image';
 import { HeaderLogoutModal } from '../../header/HeaderLogoutModal';
 import { getFinalStringForNumber } from '../../../functions/functions';
+import { SpinnerForPages } from '../../SpinnerForPages';
 
 export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }) {
     console.log('User Profile render')
@@ -185,7 +186,7 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                     getFinalStringForNumber={getFinalStringForNumber}
                 />
 
-                {data && userPosts.map((el) => (
+                {data ? userPosts.map((el) => (
                     el.node &&
                     <PostCard
                         key={el.node.id}
@@ -196,9 +197,8 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                         userUsername={userUsername}
                         yearNow={yearNow}
                         getFinalStringForNumber={getFinalStringForNumber}
-
                     />
-                ))}
+                )) : <SpinnerForPages />}
 
             </>
             :

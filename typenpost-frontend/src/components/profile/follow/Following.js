@@ -4,12 +4,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { USER_FOLLOWING } from "../../../gqls/queries";
 import { Error } from "../../Error";
 import { useQuery } from "@apollo/client";
-import Spinner from 'react-bootstrap/Spinner'
 import InfiniteScroll from 'react-infinite-scroll-component'
-
+import { Loader } from "../../Loader";
 import { UserFollowCard } from "./UserFollowCard"
-
+import Spinner from "react-bootstrap/Spinner";
 import { IsAuthContext, UsernameContext } from '../../../context/LoginContext';
+import { SpinnerForPages } from "../../SpinnerForPages";
 
 export function Following({ handleAlert }) {
     console.log('Render Following Component')
@@ -22,7 +22,9 @@ export function Following({ handleAlert }) {
     var message = ''
 
     useTitle('Typenpost - Following')
-    const { data, fetchMore, error: errorUserFollowing } = useQuery(USER_FOLLOWING, {
+    const { data, fetchMore, 
+        loading: loadingUserFollowing,
+        error: errorUserFollowing } = useQuery(USER_FOLLOWING, {
         variables: { username: userUsername }
     })
 
@@ -43,6 +45,10 @@ export function Following({ handleAlert }) {
 
     if (errorUserFollowing) {
         return <Error />
+    }
+
+    if (loadingUserFollowing) {
+        return <SpinnerForPages />
     }
 
     return (<div className='no-padding'>

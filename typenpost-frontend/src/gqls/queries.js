@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client"
-import { CORE_USER_FIELDS } from "./fragments"
+import { CORE_USER_FIELDS, CORE_FOLLOW_LIST_FIELDS } from "./fragments"
 
 export const QUERY_ME = gql`
     ${CORE_USER_FIELDS}
@@ -51,6 +51,7 @@ export const USER_PROFILE = gql`
                 edges {
                     node {
                         id
+                        uuid
                         text
                         created
                         numberOfLikes
@@ -64,6 +65,7 @@ export const USER_PROFILE = gql`
 `
 
 export const USER_FOLLOWERS = gql`
+    ${CORE_FOLLOW_LIST_FIELDS}
     query UserFollowers(
             $username: String!
             $cursor: String
@@ -73,26 +75,27 @@ export const USER_FOLLOWERS = gql`
             profile {
                 id
                 followers(first: 20, after: $cursor) {
-                    pageInfo {
-                        hasNextPage
-                        endCursor
-                        startCursor
-                        hasPreviousPage
-                    }
-                    edges {
-                        node {
-                            id
-                            avatar
-                            amIFollowing
-                            isHeFollowing
-                            user {
-                                id
-                                username
-                                name
-                            }
-                        }
-                        cursor
-                    }
+                    ...CoreFollowListFields
+                    # pageInfo {
+                    #     hasNextPage
+                    #     endCursor
+                    #     startCursor
+                    #     hasPreviousPage
+                    # }
+                    # edges {
+                    #     node {
+                    #         id
+                    #         avatar
+                    #         amIFollowing
+                    #         isHeFollowing
+                    #         user {
+                    #             id
+                    #             username
+                    #             name
+                    #         }
+                    #     }
+                    #     cursor
+                    # }
                 }
             }
         }
@@ -100,6 +103,7 @@ export const USER_FOLLOWERS = gql`
 `
 
 export const USER_FOLLOWING = gql`
+    ${CORE_FOLLOW_LIST_FIELDS}
     query UserFollowing(
             $username: String!
             $cursor: String
@@ -109,26 +113,27 @@ export const USER_FOLLOWING = gql`
             profile {
                 id
                 following(first: 20, after: $cursor) {
-                    pageInfo {
-                        hasNextPage
-                        endCursor
-                        startCursor
-                        hasPreviousPage
-                    }
-                    edges {
-                        node {
-                            id
-                            avatar
-                            amIFollowing
-                            isHeFollowing
-                            user {
-                                id
-                                username
-                                name
-                            }
-                        }
-                        cursor
-                    }
+                    ...CoreFollowListFields
+                    # pageInfo {
+                    #     hasNextPage
+                    #     endCursor
+                    #     startCursor
+                    #     hasPreviousPage
+                    # }
+                    # edges {
+                    #     node {
+                    #         id
+                    #         avatar
+                    #         amIFollowing
+                    #         isHeFollowing
+                    #         user {
+                    #             id
+                    #             username
+                    #             name
+                    #         }
+                    #     }
+                    #     cursor
+                    # }
                 }
             }
         }

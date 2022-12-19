@@ -219,6 +219,18 @@ export const DELETE_USER_PROFILE_AVATAR = gql`
     }
 `
 
+export const POST_LIKING = gql`
+    mutation PostLiking($uuid: UUID!) {
+        likePost(uuid: $uuid) {
+            action
+            post {
+                id
+                numberOfLikes
+            }
+        }
+    }
+`
+
 
 
 

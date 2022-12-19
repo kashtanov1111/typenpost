@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 import nobody from '../../../assets/images/nobody.jpg'
 import { useNavigate } from "react-router-dom";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import Button from 'react-bootstrap/Button'
-import Spinner from "react-bootstrap/esm/Spinner";
+import { SpinnerForButton } from "../../SpinnerForButton";
 
 import { createImagePlaceholderUrl } from '../../../functions/functions';
 import { useFollowing } from "../../../customHooks/useFollowing";
@@ -64,15 +64,7 @@ export function UserFollowCard({
                         onClick={handleFollowBtnClicked}
                     >
                         {loadingFollowingUser ?
-                            <div><Spinner
-                                as='span'
-                                animation='border'
-                                size='sm'
-                                role='status'
-                                aria-hidden='true' />
-                                <span className='visually-hidden'>
-                                    Loading...</span>
-                            </div> :
+                            <SpinnerForButton /> :
                             <span>Following</span>
                         }
                     </Button> :
@@ -82,15 +74,7 @@ export function UserFollowCard({
                         variant='primary'
                         onClick={handleFollowBtnClicked}>
                         {loadingFollowingUser ?
-                            <div><Spinner
-                                as='span'
-                                animation='border'
-                                size='sm'
-                                role='status'
-                                aria-hidden='true' />
-                                <span className='visually-hidden'>
-                                    Loading...</span>
-                            </div> :
+                            <SpinnerForButton /> :
                             (profile.isHeFollowing ? 'Follow back' : 'Follow')
                         }
                     </Button>
