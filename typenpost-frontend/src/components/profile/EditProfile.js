@@ -46,15 +46,15 @@ export function EditProfile({ handleAlert }) {
         error: false,
         message: ''
     })
-    const nameLimitExceeded = false
-    const aboutLimitExceeded = false
+    var nameLimitExceeded = false
+    var aboutLimitExceeded = false
     
     if (userData) {
-        if (userData.name.length > 55) {
-            const nameLimitExceeded = true
+        if (userData.name && userData.name.length > 55) {
+            nameLimitExceeded = true
         }
-        if (userData.about.length > 350) {
-            const aboutLimitExceeded = true
+        if (userData.about && userData.about.length > 350) {
+            aboutLimitExceeded = true
         }
 
     }
