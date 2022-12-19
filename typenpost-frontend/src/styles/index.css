@@ -369,10 +369,11 @@ p {
 .follow-header {
   position: sticky;
   top: 0;
+  z-index: 1;
 }
 
 .follow-tab {
-  padding: 0.5rem 0;
+  padding: 0.75rem 0;
   text-decoration: none;
   cursor: pointer;
 }
@@ -483,9 +484,11 @@ p {
   cursor: pointer;
 }
 
-.user-header__following:hover .user-header__following-word,
-.user-header__followers:hover .user-header__followers-word {
-  text-decoration: underline;
+@media (hover: hover) {
+  .user-header__following:hover .user-header__following-word,
+  .user-header__followers:hover .user-header__followers-word {
+    text-decoration: underline;
+  }
 }
 
 /* || USER FOLLOW CARD */

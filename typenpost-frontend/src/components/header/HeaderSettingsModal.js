@@ -8,6 +8,7 @@ import cursor_text from '../../assets/images/cursor-text.svg'
 import fingerprint from '../../assets/images/fingerprint.svg'
 import envelope from '../../assets/images/envelope.svg'
 import trash3 from '../../assets/images/trash3.svg'
+import { createImageSrcUrl } from '../../functions/functions';
 
 export function HeaderSettingsModal({
     showSettingsModal,
@@ -40,7 +41,7 @@ export function HeaderSettingsModal({
                     onClick={handleCloseSettingsModal}
                     to='/password_change'>
                     <div className='listgroupitem-settings-modal'>
-                        <img src={fingerprint} alt="" width='20' height='20' />
+                        <img src={createImageSrcUrl(fingerprint)} alt="" width='20' height='20' />
                         <span>Change password</span>
                     </div>
                 </ListGroup.Item>
@@ -50,14 +51,14 @@ export function HeaderSettingsModal({
                     onClick={handleCloseSettingsModal}
                     to='/username_change'>
                     <div className='listgroupitem-settings-modal'>
-                        <img src={cursor_text} alt="" width='20' height='20' />
+                        <img src={createImageSrcUrl(cursor_text)} alt="" width='20' height='20' />
                         <span>Change username</span>
                     </div>
                 </ListGroup.Item>
                 <Accordion.Item className="no-top-border" eventKey='0'>
                     <Accordion.Header>
                         <div className='listgroupitem-settings-modal'>
-                            <img src={envelope} alt="" width='20' height='20' />
+                            <img src={createImageSrcUrl(envelope)} alt="" width='20' height='20' />
                             <span>Change email</span>
                         </div>
                     </Accordion.Header>
@@ -105,7 +106,7 @@ export function HeaderSettingsModal({
                     state={pathname}
                     action>
                     <div className='listgroupitem-settings-modal'>
-                        <img src={trash3} alt="" width='20' height='20' />
+                        <img src={createImageSrcUrl(trash3)} alt="" width='20' height='20' />
                         <span>Archive account</span>
                     </div>
                 </ListGroup.Item>
@@ -116,7 +117,7 @@ export function HeaderSettingsModal({
                     }}
                     >
                     <div className='listgroupitem-settings-modal'>
-                        <img src={logout} alt="" height='20' width='20' />
+                        <img src={createImageSrcUrl(logout)} alt="" height='20' width='20' />
                         <span >Log out</span>
                     </div>
                 </ListGroup.Item>

@@ -14,10 +14,13 @@ import { IsAuthContext, UsernameContext } from '../../context/LoginContext'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import Dropdown from 'react-bootstrap/Dropdown'
-import { createImagePlaceholderUrl } from '../../functions/functions'
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { HeaderLogoutModal } from './HeaderLogoutModal'
 import { HeaderSettingsModal } from './HeaderSettingsModal'
+
+import { 
+    createImageSrcUrl, 
+    createImagePlaceholderUrl } from '../../functions/functions'
 
 export function Header({
     avatar,
@@ -70,20 +73,20 @@ export function Header({
                     <ul className='header-auth__ul'>
                         <li onClick={() => navigate('/')}>
                             <h1 className='header-auth__first-h1'>typenpost</h1>
-                            <img className='header-auth__first-image' src={typenpost_on_white} alt="a" height='32' width='32' />
+                            <img className='header-auth__first-image' src={createImageSrcUrl(typenpost_on_white)} alt="a" height='32' width='32' />
                         </li>
                         <li
                             onClick={() => navigate('/')}>
                             {pathname === '/' ?
-                                <img src={home_active} alt="a" height='32' width='32' /> :
-                                <img src={home} alt="a" height='32' width='32' />}
+                                <img src={createImageSrcUrl(home_active)} alt="a" height='32' width='32' /> :
+                                <img src={createImageSrcUrl(home)} alt="a" height='32' width='32' />}
                         </li>
                         <li
                             onClick={() => navigate('/create')}>
                             {(pathname === '/create' ||
                                 pathname === '/create/') ?
-                                <img src={plus_fill} alt="b" height='32' width='32' /> :
-                                <img src={plus} alt="b" height='32' width='32' />}
+                                <img src={createImageSrcUrl(plus_fill)} alt="b" height='32' width='32' /> :
+                                <img src={createImageSrcUrl(plus)} alt="b" height='32' width='32' />}
                         </li>
                         <li
                             onClick={() => navigate('/profile/' + username)}>
@@ -108,14 +111,14 @@ export function Header({
                                 as={CustomToggle}
                                 id="dropdown-menu-align-responsive-1">
                                 <li as={Dropdown}>
-                                    <img src={burger} alt="" height='32' width='32' />
+                                    <img src={createImageSrcUrl(burger)} alt="" height='32' width='32' />
                                 </li>
                             </Dropdown.Toggle>
                             <Dropdown.Menu className='py-0'>
                                 <Dropdown.Item 
                                     onClick={() => setShowSettingsModal(true)}
                                     className='header-auth__dropdown-item py-3'>
-                                    <img src={gear} alt="" height='20' width='20' />
+                                    <img src={createImageSrcUrl(gear)} alt="" height='20' width='20' />
                                     <span>Settings</span>
                                 </Dropdown.Item>
                                 <Dropdown.Divider className='my-0' />
@@ -123,7 +126,7 @@ export function Header({
                                     className='header-auth__dropdown-item py-3'
                                     onClick={() => setShowLogoutModal(true)}
                                     >
-                                    <img src={logout} alt="" height='20' width='20' />
+                                    <img src={createImageSrcUrl(logout)} alt="" height='20' width='20' />
                                     <span>Log out</span>
                                 </Dropdown.Item>
                             </Dropdown.Menu>

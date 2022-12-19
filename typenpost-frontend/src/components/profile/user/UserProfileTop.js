@@ -9,7 +9,7 @@ import gear_white from '../../../assets/images/gear-white.svg'
 import { UserProfileTopLg } from "./UserProfileTopLg";
 import { IsAuthContext } from "../../../context/LoginContext";
 import { useFollowing } from "../../../customHooks/useFollowing";
-// import { getFinalStringForNumber } from "../../../functions/functions";
+import { createImageSrcUrl } from "../../../functions/functions";
 
 export function UserProfileTop({
     setIsImageOpen,
@@ -172,8 +172,8 @@ export function UserProfileTop({
                             onClick={() => setShowSettingsModal(true)}
                             variant='outline-dark'
                             className='settings-btn'>
-                            <img className={showSettingsModal ? 'offscreen' : ''} src={gear} alt="" width='15' height='15' />
-                            <img className={showSettingsModal ? '' : 'offscreen'} src={gear_white} alt="" width='15' height='15' />
+                            <img className={showSettingsModal ? 'offscreen' : ''} src={createImageSrcUrl(gear)} alt="" width='15' height='15' />
+                            <img className={showSettingsModal ? '' : 'offscreen'} src={createImageSrcUrl(gear_white)} alt="" width='15' height='15' />
                             <span>Settings</span>
                         </Button>
                     </>

@@ -29,6 +29,7 @@ import {
     IsAuthContext, 
     UsernameContext,
     ProfileIdContext } from '../../context/LoginContext';
+import { createImageSrcUrl } from '../../functions/functions';
 
 export function EditProfile({ handleAlert }) {
     console.log('Edit Profile render')
@@ -164,12 +165,12 @@ export function EditProfile({ handleAlert }) {
                     noValidate>
                     <div className='avatar-edit'>
                         <ProgressiveImage
-                            src={(userData && userData.avatar) ?
-                                userData.avatar : nobody}
+                            src={((userData && userData.avatar) ?
+                                userData.avatar : createImageSrcUrl(nobody))}
                             placeholder={(userData &&
                                 userData.avatar) ?
                                 createImagePlaceholderUrl(
-                                    userData.avatar, '250x250') : nobody}
+                                    userData.avatar, '250x250') : createImageSrcUrl(nobody)}
                         >
                             {(src, loading) =>
                                 <img

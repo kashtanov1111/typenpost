@@ -5,7 +5,7 @@ import heart_filled from '../../../assets/images/heart-fill.svg'
 import comment from '../../../assets/images/chat-left.svg'
 import React from "react";
 import ProgressiveImage from 'react-progressive-graceful-image'
-// import { getFinalStringForNumber } from '../../../functions/functions';
+import { createImageSrcUrl } from '../../../functions/functions'
 
 export function PostCard({
     post,
@@ -66,7 +66,7 @@ export function PostCard({
                     <p>{getDateJoinedPostCard(post.created)}</p>
                 </div>
                 <div>
-                    <img src={ellipsis} alt="" width='15' height='15'/>
+                    <img src={createImageSrcUrl(ellipsis)} alt="" width='15' height='15'/>
                 </div>
             </div>
             <div>
@@ -75,12 +75,12 @@ export function PostCard({
             <div className='post-card__footer'>
                 <div>
                     {post.hasILiked ?
-                    <img src={heart_filled} alt="" width='15' height='15'/> :
-                    <img src={heart} alt="" width='15' height='15'/>}
+                    <img src={createImageSrcUrl(heart_filled)} alt="" width='15' height='15'/> :
+                    <img src={createImageSrcUrl(heart)} alt="" width='15' height='15'/>}
                     <p>{numberOfLikes !== 0 && getFinalStringForNumber(numberOfLikes)}</p>
                 </div>
                 <div>
-                    <img src={comment} alt="" width='15' height='15'/>
+                    <img src={createImageSrcUrl(comment)} alt="" width='15' height='15'/>
                     {/* <p>0</p> */}
                 </div>
             </div>
