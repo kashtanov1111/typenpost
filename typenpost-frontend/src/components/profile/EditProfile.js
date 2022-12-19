@@ -1,6 +1,6 @@
 import nobody from '../../assets/images/nobody.jpg'
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { useTitle } from '../../customHooks/hooks';
+import { useTitle } from '../../customHooks/useTitle';
 import { useNavigate } from "react-router-dom";
 import { QUERY_ME_FOR_EDIT_PROFILE } from "../../gqls/queries";
 import {
@@ -177,9 +177,9 @@ export function EditProfile({ handleAlert }) {
                                         filter: loading && 'blur(1px}',
                                         'WebkitFilter': loading && 'blur(1px)',
                                     }}
-                                    className={
-                                        (userData && userData.avatar) ? 
-                                        'darkened-avatar' : ''}
+                                    className={"img-shadowed " + 
+                                        ((userData && userData.avatar) ? 
+                                        'darkened-avatar' : '')}
                                     height='112'
                                     width='112'
                                     src={src}

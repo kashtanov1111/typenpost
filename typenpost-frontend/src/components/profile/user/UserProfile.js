@@ -6,7 +6,7 @@ import { USER_PROFILE } from "../../../gqls/queries";
 import { Error } from "../../Error";
 import { useQuery } from "@apollo/client";
 import { UserProfileTop } from './UserProfileTop';
-// import { PostCard } from '../../post/card/PostCard';
+import { PostCard } from '../../post/card/PostCard';
 import Button from "react-bootstrap/Button";
 import {
     UsernameContext,
@@ -19,6 +19,7 @@ import { LogoBanner } from '../../LogoBanner';
 import { HeaderSettingsModal } from '../../header/HeaderSettingsModal';
 import ProgressiveImage from 'react-progressive-graceful-image';
 import { HeaderLogoutModal } from '../../header/HeaderLogoutModal';
+import { getFinalStringForNumber } from '../../../functions/functions';
 
 export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }) {
     console.log('User Profile render')
@@ -37,8 +38,9 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
     const [showSettingsModal, setShowSettingsModal] = useState(false)
     const [showLogoutModal, setShowLogoutModal] = useState(false)
 
-    // const yearNow = new Date().getFullYear()
+    const yearNow = new Date().getFullYear()
     var improvedUserData = null
+    var userPosts = null
     var placeholderProfileSrc = null
     var avatarSrc = null
 
@@ -58,7 +60,6 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
     const { data, loading: loadingUserProfile, error } = useQuery(USER_PROFILE, {
         variables: { username: userUsername },
         onCompleted: (data) => {
-            // console.log('Data from user profile', data)
             const amIFollowing = data.user.profile.amIFollowing
             if (amIFollowing) {
                 setAmIFollowing(true)
@@ -88,7 +89,7 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
             return <Error description='User is not found.' />
         } else {
             improvedUserData = {
-                profileId: user.profile.id,
+                id: user.profile.id,
                 name: user.name,
                 dateJoined: user.dateJoined,
                 email: user.email,
@@ -99,6 +100,8 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                 numberOfFollowing: user.profile.numberOfFollowing,
                 numberOfPosts: user.numberOfPosts,
             }
+            userPosts = user.posts.edges
+
         }
     }
     if (improvedUserData === null) {
@@ -128,7 +131,27 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
     return (
         !isImageOpen ?
             <>
-
+                <Button
+                    as={Link}
+                    to='/profile/wwwwwwwwwwwwwwwwwwww'
+                    variant='outline-dark'
+                    className="me-2">
+                    www user
+                </Button>
+                <Button
+                    as={Link}
+                    to='/profile/0'
+                    variant='outline-dark'
+                    className="me-2">
+                    0 user
+                </Button>
+                <Button
+                    as={Link}
+                    to='/profile/1'
+                    variant='outline-dark'
+                    className="me-2">
+                    1 user
+                </Button>
                 <HeaderSettingsModal
                     pathname={pathname}
                     secondaryEmail={secondaryEmail}
@@ -159,40 +182,23 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                     email={email}
                     secondaryEmail={secondaryEmail}
                     showSettingsModal={showSettingsModal}
+                    getFinalStringForNumber={getFinalStringForNumber}
                 />
-                <Button
-                    as={Link}
-                    to='/profile/wwwwwwwwwwwwwwwwwwww'
-                    variant='outline-dark'
-                    className="me-2">
-                    www user
-                </Button>
-                <Button
-                    as={Link}
-                    to='/profile/0'
-                    variant='outline-dark'
-                    className="me-2">
-                    0 user
-                </Button>
-                <Button
-                    as={Link}
-                    to='/profile/1'
-                    variant='outline-dark'
-                    className="me-2">
-                    1 user
-                </Button>
 
-                {/* {data && data.user.posts.edges.map((el) => (
-         el.node && 
-         <PostCard
-             key={el.node.id}
-             node={el.node}
-             data={data}
-             loadingUserProfile={loadingUserProfile}
-             yearNow={yearNow}
-             isMyProfile={isMyProfile}
-         />
-     ))} */}
+                {data && userPosts.map((el) => (
+                    el.node &&
+                    <PostCard
+                        key={el.node.id}
+                        post={el.node}
+                        placeholderProfileSrc={placeholderProfileSrc}
+                        avatarSrc={avatarSrc}
+                        improvedUserData={improvedUserData}
+                        userUsername={userUsername}
+                        yearNow={yearNow}
+                        getFinalStringForNumber={getFinalStringForNumber}
+
+                    />
+                ))}
 
             </>
             :

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react"
 import { useMutation } from "@apollo/client"
 import { useNavigate } from "react-router-dom"
-import { useTitle } from '../../customHooks/hooks'
+import { useTitle } from '../../customHooks/useTitle'
 import { Error } from "../Error"
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'

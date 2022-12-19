@@ -33,3 +33,26 @@ export function convertBase64(file) {
       }
     })
 }
+
+
+export function getFinalStringForNumber(number) {
+  const numberStr = number.toString()
+  if (number < 1000) {
+      return numberStr
+  } else if (number < 10000) {
+      return numberStr[0] + ' ' + numberStr.slice(1,)
+  }
+  const numberOfDigits = number.toString().length
+  var divider = 1000
+  var abbr = 'K'
+  if (numberOfDigits > 6) {
+      divider = 1000000
+      abbr = 'M'
+  }
+  const value = Math.floor((number / divider) * 10) / 10
+  if (value.toString().length > 4) {
+      return Math.floor(value).toString() + abbr
+  } else {
+      return value.toString() + abbr
+  }
+}

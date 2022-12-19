@@ -82,14 +82,14 @@ export function RoutesComponent({
           />} />
       <Route
         path='/profile/:userUsername'
-        element={<FollowHeader />}
+        element={<FollowHeader/>}
       >
         <Route
           path='followers'
-          element={<Followers />} />
+          element={<Followers handleAlert={handleAlert}/>} />
         <Route
           path='following'
-          element={<Following />} />
+          element={<Following handleAlert={handleAlert}/>} />
       </Route>
       <Route
         path='/edit_profile'

@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Button from "react-bootstrap/Button";
 import { HideShowButton } from "../HideShowButton";
-import { useTitle } from '../../customHooks/hooks'
+import { useTitle } from '../../customHooks/useTitle'
 import { LogoBanner } from "../LogoBanner";
 import { LOGIN_MUTATION } from "../../gqls/mutations";
 import { IsAuthContext } from "../../context/LoginContext";

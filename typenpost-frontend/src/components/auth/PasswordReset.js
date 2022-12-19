@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react"
 import { useMutation } from "@apollo/client"
 import { useLocation } from "react-router-dom"
 
-import { useTitle } from '../../customHooks/hooks'
+import { useTitle } from '../../customHooks/useTitle'
 import { Loader } from "../Loader"
 import { Error } from "../Error"
 import { useNavigate } from "react-router-dom"

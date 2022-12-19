@@ -54,6 +54,7 @@ export const USER_PROFILE = gql`
                         text
                         created
                         numberOfLikes
+                        hasILiked
                     }
                     cursor
                 }

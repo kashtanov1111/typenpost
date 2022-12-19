@@ -40,7 +40,7 @@ export function UserProfileTopLg({
                                 filter: loading && 'blur(1px}',
                                 'WebkitFilter': loading && 'blur(1px)'
                             }}
-                            className="pointer"
+                            className="pointer img-shadowed"
                             onClick={() => setIsImageOpen(true)}
                             width='72'
                             height='72'

@@ -1,183 +1,78 @@
-// import React, {useState, useEffect, useContext} from "react";
-// import nobody from '../../assets/images/nobody.jpg'
-// import { useTitle } from "../../customHooks/hooks";
-// import { useParams, Link, useNavigate } from "react-router-dom";
-// import { USER_FOLLOWING } from "../../gqls/queries";
-// import { FOLLOWING_USER } from "../../gqls/mutations";
-// import { Error } from "../Error";
-// import ProgressiveImage from 'react-progressive-graceful-image'
-// import { useMutation, useQuery } from "@apollo/client";
-// import Button from 'react-bootstrap/Button'
-// import Card from 'react-bootstrap/Card'
-// import Row from 'react-bootstrap/Row'
-// import Col from 'react-bootstrap/Col'
-// import Spinner from 'react-bootstrap/Spinner'
-// import Placeholder from 'react-bootstrap/Placeholder'
-// import InfiniteScroll from 'react-infinite-scroll-component'
-// import { handleUserFirstLastName } from '../../functions/functions';
+import React, { useEffect, useContext } from "react";
+import { useTitle } from "../../../customHooks/useTitle";
+import { useParams, useNavigate } from "react-router-dom";
+import { USER_FOLLOWING } from "../../../gqls/queries";
+import { Error } from "../../Error";
+import { useQuery } from "@apollo/client";
+import Spinner from 'react-bootstrap/Spinner'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
-// import { 
-//     createImagePlaceholderUrl } from '../../functions/functions';
-// import { 
-//     IsAuthContext, 
-//     UsernameContext } from '../../context/LoginContext';
+import { UserFollowCard } from "./UserFollowCard"
 
-export function Following(props) {
-    // const isAuthenticated = useContext(IsAuthContext)
-    // const username = useContext(UsernameContext)
-    // const params = useParams()
-    // const userUsername = params.userUsername
-    // const navigate = useNavigate()
-    // const [width, setWidth] = useState(window.innerWidth)
-    
-    // useTitle('Typenpost - Following')
+import { IsAuthContext, UsernameContext } from '../../../context/LoginContext';
 
-    // const { 
-    //     data, 
-    //     loading: loadingUserFollowing, fetchMore,
-    //     error: errorUserFollowing, refetch} = useQuery(USER_FOLLOWING, {
-    //         variables: { username: userUsername }
-    // })
-    
-    // const [handleFollow, {
-    //     error: errorFollowingUser}] = useMutation(FOLLOWING_USER)
+export function Following({ handleAlert }) {
+    console.log('Render Following Component')
 
-    // function handleWindowSizeChange() {
-    //     setWidth(window.innerWidth)
-    // }
+    const username = useContext(UsernameContext)
+    const isAuthenticated = useContext(IsAuthContext)
+    const params = useParams()
+    const userUsername = params.userUsername
+    const navigate = useNavigate()
+    var message = ''
 
-    // function handleFollowBtnClicked(e, username) {
-    //     e.preventDefault()
-    //     var mainElement = ''
-    //     if (e.target.tagName === 'SPAN') {
-    //         mainElement = e.target.parentElement
-    //     } else {
-    //         mainElement = e.target
-    //     }
-    //     if (mainElement.className.includes('following')) {
-    //         mainElement.className = mainElement.className.replace('following', 'primary')
-    //         mainElement.children[0].textContent = 'Follow'
-    //     } else {
-    //         mainElement.className = mainElement.className.replace('primary', 'following')
-    //         mainElement.children[0].textContent = 'Following'
-    //     }
-    //     handleFollow({variables: {username: username}})
-    // }
-    
-    // useEffect(() => {
-    //     refetch({username: userUsername})
-    // }, [navigate])
+    useTitle('Typenpost - Following')
+    const { data, fetchMore, error: errorUserFollowing } = useQuery(USER_FOLLOWING, {
+        variables: { username: userUsername }
+    })
 
-    // useEffect(() => {
-    //     if (!isAuthenticated) {
-    //         navigate('../../login', {
-    //             state: '/profile/' + userUsername + '/following', 
-    //             replace: true})
-    //     }
-    // }, [isAuthenticated])
+    const following = data && data.user.profile.following
 
-    // useEffect(() => {
-    //     window.addEventListener('resize', handleWindowSizeChange)
-    //     return () => {
-    //           window.removeEventListener('resize', handleWindowSizeChange)
-    //       }
-    // }, [window.innerWidth])
+    if (following && (following.edges.length === 0)) {
+        message = "This user hasn't followed anyone yet."
+    }
 
-    // if (errorUserFollowing || errorFollowingUser) {
-    //     return <Error />
-    // }
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('../../login', {
+                replace: true,
+                state: '/profile/' + userUsername + '/following'
+            })
+        }
+    }, [isAuthenticated, userUsername, navigate])
 
-    return (<>
-        <h1>Following</h1>
-        {/* <InfiniteScroll
-            dataLength={data ? data.user.profile.following.edges.length : 1}
+    if (errorUserFollowing) {
+        return <Error />
+    }
+
+    return (<div className='no-padding'>
+        {message &&
+            <div className='no-follow-yet'>
+                <p>{message}</p>
+            </div>
+        }
+        <InfiniteScroll
+            dataLength={data ? following.edges.length : 1}
             next={() => fetchMore({
-                        variables: {
-                            username: userUsername,
-                            cursor: data.user.profile.following.pageInfo.endCursor,
-                        },
-                    })}
-            hasMore={data && data.user.profile.following.pageInfo.hasNextPage}
+                variables: {
+                    username: userUsername,
+                    cursor: following.pageInfo.endCursor,
+                },
+            })}
+            hasMore={data && following.pageInfo.hasNextPage}
             loader={<div className='text-center my-3'>
-                    <Spinner variant='primary' animation='border' />
-                    </div>}
-            style={{'overflowX': 'hidden'}}
+                <Spinner variant='primary' animation='border' />
+            </div>}
+            style={{ 'overflowX': 'hidden' }}
         >
-        {data && data.user.profile.following.edges.map((el) => (el.node && 
-        <Card key={el.node.id} as={Link} className='bottom-border p-2' to={'/profile/' + el.node.user.username}>
-        <Row>
-            <Col xs='auto' className='text-center pe-1 my-auto'>
-                <ProgressiveImage 
-                  src={el.node.avatar ? 
-                    el.node.avatar : nobody} 
-                  placeholder={el.node.avatar ? 
-                    createImagePlaceholderUrl(
-                        el.node.avatar, '16x16') : nobody}
-                >
-                  {(src, loading) => 
-                    <img 
-                      style={{filter: loading && 'blur(8px}', 
-                        'WebkitFilter': loading && 'blur(8px)'}} 
-                      className="rounded-circle follow-images" 
-                      src={src}
-                      alt="mdo" />}
-                </ProgressiveImage>
-            </Col>
-            <Col xs className='my-auto'>
-                <Row>
-                    <Col xs className='pe-0 ps-md-3 ps-1'>
-                        {(loadingUserFollowing || el.node.user.firstName || 
-                            el.node.lastName) && 
-                        <Placeholder as='h6' animation='glow' 
-                            className='mb-0'>
-                            {loadingUserFollowing ? 
-                            <>
-                                <Placeholder xs={2} bg='secondary'/>{' '}
-                                <Placeholder xs={4} bg='secondary'/>
-                            </> : 
-                            handleUserFirstLastName(
-                                el.node.user.firstName,
-                                el.node.user.lastName,
-                                width)
-                            }
-                        </Placeholder>}
-                        <Placeholder as='p' animation='glow' 
-                            className='text-muted mt-0 mb-1'>
-                            {loadingUserFollowing ? 
-                            <Placeholder xs={3} bg='secondary'/> :
-                            '@' + el.node.user.username}
-                        </Placeholder>
-                    </Col>
-                    <Col xs='auto' className='my-auto'>
-                        {username === el.node.user.username ? 
-                        <></> : 
-                        <>
-                        {el.node.amIFollowing ? 
-                        <Button 
-                            style={{width: '85px'}}
-                            variant='following'
-                            size='sm'
-                            onClick={(e) => handleFollowBtnClicked(e, el.node.user.username)}
-                            >
-                            <span>Following</span>
-                        </Button> :
-                        <Button
-                            style={{width: '85px'}}
-                            variant='primary'
-                            size='sm'
-                            onClick={(e) => handleFollowBtnClicked(e, el.node.user.username)}
-                            >
-                            <span>Follow</span>
-                        </Button>}
-                        </>
-                        }
-                    </Col>
-                </Row>
-            </Col>
-        </Row>
-        </Card>
-        ))}
-        </InfiniteScroll> */}
-        </>
+            {data && following.edges.map((el) => (el.node &&
+                <UserFollowCard
+                    key={el.node.id}
+                    profile={el.node}
+                    username={username}
+                    handleAlert={handleAlert} />
+            ))}
+        </InfiniteScroll>
+    </div>
     )
 }

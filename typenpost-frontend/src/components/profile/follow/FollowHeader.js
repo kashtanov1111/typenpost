@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
-export function FollowHeader(props) {
+export function FollowHeader() {
     const navigate = useNavigate()
     const location = useLocation()
     const isFollowers = (location.pathname.endsWith('followers') ||
@@ -11,7 +11,7 @@ export function FollowHeader(props) {
 
     return (
         <Row>
-            <Col md={10} className='mx-auto'>
+            <Col md={6} className='mx-auto'>
                 <Row className='text-center follow-header'>
                     <Col
                         onClick={() => navigate('followers')}

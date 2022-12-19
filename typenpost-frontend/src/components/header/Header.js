@@ -98,7 +98,7 @@ export function Header({
                                         }}
                                         height='32'
                                         width='32'
-                                        className="header-auth__avatar"
+                                        className="header-auth__avatar img-shadowed"
                                         src={src}
                                         alt="mdo" />}
                             </ProgressiveImage>

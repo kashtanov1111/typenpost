@@ -160,16 +160,16 @@ export function App({ client }) {
           <ProfileIdContext.Provider value={authenticatedUserProfileId} >
             <div className={isAuthenticated === true ? 'auth' : 'unauth'}>
               <main className='main'>
-                {showAlert ?
-                  <Alert
-                    className='marginx-8px'
-                    style={{ 'borderRadius': '0%' }}
-                    key={styleAlert}
-                    variant={styleAlert}>
-                    {textAlert}
-                  </Alert> :
-                  <></>}
                 <Container>
+                  {showAlert ?
+                    <Alert
+                      className='marginx-8px'
+                      style={{ 'borderRadius': '0%' }}
+                      key={styleAlert}
+                      variant={styleAlert}>
+                      {textAlert}
+                    </Alert> :
+                    <></>}
                   <RoutesComponent
                     handleLogout={handleLogout}
                     handleAlert={handleAlert}

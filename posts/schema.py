@@ -43,8 +43,7 @@ class PostNode(DjangoObjectType):
     def resolve_has_i_liked(parent, info):
         me = info.context.user
         if me.is_authenticated:
-            username = me.username
-            if parent.likes.filter(username=username):
+            if parent.amIInLikes:
                 return True
             else: 
                 return False
@@ -56,6 +55,7 @@ class PostNode(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info, *args, **kwargs):
+        me_username = info.context.user.username
         return (
             queryset
             .select_related('user')
@@ -66,6 +66,16 @@ class PostNode(DjangoObjectType):
                         get_user_model().objects
                             .filter(status__archived=False))
             ))
+            .prefetch_related(
+                Prefetch(
+                    'likes',
+                    queryset=(
+                        get_user_model().objects
+                            .filter(username=me_username)
+                    ),
+                    to_attr='amIInLikes'
+                )
+            )
         )
         
 class Query(graphene.ObjectType):

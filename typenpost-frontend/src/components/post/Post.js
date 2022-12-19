@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { Loader } from '../Loader'
 
 import { createImageSrcUrl } from '../../functions/functions'
-import { useTitle } from '../../customHooks/hooks'
+import { useTitle } from '../../customHooks/useTitle'
 
 const QUERY_POSTS = gql`
     query GetAllPosts {

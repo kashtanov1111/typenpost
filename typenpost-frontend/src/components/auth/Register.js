@@ -10,7 +10,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import { SpinnerForButton } from "../SpinnerForButton";
 import { Error } from "../Error";
 import { LogoBanner } from "../LogoBanner";
-import { useTitle } from '../../customHooks/hooks'
+import { useTitle } from '../../customHooks/useTitle'
 import { IsAuthContext } from "../../context/LoginContext";
 import { REGISTER_MUTATION } from "../../gqls/mutations";
 import { RegisterMade } from "./RegisterMade";

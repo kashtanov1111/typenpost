@@ -1,16 +1,15 @@
 import React, { useState, useContext } from "react";
-import { useMutation } from '@apollo/client';
 import ProgressiveImage from 'react-progressive-graceful-image'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import Placeholder from 'react-bootstrap/Placeholder'
-import { FOLLOWING_USER } from '../../../gqls/mutations';
-import { ProfileIdContext } from '../../../context/LoginContext';
 import { useNavigate } from "react-router-dom";
 import gear from '../../../assets/images/gear.svg'
 import gear_white from '../../../assets/images/gear-white.svg'
 import { UserProfileTopLg } from "./UserProfileTopLg";
 import { IsAuthContext } from "../../../context/LoginContext";
+import { useFollowing } from "../../../customHooks/useFollowing";
+// import { getFinalStringForNumber } from "../../../functions/functions";
 
 export function UserProfileTop({
     setIsImageOpen,
@@ -26,58 +25,17 @@ export function UserProfileTop({
     showSettingsModal,
     setShowSettingsModal,
     email,
-    secondaryEmail
+    secondaryEmail,
+    getFinalStringForNumber
 }) {
-    const authenticatedUserProfileId = useContext(ProfileIdContext)
     const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
     const [showMore, setShowMore] = useState(false)
 
-    const [handleFollow, {
-        loading: loadingFollowingUser }] = useMutation(FOLLOWING_USER, {
-            variables: { username: userUsername },
-            update(cache, { data: { followingUser } }) {
-                cache.modify({
-                    id: 'UserProfileNode:' + authenticatedUserProfileId,
-                    fields: {
-                        numberOfFollowing(cachedValue) {
-                            console.log('uuuuuuuuu', cachedValue)
-                            if (followingUser.action ===
-                                'unfollowed') {
-                                return cachedValue - 1
-                            } else {
-                                return cachedValue + 1
-                            }
-                        }
-                    }
-                })
-                cache.modify({
-                    id: 'UserProfileNode:' + improvedUserData.profileId,
-                    fields: {
-                        numberOfFollowers(cachedValue) {
-                            if (followingUser.action ===
-                                'followed') {
-                                return cachedValue + 1
-                            } else {
-                                return cachedValue - 1
-                            }
-                        },
-                        amIFollowing(cachedValue) {
-                            if (followingUser.action ===
-                                'followed') {
-                                return true
-                            } else {
-                                return false
-                            }
-                        }
-                    }
-                })
-
-            },
-            onError: () => {
-                handleAlert('An error occured, please try again.', 'danger')
-            },
-        })
+    const following = useFollowing(
+        handleAlert, userUsername, improvedUserData)
+    const handleFollow = following.handleFollow
+    const loadingFollowingUser = following.loadingFollowingUser
 
     function getDateJoined(string) {
         const d = new Date(string)
@@ -85,46 +43,24 @@ export function UserProfileTop({
             'en-us', { day: 'numeric', month: 'long', year: 'numeric' })
     }
 
-    function getFinalStringForNumber(number) {
-        const numberStr = number.toString()
-        if (number < 1000) {
-            return numberStr
-        } else if (number < 10000) {
-            return numberStr[0] + ' ' + numberStr.slice(1,)
-        }
-        const numberOfDigits = number.toString().length
-        var divider = 1000
-        var abbr = 'K'
-        if (numberOfDigits > 6) {
-            divider = 1000000
-            abbr = 'M'
-        }
-        const value = Math.floor((number / divider) * 10) / 10
-        if (value.toString().length > 4) {
-            return Math.floor(value).toString() + abbr
-        } else {
-            return value.toString() + abbr
-        }
-    }
-
     return (<>
         <UserProfileTopLg
-            setIsImageOpen={setIsImageOpen}
-            loadingUserProfile={loadingUserProfile}
-            isMyProfile={isMyProfile}
             amIFollowing={amIFollowing}
-            isHeFollowing={isHeFollowing}
-            improvedUserData={improvedUserData}
-            userUsername={userUsername}
-            placeholderProfileSrc={placeholderProfileSrc}
             avatarSrc={avatarSrc}
+            email={email}
             getDateJoined={getDateJoined}
             getFinalStringForNumber={getFinalStringForNumber}
             handleFollow={handleFollow}
-            loadingFollowingUser={loadingFollowingUser}
-            email={email}
-            secondaryEmail={secondaryEmail}
+            improvedUserData={improvedUserData}
             isAuthenticated={isAuthenticated}
+            isHeFollowing={isHeFollowing}
+            isMyProfile={isMyProfile}
+            loadingFollowingUser={loadingFollowingUser}
+            loadingUserProfile={loadingUserProfile}
+            placeholderProfileSrc={placeholderProfileSrc}
+            secondaryEmail={secondaryEmail}
+            setIsImageOpen={setIsImageOpen}
+            userUsername={userUsername}
         />
         <section className='user-header'>
             <div className="user-header__avatar">
@@ -138,7 +74,7 @@ export function UserProfileTop({
                                 filter: loading && 'blur(1px}',
                                 'WebkitFilter': loading && 'blur(1px)'
                             }}
-                            className="pointer"
+                            className="pointer img-shadowed"
                             onClick={() => setIsImageOpen(true)}
                             width='72'
                             height='72'

@@ -1,38 +1,36 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useTitle } from "../../../customHooks/hooks";
+import React, { useEffect, useContext } from "react";
+import { useTitle } from "../../../customHooks/useTitle";
 import { useParams, useNavigate } from "react-router-dom";
 import { USER_FOLLOWERS } from "../../../gqls/queries";
-import { FOLLOWING_USER } from "../../../gqls/mutations";
 import { Error } from "../../Error";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import Spinner from 'react-bootstrap/Spinner'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { UserFollowCard } from "./UserFollowCard"
 
-import { IsAuthContext } from '../../../context/LoginContext';
+import { IsAuthContext, UsernameContext } from '../../../context/LoginContext';
 
-export function Followers(props) {
+export function Followers({ handleAlert }) {
     console.log('Render Followers Component')
 
+    const username = useContext(UsernameContext)
     const isAuthenticated = useContext(IsAuthContext)
     const params = useParams()
     const userUsername = params.userUsername
     const navigate = useNavigate()
+    var message = ''
 
     useTitle('Typenpost - Followers')
-    const {
-        data,
-        loading: loadingUserFollowers, fetchMore,
-        error: errorUserFollowers } = useQuery(USER_FOLLOWERS, {
-            variables: { username: userUsername }
-        })
+    const { data, fetchMore, error: errorUserFollowers } = useQuery(USER_FOLLOWERS, {
+        variables: { username: userUsername }
+    })
 
     const followers = data && data.user.profile.followers
-
-    const [handleFollow, {
-        loading: loadingFollowingUser,
-        error: errorFollowingUser }] = useMutation(FOLLOWING_USER)
+    
+    if (followers && (followers.edges.length === 0)) {
+        message = "This user has no followers yet."
+    }
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -43,12 +41,16 @@ export function Followers(props) {
         }
     }, [isAuthenticated, userUsername, navigate])
 
-    if (errorUserFollowers || errorFollowingUser) {
-        console.log(errorUserFollowers)
+    if (errorUserFollowers) {
         return <Error />
     }
 
     return (<div className='no-padding'>
+        {message &&
+            <div className='no-follow-yet'>
+                <p>{message}</p>
+            </div>
+        }
         <InfiniteScroll
             dataLength={data ? followers.edges.length : 1}
             next={() => fetchMore({
@@ -67,9 +69,8 @@ export function Followers(props) {
                 <UserFollowCard
                     key={el.node.id}
                     profile={el.node}
-                    handleFollow={handleFollow}
-                    loadingFollowingUser={loadingFollowingUser}
-                    loadingUserFollowers={loadingUserFollowers} />
+                    username={username}
+                    handleAlert={handleAlert} />
             ))}
         </InfiniteScroll>
     </div>

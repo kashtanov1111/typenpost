@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react"
 import { useQuery } from "@apollo/client"
-import { useTitle } from "../../functions/functions"
+import { useTitle } from "../../customHooks/useTitle"
 import { useNavigate } from "react-router-dom"
 import { Loader } from "../Loader"
 
