@@ -16,6 +16,7 @@ import {
   IdContext,
   ProfileIdContext
 } from '../context/LoginContext'
+import { ClientContext } from '../context/ApolloContext';
 import Alert from 'react-bootstrap/Alert'
 import { Loader } from './Loader';
 
@@ -154,42 +155,44 @@ export function App({ client }) {
   console.log('Render App Component,', ', isAuthenticated:', isAuthenticated)
 
   return (
-    <IsAuthContext.Provider value={isAuthenticated} >
-      <UsernameContext.Provider value={username} >
-        <IdContext.Provider value={authenticatedUserId} >
-          <ProfileIdContext.Provider value={authenticatedUserProfileId} >
-            <div className={isAuthenticated === true ? 'auth' : 'unauth'}>
-              <main className='main'>
-                <Container>
-                  {showAlert ?
-                    <Alert
-                      className='marginx-8px'
-                      style={{ 'borderRadius': '0%' }}
-                      key={styleAlert}
-                      variant={styleAlert}>
-                      {textAlert}
-                    </Alert> :
-                    <></>}
-                  <RoutesComponent
-                    handleLogout={handleLogout}
-                    handleAlert={handleAlert}
-                    setIsAuthenticated={setIsAuthenticated}
-                    email={email}
-                    queryMe={queryMe}
-                    secondaryEmail={secondaryEmail}
-                  />
-                </Container>
-              </main>
-              <Header
-                avatar={avatar}
-                handleLogout={handleLogout}
-                handleAlert={handleAlert}
-                secondaryEmail={secondaryEmail}
-              />
-            </div>
-          </ProfileIdContext.Provider>
-        </IdContext.Provider>
-      </UsernameContext.Provider>
-    </IsAuthContext.Provider>
+    <ClientContext.Provider value={client} >
+      <IsAuthContext.Provider value={isAuthenticated} >
+        <UsernameContext.Provider value={username} >
+          <IdContext.Provider value={authenticatedUserId} >
+            <ProfileIdContext.Provider value={authenticatedUserProfileId} >
+              <div className={isAuthenticated === true ? 'auth' : 'unauth'}>
+                <main className='main'>
+                  <Container>
+                    {showAlert ?
+                      <Alert
+                        className='main-alert'
+                        style={{ 'borderRadius': '0%' }}
+                        key={styleAlert}
+                        variant={styleAlert}>
+                        {textAlert}
+                      </Alert> :
+                      <></>}
+                    <RoutesComponent
+                      handleLogout={handleLogout}
+                      handleAlert={handleAlert}
+                      setIsAuthenticated={setIsAuthenticated}
+                      email={email}
+                      queryMe={queryMe}
+                      secondaryEmail={secondaryEmail}
+                    />
+                  </Container>
+                </main>
+                <Header
+                  avatar={avatar}
+                  handleLogout={handleLogout}
+                  handleAlert={handleAlert}
+                  secondaryEmail={secondaryEmail}
+                />
+              </div>
+            </ProfileIdContext.Provider>
+          </IdContext.Provider>
+        </UsernameContext.Provider>
+      </IsAuthContext.Provider>
+    </ClientContext.Provider>
   )
 }

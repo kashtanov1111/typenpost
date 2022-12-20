@@ -48,7 +48,7 @@ export function EditProfile({ handleAlert }) {
     })
     var nameLimitExceeded = false
     var aboutLimitExceeded = false
-    
+
     if (userData) {
         if (userData.name && userData.name.length > 55) {
             nameLimitExceeded = true
@@ -118,6 +118,10 @@ export function EditProfile({ handleAlert }) {
             })
         }
     })
+
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
 
     useEffect(() => {
         if (isAuthenticated === false) {

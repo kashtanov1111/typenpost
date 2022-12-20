@@ -14,6 +14,7 @@ from graphene import relay
 
 from graphql_auth.schema import UserNode
 
+
 class PostFilter(django_filters.FilterSet):
     text = django_filters.CharFilter(lookup_expr='iexact')
 
@@ -22,7 +23,7 @@ class PostFilter(django_filters.FilterSet):
         fields = {
             'text': ['icontains',],
         }
-    
+
     order_by = django_filters.OrderingFilter(
         fields=(
             ('text', 'created',),
@@ -35,10 +36,12 @@ class PostNode(DjangoObjectType):
     number_of_likes = graphene.Int()
     has_i_liked = graphene.Boolean()
     uuid = graphene.UUID()
+
     class Meta:
         model = Post
         filterset_class = PostFilter
-        fields = ('id', 'text', 'created', 'updated', 'user', 'comments', 'likes', 'uuid')
+        fields = ('id', 'text', 'created', 'updated',
+                  'user', 'comments', 'likes', 'uuid')
         interfaces = (graphene.relay.Node, )
 
     def resolve_uuid(parent, info):
@@ -49,7 +52,7 @@ class PostNode(DjangoObjectType):
         if me.is_authenticated:
             if parent.amIInLikes:
                 return True
-            else: 
+            else:
                 return False
         else:
             return False
@@ -65,23 +68,24 @@ class PostNode(DjangoObjectType):
             .select_related('user')
             .prefetch_related(
                 Prefetch(
-                    'likes', 
+                    'likes',
                     queryset=(
                         get_user_model().objects
-                            .filter(status__archived=False))
-            ))
+                        .filter(status__archived=False))
+                ))
             .prefetch_related(
                 Prefetch(
                     'likes',
                     queryset=(
                         get_user_model().objects
-                            .filter(username=me_username)
+                        .filter(username=me_username)
                     ),
                     to_attr='amIInLikes'
                 )
             )
         )
-        
+
+
 class Query(graphene.ObjectType):
     post = graphene.relay.Node.Field(PostNode)
     posts = DjangoFilterConnectionField(PostNode)
@@ -91,10 +95,11 @@ class Query(graphene.ObjectType):
     def resolve_feed(parent, info, *args, **kwargs):
         user = info.context.user
         return (Post.objects
-            .feed(user=user)
-            .select_related('user__profile')
-            .filter(user__status__archived=False)
-            )
+                .feed(user=user)
+                .select_related('user__profile')
+                .filter(user__status__archived=False)
+                )
+
 
 class LikePost(graphene.Mutation):
     post = graphene.Field(PostNode)
@@ -102,7 +107,7 @@ class LikePost(graphene.Mutation):
 
     class Arguments:
         uuid = graphene.UUID(required=True)
-    
+
     @login_required
     def mutate(root, info, uuid=None):
         user = info.context.user
@@ -132,6 +137,7 @@ class CreatePost(graphene.Mutation):
 
         return CreatePost(post=post)
 
+
 class UpdatePost(graphene.Mutation):
     post = graphene.Field(PostNode, id=graphene.UUID())
 
@@ -150,20 +156,33 @@ class UpdatePost(graphene.Mutation):
                 post.save()
                 return UpdatePost(post=post)
             else:
-                raise Exception('There is no object with this id or you have not a permission to change this post')
+                raise Exception(
+                    'There is no object with this id or you have not a permission to change this post')
         else:
             raise Exception('You have not provided id or text')
 
-# class DeletePost(graphene.Mutation):
-#     post = graphene.Field(PostNode, id=graphene.UUID())
 
-#     class Arguments:
-#         id = graphene.UUID(required=True)
+class DeletePost(graphene.Mutation):
+    action = graphene.String()
 
-#     @login_required
-#     def mutate()
+    class Arguments:
+        uuid = graphene.UUID(required=True)
+
+    @login_required
+    def mutate(root, info, uuid=None):
+        user = info.context.user
+        post = Post.objects.get(id=uuid)
+        if post.user == user:
+            post.delete()
+            action = 'deleted'
+            return DeletePost(action=action)
+        else:
+            action = 'not deleted'
+            return DeletePost(action=action)
+
 
 class Mutation(graphene.ObjectType):
     create_post = CreatePost.Field()
     update_post = UpdatePost.Field()
     like_post = LikePost.Field()
+    delete_post = DeletePost.Field()

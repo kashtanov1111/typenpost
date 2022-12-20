@@ -196,6 +196,7 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                         improvedUserData={improvedUserData}
                         userUsername={userUsername}
                         yearNow={yearNow}
+                        handleAlert={handleAlert}
                         getFinalStringForNumber={getFinalStringForNumber}
                     />
                 )) : <SpinnerForPages />}
