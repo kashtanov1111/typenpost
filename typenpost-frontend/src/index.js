@@ -24,6 +24,16 @@ const client = new ApolloClient({
             following: relayStylePagination(),
           }
       },
+      UserNode: {
+          fields: {
+            posts: relayStylePagination(),
+          }
+      },
+      Query: {
+          fields: {
+            feed: relayStylePagination(),
+          }
+      },
     },
   }),
   

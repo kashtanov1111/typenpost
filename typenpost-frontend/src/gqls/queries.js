@@ -41,7 +41,7 @@ export const USER_PROFILE = gql`
                 amIFollowing
                 isHeFollowing
             }
-            posts(first: 20, after: $cursor) {
+            posts(first: 10, after: $cursor) {
                 pageInfo {
                     hasNextPage
                     endCursor
@@ -76,26 +76,6 @@ export const USER_FOLLOWERS = gql`
                 id
                 followers(first: 20, after: $cursor) {
                     ...CoreFollowListFields
-                    # pageInfo {
-                    #     hasNextPage
-                    #     endCursor
-                    #     startCursor
-                    #     hasPreviousPage
-                    # }
-                    # edges {
-                    #     node {
-                    #         id
-                    #         avatar
-                    #         amIFollowing
-                    #         isHeFollowing
-                    #         user {
-                    #             id
-                    #             username
-                    #             name
-                    #         }
-                    #     }
-                    #     cursor
-                    # }
                 }
             }
         }
@@ -114,26 +94,6 @@ export const USER_FOLLOWING = gql`
                 id
                 following(first: 20, after: $cursor) {
                     ...CoreFollowListFields
-                    # pageInfo {
-                    #     hasNextPage
-                    #     endCursor
-                    #     startCursor
-                    #     hasPreviousPage
-                    # }
-                    # edges {
-                    #     node {
-                    #         id
-                    #         avatar
-                    #         amIFollowing
-                    #         isHeFollowing
-                    #         user {
-                    #             id
-                    #             username
-                    #             name
-                    #         }
-                    #     }
-                    #     cursor
-                    # }
                 }
             }
         }
@@ -141,8 +101,8 @@ export const USER_FOLLOWING = gql`
 `
 
 export const POST_FEED = gql`
-    query PostFeed {
-        feed {
+    query PostFeed($cursor: String) {
+        feed(first: 10, after: $cursor) {
             pageInfo {
                 hasNextPage
                 endCursor
@@ -152,13 +112,14 @@ export const POST_FEED = gql`
             edges {
                 node {
                     id
+                    uuid
                     text
                     created
                     numberOfLikes
+                    hasILiked
                     user {
                         username
-                        firstName
-                        lastName
+                        name
                         profile {
                             avatar
                         }

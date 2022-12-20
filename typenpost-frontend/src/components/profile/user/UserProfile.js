@@ -21,6 +21,8 @@ import ProgressiveImage from 'react-progressive-graceful-image';
 import { HeaderLogoutModal } from '../../header/HeaderLogoutModal';
 import { getFinalStringForNumber } from '../../../functions/functions';
 import { SpinnerForPages } from '../../SpinnerForPages';
+import InfiniteScroll from 'react-infinite-scroll-component'
+import Spinner from 'react-bootstrap/Spinner';
 
 export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }) {
     console.log('User Profile render')
@@ -58,7 +60,7 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
         setIsMyProfile(false)
     }
 
-    const { data, loading: loadingUserProfile, error } = useQuery(USER_PROFILE, {
+    const { data, fetchMore, loading: loadingUserProfile, error } = useQuery(USER_PROFILE, {
         variables: { username: userUsername },
         onCompleted: (data) => {
             const amIFollowing = data.user.profile.amIFollowing
@@ -101,7 +103,7 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                 numberOfFollowing: user.profile.numberOfFollowing,
                 numberOfPosts: user.numberOfPosts,
             }
-            userPosts = user.posts.edges
+            userPosts = user.posts
 
         }
     }
@@ -132,27 +134,6 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
     return (
         !isImageOpen ?
             <>
-                <Button
-                    as={Link}
-                    to='/profile/wwwwwwwwwwwwwwwwwwww'
-                    variant='outline-dark'
-                    className="me-2">
-                    www user
-                </Button>
-                <Button
-                    as={Link}
-                    to='/profile/0'
-                    variant='outline-dark'
-                    className="me-2">
-                    0 user
-                </Button>
-                <Button
-                    as={Link}
-                    to='/profile/1'
-                    variant='outline-dark'
-                    className="me-2">
-                    1 user
-                </Button>
                 <HeaderSettingsModal
                     pathname={pathname}
                     secondaryEmail={secondaryEmail}
@@ -185,22 +166,36 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                     showSettingsModal={showSettingsModal}
                     getFinalStringForNumber={getFinalStringForNumber}
                 />
-
-                {data ? userPosts.map((el) => (
-                    el.node &&
-                    <PostCard
-                        key={el.node.id}
-                        post={el.node}
-                        placeholderProfileSrc={placeholderProfileSrc}
-                        avatarSrc={avatarSrc}
-                        improvedUserData={improvedUserData}
-                        userUsername={userUsername}
-                        yearNow={yearNow}
-                        handleAlert={handleAlert}
-                        getFinalStringForNumber={getFinalStringForNumber}
-                    />
-                )) : <SpinnerForPages />}
-
+                <InfiniteScroll
+                    dataLength={data ? userPosts.edges.length : 1}
+                    next={() => fetchMore({
+                        variables: {
+                            username: userUsername,
+                            cursor: userPosts.pageInfo.endCursor,
+                        },
+                    })}
+                    hasMore={data && userPosts.pageInfo.hasNextPage}
+                    loader={<div className='text-center my-3'>
+                        <Spinner variant='primary' animation='border' />
+                    </div>}
+                    style={{ overflow: 'visible'}}
+                >
+                    {data ? userPosts.edges.map((el) => (
+                        el.node &&
+                        <PostCard
+                            key={el.node.id}
+                            post={el.node}
+                            placeholderProfileSrc={placeholderProfileSrc}
+                            avatarSrc={avatarSrc}
+                            improvedUserData={improvedUserData}
+                            userUsername={userUsername}
+                            authUsername={username}
+                            yearNow={yearNow}
+                            handleAlert={handleAlert}
+                            getFinalStringForNumber={getFinalStringForNumber}
+                        />
+                    )) : <SpinnerForPages />}
+                </InfiniteScroll>
             </>
             :
             <div className='avatar-opened' onClick={() => setIsImageOpen(false)}>

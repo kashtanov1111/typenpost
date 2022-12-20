@@ -47,6 +47,7 @@ export function UserFollowCard({
                             }}
                             width='64'
                             height='64'
+                            className='img-shadowed'
                             src={src}
                             alt="mdo" />}
                 </ProgressiveImage>

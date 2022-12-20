@@ -21,6 +21,7 @@ import { Following } from './profile/follow/Following';
 import { FollowHeader } from './profile/follow/FollowHeader';
 import { Error } from './Error';
 import { TestTest } from './TestTest';
+import { PostFeed } from './post/PostFeed';
 
 
 export function RoutesComponent({
@@ -33,8 +34,8 @@ export function RoutesComponent({
 }) {
   return (
     <Routes>
-      {/* <Route index element={<PostFeed />} /> */}
-      <Route path='/' element={<TestTest handleLogout={handleLogout} />} />
+      <Route index element={<PostFeed handleAlert={handleAlert} />} />
+      {/* <Route path='/' element={<TestTest handleLogout={handleLogout} />} /> */}
       <Route
         path='/login'
         element={<Login

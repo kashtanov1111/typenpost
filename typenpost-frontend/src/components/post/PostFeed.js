@@ -2,61 +2,65 @@ import React, { useEffect, useContext } from "react"
 import { useQuery } from "@apollo/client"
 import { useTitle } from "../../customHooks/useTitle"
 import { useNavigate } from "react-router-dom"
-import { Loader } from "../Loader"
-
-import Button from 'react-bootstrap/Button'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-
+import { LogoBanner } from "../LogoBanner"
 import { POST_FEED } from "../../gqls/queries"
 import { Error } from "../Error"
 import { IsAuthContext, UsernameContext } from "../../context/LoginContext"
+import { SpinnerForPages } from "../SpinnerForPages"
+import { PostCard } from "./card/PostCard"
+import { getFinalStringForNumber } from "../../functions/functions"
+import Spinner from "react-bootstrap/Spinner"
+import InfiniteScroll from "react-infinite-scroll-component"
 
-export function PostFeed() {
+export function PostFeed({ handleAlert }) {
+    console.log('Post Feed render')
     const isAuthenticated = useContext(IsAuthContext)
     const username = useContext(UsernameContext)
     useTitle('Typenpost')
     const navigate = useNavigate()
-    const { data, loading, error, refetch } = useQuery(
-        POST_FEED, {
-            errorPolicy: 'ignore'
-        }
-    )
+    const { data, fetchMore, loading, error } = useQuery(POST_FEED)
+    const yearNow = new Date().getFullYear()
+
     useEffect(() => {
         if (!isAuthenticated) {
-            if (!JSON.parse(
-                localStorage.getItem('refreshToken'))) {
-                    navigate('../login/', {replace: true})
-                }
+            navigate('../login', { replace: true })
         }
-    }, [isAuthenticated])
+    }, [isAuthenticated, navigate])
 
-    useEffect(() => {
-        refetch()
-    }, [username])
-
-    if (loading) {
-        return <Loader />
-    }
     if (error) {
-        console.log(error.graphQLErrors)
         return <Error />
     }
-    return (isAuthenticated ?
-        <Row>
-            <Col className='text-center mx-auto' >
-                <Button className='text-center mx-auto' onClick={() => refetch()}>
-                    Load new posts
-                </Button>
-            </Col>
-                {data && data.feed.edges.map((el) => (
-                    (el.node && <div key={el.node.id}>
-                        <a onClick={() => navigate(`posts/${el.node.id}`)}>
-                            Post - {el.node.id}: { el.node.text } { el.node.created } {el.node.user.username}
-                        </a>
-                    </div>)
-                ))}
-        </Row> :
-        <Loader />
+
+    return (
+        <>
+            <LogoBanner />
+            {!loading ?
+                <InfiniteScroll
+                    dataLength={data ? data.feed.edges.length : 1}
+                    next={() => fetchMore({
+                        variables: {
+                            cursor: data.feed.pageInfo.endCursor,
+                        },
+                    })}
+                    hasMore={data && data.feed.pageInfo.hasNextPage}
+                    loader={<div className='text-center my-3'>
+                        <Spinner variant='primary' animation='border' />
+                    </div>}
+                    style={{ overflow: 'visible' }}
+                >
+                    {data && data.feed.edges.map((el) => (
+                        el.node &&
+                        <PostCard
+                            key={el.node.id}
+                            post={el.node}
+                            yearNow={yearNow}
+                            handleAlert={handleAlert}
+                            authUsername={username}
+                            getFinalStringForNumber={getFinalStringForNumber}
+                        />
+                    ))}
+                </InfiniteScroll> :
+                <SpinnerForPages />}
+        </>
     )
 }

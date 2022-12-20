@@ -54,6 +54,7 @@ textarea {
   cursor: pointer;
 }
 
+
 /* || GENERAL STYLES */
 
 main {
@@ -213,6 +214,9 @@ p {
   align-items: center;
   margin-left: -0.75rem;
   margin-right: -0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 .logo-for-forms span {
   padding-bottom: 0.4rem;
@@ -272,6 +276,7 @@ p {
 .no-border {
   border: none;
 }
+
 
 /* || SETTINGS MODAL */
 
@@ -387,6 +392,7 @@ p {
   position: sticky;
   top: 0;
   margin: 0 -0.75rem;
+  z-index: 1001;
 }
 
 /* || FOLLOW TABS */
@@ -432,22 +438,22 @@ p {
 }
 
 .user-header__avatar {
-  flex: 25%;
+  flex: 30%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .user-header__avatar img {
-  height: 4.5rem;
-  width: 4.5rem;
+  height: 5.5rem;
+  width: 5.5rem;
   object-fit: cover;
   border-radius: 50%;
 }
 
 .user-header-stats {
   text-align: center;
-  flex: 75%;
+  flex: 70%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-evenly;
@@ -742,7 +748,7 @@ p {
   }
 
   .user-header-lg__top-right {
-    flex: 75%;
+    flex: 70%;
     padding-left: 1rem;
   }
 

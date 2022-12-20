@@ -11,6 +11,9 @@ import { useMutation } from '@apollo/client'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { CustomToggle } from '../../../CustomToggle';
 import { PostDeleteModal } from '../PostDeleteModal'
+import { createImagePlaceholderUrl } from '../../../functions/functions'
+import nobody from '../../../assets/images/nobody.jpg'
+
 export function PostCard({
     post,
     avatarSrc,
@@ -19,7 +22,8 @@ export function PostCard({
     userUsername,
     yearNow,
     getFinalStringForNumber,
-    handleAlert
+    handleAlert,
+    authUsername
 }) {
 
     console.log('Post Card Render')
@@ -27,6 +31,13 @@ export function PostCard({
     const [hasILiked, setHasILiked] = useState(post.hasILiked)
     const [numberOfLikes, setNumberOfLikes] = useState(post.numberOfLikes)
     const [showPostDeleteModal, setShowPostDeleteModal] = useState(false)
+    const avatar = avatarSrc ? avatarSrc : 
+        (post.user.profile.avatar ? post.user.profile.avatar : nobody)
+    const placeholder = placeholderProfileSrc ? placeholderProfileSrc :
+        (post.user.profile.avatar ? createImagePlaceholderUrl(post.user.profile.avatar, '50x50') : nobody)
+    const username = userUsername ? userUsername : post.user.username
+    const name = improvedUserData ? improvedUserData.name : post.user.name
+    const isMyPost = username === authUsername
 
     function handleLikeBtnClicked() {
         if (hasILiked === false) {
@@ -115,8 +126,8 @@ export function PostCard({
             <div className='post-card__top'>
                 <div>
                     <ProgressiveImage
-                        src={avatarSrc}
-                        placeholder={placeholderProfileSrc}
+                        src={avatar}
+                        placeholder={placeholder}
                     >
                         {(src, loading) =>
                             <img
@@ -132,13 +143,13 @@ export function PostCard({
                     </ProgressiveImage>
                 </div>
                 <div>
-                    <p className='mb-0'>{improvedUserData.name}</p>
-                    <p className={improvedUserData.name ? '' : 'post-card__top-no-top-margin'}>{'@' + userUsername}</p>
+                    <p className='mb-0'>{name}</p>
+                    <p className={name ? '' : 'post-card__top-no-top-margin'}>{'@' + username}</p>
                 </div>
-                <div>
+                <div className={isMyPost ? '' : 'pe-0'}>
                     <p>{getDateJoinedPostCard(post.created)}</p>
                 </div>
-                <Dropdown>
+                {isMyPost && <Dropdown>
                     <Dropdown.Toggle
                         as={CustomToggle}
                         id="dropdown-menu-align-responsive-2">
@@ -155,7 +166,7 @@ export function PostCard({
                             <span>Delete</span>
                         </Dropdown.Item>
                     </Dropdown.Menu>
-                </Dropdown>
+                </Dropdown>}
             </div>
             <div>
                 <p className='mt-1'>{handlePostText(post.text)}</p>
