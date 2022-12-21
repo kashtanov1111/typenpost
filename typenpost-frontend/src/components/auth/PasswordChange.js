@@ -1,25 +1,23 @@
-import React, { useState, useEffect, useContext } from "react"
+import { AlertContext } from '../../context/AlertContext';
+import { Error } from "../Error"
+import { HideShowButton } from "../HideShowButton"
+import { IsAuthContext } from "../../context/LoginContext"
+import { PASSWORD_CHANGE } from "../../gqls/mutations"
+import { SpinnerForButton } from "../SpinnerForButton"
 import { useMutation } from "@apollo/client"
 import { useNavigate } from "react-router-dom"
-import { Loader } from "../Loader"
 import { useTitle } from '../../customHooks/useTitle'
-import { SpinnerForButton } from "../SpinnerForButton"
-import { Error } from "../Error"
-
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
+import Col from 'react-bootstrap/Col'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import { LogoBanner } from "../LogoBanner"
-import { HideShowButton } from "../HideShowButton"
-import { PASSWORD_CHANGE } from "../../gqls/mutations"
-import { IsAuthContext } from "../../context/LoginContext"
+import Form from 'react-bootstrap/Form'
+import React, { useState, useEffect, useContext } from "react"
+import Row from 'react-bootstrap/Row'
 
-export function PasswordChange(props) {
-    const { handleAlert, handleLogout } = props
+export function PasswordChange({ handleLogout }) {
     const isAuthenticated = useContext(IsAuthContext)
-
+    const handleAlert = useContext(AlertContext)
+    
     const navigate = useNavigate()
     useTitle('Typenpost - Password Change')
 
@@ -70,7 +68,6 @@ export function PasswordChange(props) {
     return (isAuthenticated === true &&
         <Row>
             <Col md={6} className='mx-auto'>
-                <LogoBanner />
                 <h1 className='text-center mt-2 mb-3'>Change Password</h1>
                 <Form onSubmit={(event) => {
                     event.preventDefault()

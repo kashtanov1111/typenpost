@@ -1,7 +1,7 @@
-import React from "react";
-import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
-import Row from 'react-bootstrap/Row'
+import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import Col from 'react-bootstrap/Col'
+import React from "react";
+import Row from 'react-bootstrap/Row'
 
 export function FollowHeader() {
     const navigate = useNavigate()

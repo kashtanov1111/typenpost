@@ -1,27 +1,24 @@
-import React, { useState, useEffect, useContext } from "react"
+import { AlertContext } from '../../context/AlertContext';
+import { Error } from "../Error"
+import { HideShowButton } from "../HideShowButton"
+import { IsAuthContext } from "../../context/LoginContext"
+import { PASSWORD_RESET } from "../../gqls/mutations"
+import { SpinnerForButton } from "../SpinnerForButton"
 import { useMutation } from "@apollo/client"
 import { useParams, useNavigate } from "react-router-dom"
-import Alert from 'react-bootstrap/Alert'
 import { useTitle } from '../../customHooks/useTitle'
-import { Loader } from "../Loader"
-import { Error } from "../Error"
-
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
+import Col from 'react-bootstrap/Col'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import { SpinnerForButton } from "../SpinnerForButton"
-import { LogoBanner } from "../LogoBanner"
-import { HideShowButton } from "../HideShowButton"
+import Form from 'react-bootstrap/Form'
+import React, { useState, useEffect, useContext } from "react"
+import Row from 'react-bootstrap/Row'
 
-import { PASSWORD_RESET } from "../../gqls/mutations"
-import { IsAuthContext } from "../../context/LoginContext"
-
-export function PasswordResetWithToken(props) {
+export function PasswordResetWithToken() {
     console.log('PasswordResetWithToken render')
-
-    const { handleAlert } = props
+    
+    const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
     const params = useParams()
     const token = params.confirmationToken
@@ -71,7 +68,6 @@ export function PasswordResetWithToken(props) {
     return ((isAuthenticated === false) &&
         <Row>
             <Col md={6} className='mx-auto' >
-                <LogoBanner />
                 <h1 className='text-center mt-2 mb-3'>Reset Your Password</h1>
                 {data && !data.passwordReset.success &&
                     data.passwordReset.errors.nonFieldErrors.map((el) => (

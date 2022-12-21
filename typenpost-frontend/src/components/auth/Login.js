@@ -1,22 +1,23 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useMutation } from "@apollo/client";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { SpinnerForButton } from "../SpinnerForButton";
+import { AlertContext } from '../../context/AlertContext';
 import { Error } from "../Error";
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import Button from "react-bootstrap/Button";
 import { HideShowButton } from "../HideShowButton";
-import { useTitle } from '../../customHooks/useTitle'
-import { LogoBanner } from "../LogoBanner";
-import { LOGIN_MUTATION } from "../../gqls/mutations";
 import { IsAuthContext } from "../../context/LoginContext";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { LOGIN_MUTATION } from "../../gqls/mutations";
+import { SpinnerForButton } from "../SpinnerForButton";
+import { useMutation } from "@apollo/client";
+import { useTitle } from '../../customHooks/useTitle'
 import Alert from 'react-bootstrap/Alert'
+import Button from "react-bootstrap/Button";
+import Col from 'react-bootstrap/Col';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Form from 'react-bootstrap/Form';
+import React, { useEffect, useState, useContext } from "react";
+import Row from 'react-bootstrap/Row';
 
-export function Login({ handleAlert, queryMe, setIsAuthenticated }) {
+export function Login({ queryMe, setIsAuthenticated }) {
     const navigate = useNavigate()
+    const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
     const location = useLocation()
     useTitle('Typenpost - Log In')
@@ -101,7 +102,6 @@ export function Login({ handleAlert, queryMe, setIsAuthenticated }) {
         <>
             <Row>
                 <Col md={6} className='mx-auto'>
-                    <LogoBanner />
                     <h1 className='text-center mt-3 mb-3'>
                         Log in
                     </h1>

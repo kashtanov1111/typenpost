@@ -1,40 +1,36 @@
-import nobody from '../../assets/images/nobody.jpg'
-import React, { useState, useEffect, useContext } from "react";
-import { useTitle } from '../../customHooks/useTitle';
-import { useNavigate } from "react-router-dom";
-import { QUERY_ME_FOR_EDIT_PROFILE } from "../../gqls/queries";
-import {
-    EDIT_PROFILE,
-    DELETE_USER_PROFILE_AVATAR
-} from '../../gqls/mutations';
+import { AlertContext } from '../../context/AlertContext';
+import { 
+    convertBase64, 
+    createImagePlaceholderUrl } from '../../functions/functions';
+import { 
+    EDIT_PROFILE, 
+    DELETE_USER_PROFILE_AVATAR } from '../../gqls/mutations';
 import { Error } from "../Error";
-import ProgressiveImage from 'react-progressive-graceful-image'
-import { useMutation, useLazyQuery } from "@apollo/client";
+import { 
+    IsAuthContext, 
+    UsernameContext, 
+    ProfileIdContext } from '../../context/LoginContext';
+import { QUERY_ME_FOR_EDIT_PROFILE } from "../../gqls/queries";
 import { useLocation } from 'react-router-dom';
-
+import { useMutation, useLazyQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+import { useScrollTop } from '../../customHooks/useScrollTop';
+import { useTitle } from '../../customHooks/useTitle';
 import Button from 'react-bootstrap/Button'
-import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import Spinner from 'react-bootstrap/Spinner'
-import Form from 'react-bootstrap/Form'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import { LogoBanner } from '../LogoBanner';
-
-import {
-    convertBase64,
-    createImagePlaceholderUrl
-} from '../../functions/functions';
+import Form from 'react-bootstrap/Form'
 import FormLabel from 'react-bootstrap/esm/FormLabel';
-import {
-    IsAuthContext,
-    UsernameContext,
-    ProfileIdContext
-} from '../../context/LoginContext';
-import { createImageSrcUrl } from '../../functions/functions';
+import nobody from '../../assets/images/nobody.jpg'
+import ProgressiveImage from 'react-progressive-graceful-image'
+import React, { useState, useEffect, useContext } from "react";
+import Row from 'react-bootstrap/Row'
+import Spinner from 'react-bootstrap/Spinner'
+import { SpinnerForPages } from '../SpinnerForPages';
 
-export function EditProfile({ handleAlert }) {
+export function EditProfile() {
     console.log('Edit Profile render')
-
+    const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
     const authenticatedUserProfileId = useContext(ProfileIdContext)
     const username = useContext(UsernameContext)
@@ -46,6 +42,7 @@ export function EditProfile({ handleAlert }) {
         error: false,
         message: ''
     })
+    useScrollTop()
     var nameLimitExceeded = false
     var aboutLimitExceeded = false
 
@@ -59,7 +56,8 @@ export function EditProfile({ handleAlert }) {
 
     }
 
-    const [getUserProfile, { error: errorQueryMe }] = useLazyQuery(
+    const [getUserProfile, { 
+        error: errorQueryMe }] = useLazyQuery(
         QUERY_ME_FOR_EDIT_PROFILE,
         {
             onCompleted: (data) => {
@@ -120,10 +118,6 @@ export function EditProfile({ handleAlert }) {
     })
 
     useEffect(() => {
-        window.scrollTo(0, 0)
-    }, [])
-
-    useEffect(() => {
         if (isAuthenticated === false) {
             navigate('../login', { replace: true, state: '/edit_profile' })
         }
@@ -163,10 +157,9 @@ export function EditProfile({ handleAlert }) {
         return <Error />
     }
 
-    return (userData &&
+    return (userData ?
         <Row>
             <Col md={8} className='mx-auto' >
-                <LogoBanner />
                 <h1 className='text-center mb-3'>
                     Edit Profile
                 </h1>
@@ -312,6 +305,7 @@ export function EditProfile({ handleAlert }) {
                     </Button>
                 </Form>
             </Col>
-        </Row>
+        </Row> :
+        <SpinnerForPages />
     )
 }

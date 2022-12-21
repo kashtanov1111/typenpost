@@ -1,19 +1,21 @@
-import React, { useEffect, useContext } from "react";
-import { useTitle } from "../../../customHooks/useTitle";
-import { useParams, useNavigate } from "react-router-dom";
-import { USER_FOLLOWING } from "../../../gqls/queries";
+import { AlertContext } from '../../../context/AlertContext';
 import { Error } from "../../Error";
-import { useQuery } from "@apollo/client";
-import InfiniteScroll from 'react-infinite-scroll-component'
-import { Loader } from "../../Loader";
-import { UserFollowCard } from "./UserFollowCard"
-import Spinner from "react-bootstrap/Spinner";
 import { IsAuthContext, UsernameContext } from '../../../context/LoginContext';
 import { SpinnerForPages } from "../../SpinnerForPages";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { USER_FOLLOWING } from "../../../gqls/queries";
+import { UserFollowCard } from "./UserFollowCard"
+import { useTitle } from "../../../customHooks/useTitle";
+import InfiniteScroll from 'react-infinite-scroll-component'
+import React, { useEffect, useContext } from "react";
+import Spinner from "react-bootstrap/Spinner";
 
-export function Following({ handleAlert }) {
+
+export function Following() {
     console.log('Render Following Component')
-
+    
+    const handleAlert = useContext(AlertContext)
     const username = useContext(UsernameContext)
     const isAuthenticated = useContext(IsAuthContext)
     const params = useParams()

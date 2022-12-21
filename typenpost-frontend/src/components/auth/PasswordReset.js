@@ -1,22 +1,17 @@
-import React, { useState, useEffect, useContext } from "react"
-import { useMutation } from "@apollo/client"
-import { useLocation } from "react-router-dom"
-
-import { useTitle } from '../../customHooks/useTitle'
-import { Loader } from "../Loader"
 import { Error } from "../Error"
-import { useNavigate } from "react-router-dom"
-
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import FloatingLabel from 'react-bootstrap/FloatingLabel'
-
-import { SEND_PASSWORD_RESET_EMAIL } from "../../gqls/mutations"
 import { IsAuthContext } from "../../context/LoginContext"
+import { SEND_PASSWORD_RESET_EMAIL } from "../../gqls/mutations"
 import { SpinnerForButton } from "../SpinnerForButton"
-import { LogoBanner } from "../LogoBanner"
+import { useLocation } from "react-router-dom"
+import { useMutation } from "@apollo/client"
+import { useNavigate } from "react-router-dom"
+import { useTitle } from '../../customHooks/useTitle'
+import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import FloatingLabel from 'react-bootstrap/FloatingLabel'
+import Form from 'react-bootstrap/Form'
+import React, { useState, useEffect, useContext } from "react"
+import Row from 'react-bootstrap/Row'
 
 export function PasswordReset() {
     console.log('PasswordReset render')
@@ -54,7 +49,6 @@ export function PasswordReset() {
         <Row>
             <Col md={6} className='mx-auto'>
                 {(data === undefined || data.sendPasswordResetEmail.errors) ? <div>
-                    <LogoBanner />
                     <h1 className='my-2'>Password Reset</h1>
                     <p className='mb-2'>
                         Forgotten your password?
@@ -111,7 +105,6 @@ export function PasswordReset() {
                     </Form>
                 </div> :
                     <div>
-                        <LogoBanner />
                         <h1 className='my-2'>Password Reset</h1>
                         <p>
                             We have sent you an e-mail.

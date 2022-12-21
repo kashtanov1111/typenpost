@@ -1,24 +1,22 @@
-import React, { useState, useEffect, useContext } from "react"
-import { useMutation } from "@apollo/client"
-import { useNavigate, useLocation } from "react-router-dom"
-import { Loader } from "../Loader"
-import { useTitle } from '../../customHooks/useTitle'
-
+import { AlertContext } from '../../context/AlertContext';
 import { Error } from "../Error"
-
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import { LogoBanner } from "../LogoBanner";
 import { HideShowButton } from "../HideShowButton";
-import { SWAP_EMAILS } from "../../gqls/mutations"
 import { IsAuthContext } from "../../context/LoginContext"
 import { SpinnerForButton } from "../SpinnerForButton"
+import { SWAP_EMAILS } from "../../gqls/mutations"
+import { useMutation } from "@apollo/client"
+import { useNavigate, useLocation } from "react-router-dom"
+import { useTitle } from '../../customHooks/useTitle'
+import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Form from 'react-bootstrap/Form'
+import React, { useState, useEffect, useContext } from "react"
+import Row from 'react-bootstrap/Row'
 
-export function SwapEmails({ handleAlert, secondaryEmail }) {
+export function SwapEmails({ secondaryEmail }) {
     const isAuthenticated = useContext(IsAuthContext)
+    const handleAlert = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
     useTitle('Typenpost - Swap Emails')
@@ -66,7 +64,6 @@ export function SwapEmails({ handleAlert, secondaryEmail }) {
     return (isAuthenticated === true && secondaryEmail &&
         <Row>
             <Col md={6} className='mx-auto'>
-                <LogoBanner />
                 <h1 className='text-center mb-3'>Swap Emails</h1>
                 <Form onSubmit={(event) => {
                     event.preventDefault()

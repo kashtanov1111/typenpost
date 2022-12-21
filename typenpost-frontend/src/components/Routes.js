@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import { CreatePost, PostDetail } from './post/Post';
+import { CreatePost } from './post/Post';
 import { Login } from './auth/Login';
 import { Register } from './auth/Register';
 import { PasswordChange } from './auth/PasswordChange';
@@ -20,13 +20,12 @@ import { Followers } from './profile/follow/Followers';
 import { Following } from './profile/follow/Following';
 import { FollowHeader } from './profile/follow/FollowHeader';
 import { Error } from './Error';
-import { TestTest } from './TestTest';
+import { PostDetail } from './post/PostDetail';
 import { PostFeed } from './post/PostFeed';
 
 
 export function RoutesComponent({
   handleLogout,
-  handleAlert,
   email,
   secondaryEmail,
   setIsAuthenticated,
@@ -34,49 +33,39 @@ export function RoutesComponent({
 }) {
   return (
     <Routes>
-      <Route index element={<PostFeed handleAlert={handleAlert} />} />
-      {/* <Route path='/' element={<TestTest handleLogout={handleLogout} />} /> */}
+      <Route index element={<PostFeed />} />
       <Route
         path='/login'
         element={<Login
-          handleAlert={handleAlert}
           setIsAuthenticated={setIsAuthenticated}
           queryMe={queryMe}
         />} />
       <Route
         path='/register'
-        element={<Register
-          handleAlert={handleAlert} />} />
-      <Route path='posts/:postId' element={<PostDetail />} />
+        element={<Register />} />
+      <Route path='/:postId' element={<PostDetail />} />
       <Route
         path='/activate/:confirmationToken'
-        element={<VerifyAccount handleAlert={handleAlert} />} />
+        element={<VerifyAccount />} />
       <Route
         path='/activate2email/:confirmationToken'
         element={<VerifySecondaryEmail
-          queryMe={queryMe}
-          handleAlert={handleAlert} />} />
+          queryMe={queryMe} />} />
       <Route
         path='/password-reset/:confirmationToken'
-        element={<PasswordResetWithToken
-          handleAlert={handleAlert} />}
+        element={<PasswordResetWithToken />}
       />
       <Route path='/create' element={<CreatePost />} />
       <Route path='/password_reset' element={<PasswordReset />} />
       <Route
         path='/password_change'
-        element={<PasswordChange
-          handleAlert={handleAlert}
-          handleLogout={handleLogout} />} />
+        element={<PasswordChange handleLogout={handleLogout} />} />
       <Route
         path='/username_change'
-        element={<UsernameChange
-          handleAlert={handleAlert}
-          handleLogout={handleLogout} />} />
+        element={<UsernameChange handleLogout={handleLogout} />} />
       <Route
         path='/profile/:userUsername'
         element={<UserProfile 
-          handleAlert={handleAlert}
           handleLogout={handleLogout}
           secondaryEmail={secondaryEmail}
           email={email}
@@ -87,41 +76,29 @@ export function RoutesComponent({
       >
         <Route
           path='followers'
-          element={<Followers handleAlert={handleAlert}/>} />
+          element={<Followers />} />
         <Route
           path='following'
-          element={<Following handleAlert={handleAlert}/>} />
+          element={<Following />} />
       </Route>
       <Route
         path='/edit_profile'
-        element={<EditProfile
-          handleAlert={handleAlert}
-        />} />
+        element={<EditProfile />} />
       <Route
         path='/add_email'
-        element={<AddSecondaryEmail
-          handleAlert={handleAlert}
-          email={email}
-        />} />
+        element={<AddSecondaryEmail email={email} />} />
       <Route
         path='/swap_emails'
-        element={<SwapEmails
-          handleAlert={handleAlert}
-          secondaryEmail={secondaryEmail}
-        />} />
+        element={<SwapEmails secondaryEmail={secondaryEmail} />} />
       <Route
         path='/remove_secondary_email'
         element={<RemoveSecondaryEmail
           queryMe={queryMe}
-          handleAlert={handleAlert}
           secondaryEmail={secondaryEmail}
         />} />
       <Route
         path='/archive_account'
-        element={<ArchiveAccount
-          handleAlert={handleAlert}
-          handleLogout={handleLogout}
-        />} />
+        element={<ArchiveAccount handleLogout={handleLogout} />} />
       <Route
         path='*'
         element={<Error description="The page doesn't exist." />} />

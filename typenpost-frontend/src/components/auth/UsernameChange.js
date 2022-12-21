@@ -1,24 +1,20 @@
-import React, { useState, useEffect, useContext } from "react"
+import { AlertContext } from '../../context/AlertContext';
+import { Error } from "../Error"
+import { IsAuthContext } from "../../context/LoginContext"
+import { SpinnerForButton } from "../SpinnerForButton"
 import { useMutation } from "@apollo/client"
 import { useNavigate } from "react-router-dom"
-
-import { useTitle } from '../../customHooks/useTitle'
-
-import { Error } from "../Error"
-
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import { SpinnerForButton } from "../SpinnerForButton"
-import { Loader } from "../Loader"
-
 import { USERNAME_CHANGE } from "../../gqls/mutations"
-import { IsAuthContext } from "../../context/LoginContext"
-import { LogoBanner } from "../LogoBanner"
+import { useTitle } from '../../customHooks/useTitle'
+import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import FloatingLabel from 'react-bootstrap/FloatingLabel'
+import Form from 'react-bootstrap/Form'
+import React, { useState, useEffect, useContext } from "react"
+import Row from 'react-bootstrap/Row'
 
-export function UsernameChange({ handleAlert, handleLogout }) {
+export function UsernameChange({ handleLogout }) {
+    const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
     useTitle('Typenpost - Change Username')
@@ -64,7 +60,6 @@ export function UsernameChange({ handleAlert, handleLogout }) {
     return (
         <Row>
             <Col md={6} className='mx-auto'>
-                <LogoBanner />
                 <h1 className='text-center mt-2 mb-3'>Change Username</h1>
                 <Form onSubmit={(event) => {
                     event.preventDefault()

@@ -131,4 +131,25 @@ export const POST_FEED = gql`
     }
 `
 
+export const POST_DETAIL = gql`
+    query PostDetail($uuid: UUID) {
+        post(uuid: $uuid) {
+            id
+            uuid
+            text
+            created
+            numberOfLikes
+            hasILiked
+            user {
+                username
+                name
+                profile {
+                    avatar
+                }
+            }
+        }
+    }
+`
+
+
 

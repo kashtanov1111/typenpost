@@ -1,17 +1,23 @@
-import React from "react";
+import { IdContext } from "../../context/LoginContext";
+import { POST_DELETING } from "../../gqls/mutations";
+import { SpinnerForButton } from "../SpinnerForButton";
+import { useMutation } from "@apollo/client";
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
-import { POST_DELETING } from "../../gqls/mutations";
-import { useMutation } from "@apollo/client";
-import { SpinnerForButton } from "../SpinnerForButton";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function PostDeleteModal({
+    fromPostDetail,
+    handleAlert,
+    hasPrevPage,
     postId,
     postUUID,
-    handleAlert,
-    showPostDeleteModal,
     setShowPostDeleteModal,
+    showPostDeleteModal,
 }) {
+    const navigate = useNavigate()
+    const authenticatedUserId = useContext(IdContext)
     const [handleDeletePost, {
         loading: loadingDeletePost
     }] = useMutation(
@@ -19,9 +25,26 @@ export function PostDeleteModal({
         variables: {
             uuid: postUUID
         },
+        onCompleted: () => {
+            if (fromPostDetail) {
+                if (hasPrevPage) {
+                    navigate(-1)
+                } else {
+                    navigate('/')
+                }
+            }
+        },
         update(cache) {
-            cache.evict({id: 'PostNode:' + postId})
+            cache.evict({ id: 'PostNode:' + postId })
             cache.gc()
+            cache.modify({
+                id: 'UserNode:' + authenticatedUserId,
+                fields: {
+                    numberOfPosts(cachedValue) {
+                        return cachedValue - 1
+                    }
+                }
+            })
             handleAlert('The post was successfully deleted.', 'success')
         },
         onError: () => {
@@ -29,7 +52,7 @@ export function PostDeleteModal({
         }
     }
     )
-    
+
     return (
         <Modal show={showPostDeleteModal} onHide={() => setShowPostDeleteModal(false)} centered>
             <Modal.Header closeButton >
@@ -46,9 +69,9 @@ export function PostDeleteModal({
                     onClick={handleDeletePost}
                     disabled={loadingDeletePost}
                     variant='warning'>
-                    {loadingDeletePost ? 
-                    <SpinnerForButton /> :
-                    "Delete"
+                    {loadingDeletePost ?
+                        <SpinnerForButton /> :
+                        "Delete"
                     }
                 </Button>
             </Modal.Footer>

@@ -8,8 +8,8 @@ import plus from '../../assets/images/plus-circle.svg'
 import plus_fill from '../../assets/images/plus-circle-fill.svg'
 import typenpost_on_white from '../../assets/images/typenpost-on-white.svg'
 import burger from '../../assets/images/list.svg'
-import React, { useState, useContext } from 'react'
-import { CustomToggle } from '../../CustomToggle'
+import React, { useRef, useState, useContext } from 'react'
+import { useOutsideAlerter } from '../../customHooks/useOtsideAlerter'
 import { IsAuthContext, UsernameContext } from '../../context/LoginContext'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
@@ -18,9 +18,10 @@ import ProgressiveImage from 'react-progressive-graceful-image'
 import { HeaderLogoutModal } from './HeaderLogoutModal'
 import { HeaderSettingsModal } from './HeaderSettingsModal'
 
-import { 
-    createImageSrcUrl, 
-    createImagePlaceholderUrl } from '../../functions/functions'
+import {
+    createImageSrcUrl,
+    createImagePlaceholderUrl
+} from '../../functions/functions'
 
 export function Header({
     avatar,
@@ -35,6 +36,9 @@ export function Header({
     const username = useContext(UsernameContext)
     const [showLogoutModal, setShowLogoutModal] = useState(false)
     const [showSettingsModal, setShowSettingsModal] = useState(false)
+    const [showDropdown, setShowDropdown] = useState(false)
+    const dropRef = useRef(null)
+    useOutsideAlerter(dropRef, () => setShowDropdown(false))
 
     function handleLogoutButtonClicked() {
         setShowLogoutModal(false)
@@ -56,32 +60,36 @@ export function Header({
     }
 
     return (isAuthenticated === true ?
-        <>  
+        <>
             <HeaderSettingsModal
                 pathname={pathname}
                 secondaryEmail={secondaryEmail}
                 showSettingsModal={showSettingsModal}
                 setShowSettingsModal={setShowSettingsModal}
             />
-            <HeaderLogoutModal 
+            <HeaderLogoutModal
                 handleLogoutButtonClicked={handleLogoutButtonClicked}
                 showLogoutModal={showLogoutModal}
                 setShowLogoutModal={setShowLogoutModal}
             />
             <header className='header-auth'>
                 <nav className='header-auth__nav'>
-                    <ul className='header-auth__ul'>
-                        <li onClick={() => navigate('/')}>
-                            <h1 className='header-auth__first-h1'>typenpost</h1>
-                            <img className='header-auth__first-image' src={createImageSrcUrl(typenpost_on_white)} alt="a" height='32' width='32' />
+                    <ul className='header-auth__nav__ul'>
+                        <li
+                            className='header-auth__nav__ul__li-1'
+                            onClick={() => navigate('/')}>
+                            <h1>typenpost</h1>
+                            <img src={createImageSrcUrl(typenpost_on_white)} alt="a" height='32' width='32' />
                         </li>
                         <li
+                            className='header-auth__nav__ul__li-2'
                             onClick={() => navigate('/')}>
                             {pathname === '/' ?
                                 <img src={createImageSrcUrl(home_active)} alt="a" height='32' width='32' /> :
                                 <img src={createImageSrcUrl(home)} alt="a" height='32' width='32' />}
                         </li>
                         <li
+                            className='header-auth__nav__ul__li-3'
                             onClick={() => navigate('/create')}>
                             {(pathname === '/create' ||
                                 pathname === '/create/') ?
@@ -89,6 +97,7 @@ export function Header({
                                 <img src={createImageSrcUrl(plus)} alt="b" height='32' width='32' />}
                         </li>
                         <li
+                            className='header-auth__nav__ul__li-4'
                             onClick={() => navigate('/profile/' + username)}>
                             <ProgressiveImage
                                 src={src}
@@ -101,36 +110,60 @@ export function Header({
                                         }}
                                         height='32'
                                         width='32'
-                                        className="header-auth__avatar img-shadowed"
+                                        className="img-shadowed"
                                         src={src}
                                         alt="mdo" />}
                             </ProgressiveImage>
                         </li>
-                        <Dropdown>
-                            <Dropdown.Toggle
-                                as={CustomToggle}
-                                id="dropdown-menu-align-responsive-1">
-                                <li as={Dropdown}>
-                                    <img src={createImageSrcUrl(burger)} alt="" height='32' width='32' />
-                                </li>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu className='py-0'>
-                                <Dropdown.Item 
-                                    onClick={() => setShowSettingsModal(true)}
-                                    className='header-auth__dropdown-item py-3'>
-                                    <img src={createImageSrcUrl(gear)} alt="" height='20' width='20' />
+                        <div
+                            ref={dropRef}
+                            className='header-auth__nav__ul__div c-dropdown'>
+                            <li
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    console.log('clicked')
+                                    setShowDropdown(!showDropdown)
+                                }}
+                                className='header-auth__nav__ul__div__li-5 pointer'
+                                as={Dropdown}>
+                                <img
+                                    src={createImageSrcUrl(burger)}
+                                    alt="" height='32' width='32' />
+                            </li>
+                            <div className={
+                                'c-dropdown__body-auth c-dropdown__body ' +
+                                (showDropdown ? 'c-dropdown__body-show' : '')}>
+                                <div
+                                    className='c-dropdown__el-auth c-dropdown__el pointer'
+                                    // className='post-card__dropdown-item py-2'
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        setShowDropdown(false)
+                                        setShowSettingsModal(true)
+                                    }}
+                                >
+                                    <img
+                                        src={createImageSrcUrl(gear)}
+                                        alt="" height='20' width='20' />
                                     <span>Settings</span>
-                                </Dropdown.Item>
-                                <Dropdown.Divider className='my-0' />
-                                <Dropdown.Item
-                                    className='header-auth__dropdown-item py-3'
-                                    onClick={() => setShowLogoutModal(true)}
-                                    >
-                                    <img src={createImageSrcUrl(logout)} alt="" height='20' width='20' />
+                                </div>
+                                <div
+                                    className='c-dropdown__el c-dropdown__el-auth pointer'
+                                    // className='post-card__dropdown-item py-2'
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        setShowDropdown(false)
+                                        setShowLogoutModal(true)
+                                    }}
+                                >
+
+                                    <img
+                                        src={createImageSrcUrl(logout)}
+                                        alt="" height='20' width='20' />
                                     <span>Log out</span>
-                                </Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
+                                </div>
+                            </div>
+                        </div>
                     </ul>
                 </nav>
             </header>
@@ -138,7 +171,7 @@ export function Header({
         :
         <header className='header-unauth'>
             <p className='header-unauth__p'></p>
-            <div className='header-unauth__btns'>
+            <div className='header-unauth__div'>
                 <Button
                     className='header-unauth__btn'
                     as={Link}

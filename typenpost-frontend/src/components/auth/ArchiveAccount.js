@@ -1,28 +1,25 @@
-import React, { useState, useEffect, useContext } from "react"
+import { AlertContext } from '../../context/AlertContext';
+import { ARCHIVE_ACCOUNT } from "../../gqls/mutations"
+import { Error } from "../Error"
+import { HideShowButton } from "../HideShowButton"
+import { IsAuthContext } from "../../context/LoginContext"
+import { SpinnerForButton } from "../SpinnerForButton"
 import { useMutation } from "@apollo/client"
 import { useNavigate } from "react-router-dom"
-
 import { useTitle } from '../../customHooks/useTitle'
-
-import { Error } from "../Error"
-
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
+import Col from 'react-bootstrap/Col'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import { SpinnerForButton } from "../SpinnerForButton"
-import { HideShowButton } from "../HideShowButton"
-import { LogoBanner } from "../LogoBanner"
-import { Loader } from "../Loader"
-import { ARCHIVE_ACCOUNT } from "../../gqls/mutations"
-import { IsAuthContext } from "../../context/LoginContext"
+import Form from 'react-bootstrap/Form'
+import React, { useState, useEffect, useContext } from "react"
+import Row from 'react-bootstrap/Row'
 
-export function ArchiveAccount(props) {
+
+export function ArchiveAccount({ handleLogout }) {
     console.log('ArchiveAccount render')
-
+    
+    const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
-    const { handleAlert, handleLogout } = props
     const navigate = useNavigate()
     useTitle('Typenpost - Archive Account')
 
@@ -60,7 +57,6 @@ export function ArchiveAccount(props) {
     return (isAuthenticated === true &&
         <Row>
             <Col md={6} className='mx-auto'>
-                <LogoBanner />
                 <h1 className='my-2'>Archive Account</h1>
                 <p className='pb-2'>You are about to archive your Typenpost account.
                     All information related to your account will

@@ -1,32 +1,28 @@
-import nobody from '../../../assets/images/nobody.jpg'
-import white from '../../../assets/images/white.png'
-import React, { useState, useEffect, useContext } from "react";
-import { Link, useParams, useLocation } from "react-router-dom";
-import { USER_PROFILE } from "../../../gqls/queries";
+import { AlertContext } from '../../../context/AlertContext';
+import { createImagePlaceholderUrl } from '../../../functions/functions';
 import { Error } from "../../Error";
-import { useQuery } from "@apollo/client";
-import { UserProfileTop } from './UserProfileTop';
-import { PostCard } from '../../post/card/PostCard';
-import Button from "react-bootstrap/Button";
-import {
-    UsernameContext,
-    IsAuthContext
-} from '../../../context/LoginContext';
-import {
-    createImagePlaceholderUrl
-} from '../../../functions/functions';
-import { LogoBanner } from '../../LogoBanner';
-import { HeaderSettingsModal } from '../../header/HeaderSettingsModal';
-import ProgressiveImage from 'react-progressive-graceful-image';
-import { HeaderLogoutModal } from '../../header/HeaderLogoutModal';
 import { getFinalStringForNumber } from '../../../functions/functions';
+import { HeaderLogoutModal } from '../../header/HeaderLogoutModal';
+import { HeaderSettingsModal } from '../../header/HeaderSettingsModal';
+import { PostCard } from '../../post/card/PostCard';
 import { SpinnerForPages } from '../../SpinnerForPages';
+import { useParams, useLocation } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { USER_PROFILE } from "../../../gqls/queries";
+import { UsernameContext, IsAuthContext } from '../../../context/LoginContext';
+import { UserProfileTop } from './UserProfileTop';
 import InfiniteScroll from 'react-infinite-scroll-component'
+import nobody from '../../../assets/images/nobody.jpg'
+import ProgressiveImage from 'react-progressive-graceful-image';
+import React, { useState, useEffect, useContext } from "react";
 import Spinner from 'react-bootstrap/Spinner';
+import white from '../../../assets/images/white.png'
 
-export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }) {
+
+export function UserProfile({ secondaryEmail, email, handleLogout }) {
     console.log('User Profile render')
 
+    const handleAlert = useContext(AlertContext)
     const username = useContext(UsernameContext)
     const isAuthenticated = useContext(IsAuthContext)
     const location = useLocation()
@@ -41,7 +37,6 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
     const [showSettingsModal, setShowSettingsModal] = useState(false)
     const [showLogoutModal, setShowLogoutModal] = useState(false)
 
-    const yearNow = new Date().getFullYear()
     var improvedUserData = null
     var userPosts = null
     var placeholderProfileSrc = null
@@ -146,9 +141,6 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                     showLogoutModal={showLogoutModal}
                     setShowLogoutModal={setShowLogoutModal}
                 />
-                <LogoBanner extraClass={
-                    isAuthenticated === true ?
-                        'banner-user-profile' : ''} />
                 <UserProfileTop
                     setIsImageOpen={setIsImageOpen}
                     loadingUserProfile={loadingUserProfile}
@@ -178,7 +170,7 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                     loader={<div className='text-center my-3'>
                         <Spinner variant='primary' animation='border' />
                     </div>}
-                    style={{ overflow: 'visible'}}
+                    style={{ overflow: 'visible' }}
                 >
                     {data ? userPosts.edges.map((el) => (
                         el.node &&
@@ -190,7 +182,6 @@ export function UserProfile({ handleAlert, secondaryEmail, email, handleLogout }
                             improvedUserData={improvedUserData}
                             userUsername={userUsername}
                             authUsername={username}
-                            yearNow={yearNow}
                             handleAlert={handleAlert}
                             getFinalStringForNumber={getFinalStringForNumber}
                         />

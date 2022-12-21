@@ -1,26 +1,23 @@
-import React, { useState, useEffect, useContext } from "react"
+import { AlertContext } from '../../context/AlertContext';
+import { Error } from "../Error"
+import { HideShowButton } from "../HideShowButton"
+import { IsAuthContext } from "../../context/LoginContext"
+import { REMOVE_SECONDARY_EMAIL } from "../../gqls/mutations"
+import { SpinnerForButton } from "../SpinnerForButton"
 import { useMutation } from "@apollo/client"
 import { useNavigate, useLocation } from "react-router-dom"
-
 import { useTitle } from '../../customHooks/useTitle'
-
-import { Error } from "../Error"
-import { Loader } from "../Loader"
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
+import Col from 'react-bootstrap/Col'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import { LogoBanner } from "../LogoBanner"
-import { HideShowButton } from "../HideShowButton"
+import Form from 'react-bootstrap/Form'
+import React, { useState, useEffect, useContext } from "react"
+import Row from 'react-bootstrap/Row'
 
-import { REMOVE_SECONDARY_EMAIL } from "../../gqls/mutations"
-import { IsAuthContext } from "../../context/LoginContext"
-import { SpinnerForButton } from "../SpinnerForButton"
-
-export function RemoveSecondaryEmail({ handleAlert, secondaryEmail, queryMe }) {
+export function RemoveSecondaryEmail({ secondaryEmail, queryMe }) {
     console.log('Remove secondary email render')
-
+    
+    const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
     const location = useLocation()
@@ -71,7 +68,6 @@ export function RemoveSecondaryEmail({ handleAlert, secondaryEmail, queryMe }) {
     return (isAuthenticated === true && secondaryEmail &&
         <Row>
             <Col md={6} className='mx-auto'>
-                <LogoBanner />
                 <h1 className='text-center mt-2 mb-3'>
                     Remove Secondary Email
                 </h1>

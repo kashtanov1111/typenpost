@@ -1,25 +1,25 @@
-import React, { useEffect, useContext } from "react"
+import { AlertContext } from '../../context/AlertContext';
+import { Error } from "../Error"
+import { getFinalStringForNumber } from "../../functions/functions"
+import { IsAuthContext, UsernameContext } from "../../context/LoginContext"
+import { POST_FEED } from "../../gqls/queries"
+import { PostCard } from "./card/PostCard"
+import { SpinnerForPages } from "../SpinnerForPages"
+import { useNavigate } from "react-router-dom"
 import { useQuery } from "@apollo/client"
 import { useTitle } from "../../customHooks/useTitle"
-import { useNavigate } from "react-router-dom"
-import { LogoBanner } from "../LogoBanner"
-import { POST_FEED } from "../../gqls/queries"
-import { Error } from "../Error"
-import { IsAuthContext, UsernameContext } from "../../context/LoginContext"
-import { SpinnerForPages } from "../SpinnerForPages"
-import { PostCard } from "./card/PostCard"
-import { getFinalStringForNumber } from "../../functions/functions"
-import Spinner from "react-bootstrap/Spinner"
 import InfiniteScroll from "react-infinite-scroll-component"
+import React, { useEffect, useContext } from "react"
+import Spinner from "react-bootstrap/Spinner"
 
-export function PostFeed({ handleAlert }) {
+export function PostFeed() {
     console.log('Post Feed render')
     const isAuthenticated = useContext(IsAuthContext)
+    const handleAlert = useContext(AlertContext)
     const username = useContext(UsernameContext)
     useTitle('Typenpost')
     const navigate = useNavigate()
     const { data, fetchMore, loading, error } = useQuery(POST_FEED)
-    const yearNow = new Date().getFullYear()
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -33,7 +33,6 @@ export function PostFeed({ handleAlert }) {
 
     return (
         <>
-            <LogoBanner />
             {!loading ?
                 <InfiniteScroll
                     dataLength={data ? data.feed.edges.length : 1}
@@ -53,9 +52,9 @@ export function PostFeed({ handleAlert }) {
                         <PostCard
                             key={el.node.id}
                             post={el.node}
-                            yearNow={yearNow}
                             handleAlert={handleAlert}
                             authUsername={username}
+                            fromPostFeed={true}
                             getFinalStringForNumber={getFinalStringForNumber}
                         />
                     ))}

@@ -56,3 +56,28 @@ export function getFinalStringForNumber(number) {
       return value.toString() + abbr
   }
 }
+
+export function getDateCreatedPostCard(string) {
+    const d = new Date(string)
+    const yearNow = new Date().getFullYear()
+    if (d.getFullYear() < yearNow) {
+        return d.toLocaleDateString(
+            'en-us', { day: 'numeric', month: 'short', year: 'numeric' })
+    } else {
+        var seconds = Math.floor((new Date() - d) / 1000);
+        var interval = seconds / 86400;
+        if (interval > 1) {
+            return d.toLocaleDateString(
+                'en-us', { day: 'numeric', month: 'short' })
+        }
+        interval = seconds / 3600;
+        if (interval > 1) {
+            return Math.floor(interval) + "h";
+        }
+        interval = seconds / 60;
+        if (interval > 1) {
+            return Math.floor(interval) + "m";
+        }
+        return Math.floor(seconds) + "s";
+    }
+}

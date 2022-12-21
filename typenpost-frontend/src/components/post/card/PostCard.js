@@ -1,197 +1,208 @@
-import trash from '../../../assets/images/trash-red.svg'
+import { createImagePlaceholderUrl } from '../../../functions/functions'
+import { createImageSrcUrl } from '../../../functions/functions'
+import { getDateCreatedPostCard } from '../../../functions/functions'
+import { PostDeleteModal } from '../PostDeleteModal'
+import { useLiking } from '../../../customHooks/useLiking'
+import { useNavigate } from 'react-router-dom'
+import { useOutsideAlerter } from '../../../customHooks/useOtsideAlerter'
+import comment from '../../../assets/images/chat-left.svg'
 import ellipsis from '../../../assets/images/three-dots-vertical.svg'
 import heart from '../../../assets/images/heart.svg'
 import heart_filled from '../../../assets/images/heart-fill.svg'
-import comment from '../../../assets/images/chat-left.svg'
-import React, { useEffect, useState } from "react";
-import ProgressiveImage from 'react-progressive-graceful-image'
-import { createImageSrcUrl } from '../../../functions/functions'
-import { POST_LIKING, POST_DELETING } from '../../../gqls/mutations'
-import { useMutation } from '@apollo/client'
-import Dropdown from 'react-bootstrap/Dropdown'
-import { CustomToggle } from '../../../CustomToggle';
-import { PostDeleteModal } from '../PostDeleteModal'
-import { createImagePlaceholderUrl } from '../../../functions/functions'
 import nobody from '../../../assets/images/nobody.jpg'
+import ProgressiveImage from 'react-progressive-graceful-image'
+import React, { useRef, useState } from "react";
+import trash from '../../../assets/images/trash-red.svg'
 
 export function PostCard({
-    post,
+    authUsername,
     avatarSrc,
-    placeholderProfileSrc,
-    improvedUserData,
-    userUsername,
-    yearNow,
+    fromPostDetail,
+    fromPostFeed,
     getFinalStringForNumber,
     handleAlert,
-    authUsername
+    hasPrevPage,
+    improvedUserData,
+    placeholderProfileSrc,
+    post,
+    userUsername,
 }) {
 
     console.log('Post Card Render')
+    const navigate = useNavigate()
+    const [showDropdown, setShowDropdown] = useState(false)
+    const dropRef = useRef(null)
 
-    const [hasILiked, setHasILiked] = useState(post.hasILiked)
-    const [numberOfLikes, setNumberOfLikes] = useState(post.numberOfLikes)
-    const [showPostDeleteModal, setShowPostDeleteModal] = useState(false)
-    const avatar = avatarSrc ? avatarSrc : 
-        (post.user.profile.avatar ? post.user.profile.avatar : nobody)
-    const placeholder = placeholderProfileSrc ? placeholderProfileSrc :
-        (post.user.profile.avatar ? createImagePlaceholderUrl(post.user.profile.avatar, '50x50') : nobody)
-    const username = userUsername ? userUsername : post.user.username
-    const name = improvedUserData ? improvedUserData.name : post.user.name
-    const isMyPost = username === authUsername
-
-    function handleLikeBtnClicked() {
-        if (hasILiked === false) {
-            setHasILiked(true)
-            setNumberOfLikes(numberOfLikes + 1)
-            handleLikePost()
+    useOutsideAlerter(dropRef, () => setShowDropdown(false))
+    
+    var completedPost = {}
+    if (fromPostDetail !== true) {
+        completedPost.created = post.created
+        completedPost.text = post.text
+        completedPost.id = post.id
+        completedPost.uuid = post.uuid
+        completedPost.numberOfLikes = post.numberOfLikes
+        completedPost.hasILiked = post.hasILiked
+        if (fromPostFeed === true) {
+            completedPost.name = post.user.name
+            completedPost.username = post.user.username
+            completedPost.avatar = (post.user.profile.avatar ?
+                post.user.profile.avatar : nobody)
+            completedPost.placeholder = (post.user.profile.avatar ?
+                createImagePlaceholderUrl(post.user.profile.avatar, '50x50') :
+                nobody)
         } else {
-            setHasILiked(false)
-            setNumberOfLikes(numberOfLikes - 1)
-            handleLikePost()
+            completedPost.name = improvedUserData.name
+            completedPost.username = userUsername
+            completedPost.avatar = avatarSrc
+            completedPost.placeholder = placeholderProfileSrc
+        }
+    } else {
+        completedPost = post
+    }
+
+    const [showPostDeleteModal, setShowPostDeleteModal] = useState(false)
+    const isMyPost = completedPost.username === authUsername
+
+    const liking = useLiking(completedPost, handleAlert, authUsername)
+    const hasILiked = liking.hasILiked
+    const numberOfLikes = liking.numberOfLikes
+    const handleLikeBtnClicked = liking.handleLikeBtnClicked
+
+    function navigateToUserProfile(e) {
+        e.stopPropagation()
+        if (fromPostFeed) {
+            navigate('../profile/' + completedPost.username)
         }
     }
 
-    const [handleLikePost] = useMutation(
-        POST_LIKING, {
-        variables: {
-            uuid: post.uuid
-        },
-        update(cache, { data: { likePost } }) {
-            cache.modify({
-                id: 'PostNode:' + post.id,
-                fields: {
-                    hasILiked() {
-                        if (likePost.action ===
-                            'liked') {
-                            return true
-                        } else {
-                            return false
-                        }
-                    }
-                }
-            })
-        },
-        onError: () => {
-            handleAlert('An error occured, please try again.', 'danger')
-        }
+    function navigateToPostDetail() {
+        navigate('../' + completedPost.uuid, { state: { completedPost: completedPost, from: true } })
     }
-    )
-
-    useEffect(() => {
-        setNumberOfLikes(post.numberOfLikes)
-    }, [post.numberOfLikes])
 
     function handlePostText(text) {
-        if (text.length > 500) {
-            return text.slice(0, 500) + '...'
+        if (fromPostDetail !== true) {
+            if (text.length > 500) {
+                return text.slice(0, 500) + '...'
+            } else {
+                return text
+            }
         } else {
             return text
         }
     }
-
-    function getDateJoinedPostCard(string) {
-        const d = new Date(string)
-        if (d.getFullYear() < yearNow) {
-            return d.toLocaleDateString(
-                'en-us', { day: 'numeric', month: 'short', year: 'numeric' })
-        } else {
-            var seconds = Math.floor((new Date() - d) / 1000);
-            var interval = seconds / 86400;
-            if (interval > 1) {
-                return d.toLocaleDateString(
-                    'en-us', { day: 'numeric', month: 'short' })
-            }
-            interval = seconds / 3600;
-            if (interval > 1) {
-                return Math.floor(interval) + "h";
-            }
-            interval = seconds / 60;
-            if (interval > 1) {
-                return Math.floor(interval) + "m";
-            }
-            return Math.floor(seconds) + "s";
-        }
-    }
+    console.log('showDropdown', showDropdown)
 
     return (
         <>
-        <PostDeleteModal 
-            postId={post.id} 
-            postUUID={post.uuid}
-            showPostDeleteModal={showPostDeleteModal}
-            setShowPostDeleteModal={setShowPostDeleteModal}
-            handleAlert={handleAlert}
-        />
-        <div className='post-card'>
-            <div className='post-card__top'>
-                <div>
-                    <ProgressiveImage
-                        src={avatar}
-                        placeholder={placeholder}
-                    >
-                        {(src, loading) =>
-                            <img
-                                style={{
-                                    filter: loading && 'blur(1px}',
-                                    'WebkitFilter': loading && 'blur(1px)'
-                                }}
-                                width='64'
-                                height='64'
-                                src={src}
-                                className='img-shadowed'
-                                alt="mdo" />}
-                    </ProgressiveImage>
-                </div>
-                <div>
-                    <p className='mb-0'>{name}</p>
-                    <p className={name ? '' : 'post-card__top-no-top-margin'}>{'@' + username}</p>
-                </div>
-                <div className={isMyPost ? '' : 'pe-0'}>
-                    <p>{getDateJoinedPostCard(post.created)}</p>
-                </div>
-                {isMyPost && <Dropdown>
-                    <Dropdown.Toggle
-                        as={CustomToggle}
-                        id="dropdown-menu-align-responsive-2">
-                        <div as={Dropdown}>
-                            <img className='ellipsis-img' src={createImageSrcUrl(ellipsis)} alt="" width='15' height='15' />
-                        </div>
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu className='py-0 m-0'>
-                        <Dropdown.Item
-                            className='post-card__dropdown-item py-2'
-                            onClick={() => setShowPostDeleteModal(true)}
+            <PostDeleteModal
+                postId={post.id}
+                postUUID={post.uuid}
+                showPostDeleteModal={showPostDeleteModal}
+                setShowPostDeleteModal={setShowPostDeleteModal}
+                handleAlert={handleAlert}
+                fromPostDetail={fromPostDetail}
+                hasPrevPage={hasPrevPage}
+            />
+            <div onClick={navigateToPostDetail} className='post-card'>
+                <div className='post-card__top'>
+                    <div className='post-card__top-avatar'>
+                        <ProgressiveImage
+                            src={completedPost.avatar}
+                            placeholder={completedPost.placeholder}
                         >
-                            <img src={createImageSrcUrl(trash)} alt="" height='20' width='20' />
-                            <span>Delete</span>
-                        </Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>}
-            </div>
-            <div>
-                <p className='mt-1'>{handlePostText(post.text)}</p>
-            </div>
-            <div className='post-card__footer'>
-                <div>
-                    {hasILiked ?
-                        <img
-                            onClick={handleLikeBtnClicked}
-                            className='filled-heart pointer'
-                            src={createImageSrcUrl(heart_filled)}
-                            alt="" width='18' height='18' /> :
-                        <img
-                            onClick={handleLikeBtnClicked}
-                            className='pointer'
-                            src={createImageSrcUrl(heart)}
-                            alt="" width='18' height='18' />}
-                    {numberOfLikes !== 0 ? <p className={hasILiked ? 'special-red' : ''}>{getFinalStringForNumber(numberOfLikes)}</p> : <p>&nbsp;</p>}
+                            {(src, loading) =>
+                                <img
+                                    style={{
+                                        filter: loading && 'blur(1px}',
+                                        'WebkitFilter': loading && 'blur(1px)'
+                                    }}
+                                    width='64'
+                                    height='64'
+                                    src={src}
+                                    className='avatar img-shadowed pointer'
+                                    onClick={(e) => navigateToUserProfile(e)}
+                                    alt="mdo" />}
+                        </ProgressiveImage>
+                    </div>
+                    <div className='post-card__top-names'>
+                        <p
+                            onClick={(e) => navigateToUserProfile(e)}
+                            className='mb-0 pointer'>{completedPost.name}</p>
+                        <p
+                            onClick={(e) => navigateToUserProfile(e)}
+                            className={
+                                'pointer ' + (completedPost.name ? '' :
+                                    'post-card__top-no-top-margin')}>
+                            {'@' + completedPost.username}</p>
+                    </div>
+                    <div className={
+                        'post-card__top-created ' +
+                        (isMyPost ? '' : 'pe-0')}>
+                        <p>{getDateCreatedPostCard(post.created)}</p>
+                    </div>
+                    {isMyPost && <div ref={dropRef} className='c-dropdown'>
+                        <div
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                console.log('clicked')
+                                setShowDropdown(!showDropdown)
+                            }} 
+                            className='c-dropdown__toggle pointer'>
+                            <img
+                                className='ellipsis-img'
+                                src={createImageSrcUrl(ellipsis)}
+                                alt="" width='15' height='15' />
+                        </div>
+                        <div  className={
+                            'c-dropdown__body-post c-dropdown__body ' + 
+                            (showDropdown ? 'c-dropdown__body-show' : '')}>
+                            <div
+                                className='c-dropdown__el-post c-dropdown__el pointer'
+                                // className='post-card__dropdown-item py-2'
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setShowDropdown(false)
+                                    setShowPostDeleteModal(true)
+                                }}
+                            >
+                                <img
+                                    src={createImageSrcUrl(trash)}
+                                    alt="" height='20' width='20' />
+                                <span style={{color: 'red'}}>Delete</span>
+                            </div>
+                        </div>
+                    </div>}
                 </div>
                 <div>
-                    <img src={createImageSrcUrl(comment)} alt="" width='18' height='18' />
-                    {/* <p>0</p> */}
+                    <p className='mt-1'>{handlePostText(post.text)}</p>
+                </div>
+                <div className='post-card__footer'>
+                    <div>
+                        {hasILiked ?
+                            <img
+                                onClick={(e) => handleLikeBtnClicked(e)}
+                                className='filled-heart pointer'
+                                src={createImageSrcUrl(heart_filled)}
+                                alt="" width='18' height='18' /> :
+                            <img
+                                onClick={(e) => handleLikeBtnClicked(e)}
+                                className='pointer'
+                                src={createImageSrcUrl(heart)}
+                                alt="" width='18' height='18' />}
+                        {numberOfLikes ?
+                            <p className={hasILiked ? 'special-red' : ''}>
+                                {getFinalStringForNumber(numberOfLikes)}
+                            </p> : <p>&nbsp;</p>}
+                    </div>
+                    <div>
+                        <img
+                            src={createImageSrcUrl(comment)}
+                            alt="" width='18' height='18' />
+                        {/* <p>0</p> */}
+                    </div>
                 </div>
             </div>
-        </div>
         </>
     )
 }

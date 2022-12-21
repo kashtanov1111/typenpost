@@ -1,23 +1,22 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useMutation } from "@apollo/client";
-import { Link, useNavigate } from "react-router-dom";
-
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import FloatingLabel from 'react-bootstrap/FloatingLabel'
-import { SpinnerForButton } from "../SpinnerForButton";
+import { AlertContext } from '../../context/AlertContext';
 import { Error } from "../Error";
-import { LogoBanner } from "../LogoBanner";
-import { useTitle } from '../../customHooks/useTitle'
+import { HideShowButton } from "../HideShowButton";
 import { IsAuthContext } from "../../context/LoginContext";
+import { Link, useNavigate } from "react-router-dom";
 import { REGISTER_MUTATION } from "../../gqls/mutations";
 import { RegisterMade } from "./RegisterMade";
-import { HideShowButton } from "../HideShowButton";
+import { SpinnerForButton } from "../SpinnerForButton";
+import { useMutation } from "@apollo/client";
+import { useTitle } from '../../customHooks/useTitle'
+import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import FloatingLabel from 'react-bootstrap/FloatingLabel'
+import Form from 'react-bootstrap/Form'
+import React, { useState, useEffect, useContext } from "react";
+import Row from 'react-bootstrap/Row'
 
-export function Register(props) {
-    const { handleAlert } = props
+export function Register() {
+    const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
     useTitle('Typenpost - Sign up')
@@ -89,7 +88,6 @@ export function Register(props) {
         <>{(data === undefined || data.register.errors && 0) ?
             <Row>
                 <Col md={6} className='mx-auto' >
-                    <LogoBanner />
                     <h1 className='text-center mt-2 mb-3'>
                         Sign up
                     </h1>

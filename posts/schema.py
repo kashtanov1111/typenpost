@@ -87,9 +87,29 @@ class PostNode(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    post = graphene.relay.Node.Field(PostNode)
+    post = graphene.Field(PostNode, uuid=graphene.UUID())
     posts = DjangoFilterConnectionField(PostNode)
     feed = DjangoFilterConnectionField(PostNode)
+
+    def resolve_post(parent, info, uuid):
+        user = info.context.user
+        if user.is_authenticated:
+            me_username = user.username
+        else:
+            me_username = None
+        return (Post.objects
+            .select_related('user__profile')
+            .prefetch_related(
+                Prefetch(
+                    'likes',
+                    queryset=(
+                        get_user_model().objects
+                        .filter(username=me_username)
+                    ),
+                    to_attr='amIInLikes'
+                )
+            )
+            .get(id=uuid))
 
     @login_required
     def resolve_feed(parent, info, *args, **kwargs):
