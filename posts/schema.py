@@ -50,10 +50,17 @@ class PostNode(DjangoObjectType):
     def resolve_has_i_liked(parent, info):
         me = info.context.user
         if me.is_authenticated:
-            if parent.amIInLikes:
-                return True
-            else:
-                return False
+            try:
+                if parent.amIInLikes:
+                    return True
+                else:
+                    return False
+            except:
+                if parent.likes.filter(username=me.username).exists():
+                    return True
+                else:
+                    return False
+                
         else:
             return False
 
@@ -123,7 +130,6 @@ class Query(graphene.ObjectType):
 
 class LikePost(graphene.Mutation):
     post = graphene.Field(PostNode)
-    action = graphene.String()
 
     class Arguments:
         uuid = graphene.UUID(required=True)
@@ -135,12 +141,10 @@ class LikePost(graphene.Mutation):
         post = Post.objects.get(id=uuid)
         if post.likes.filter(username=username).exists():
             post.likes.remove(user)
-            action = 'unliked'
         else:
             post.likes.add(user)
-            action = 'liked'
         post.save()
-        return LikePost(post=post, action=action)
+        return LikePost(post=post)
 
 
 class CreatePost(graphene.Mutation):
@@ -154,7 +158,6 @@ class CreatePost(graphene.Mutation):
         user = info.context.user
         post = Post(text=text, user=user)
         post.save()
-
         return CreatePost(post=post)
 
 

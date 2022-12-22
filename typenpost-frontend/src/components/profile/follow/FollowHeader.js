@@ -1,4 +1,7 @@
+import { createImageSrcUrl } from '../../../functions/functions';
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
+import arrow from '../../../assets/images/white-arrow.svg'
+import arrow_tp from '../../../assets/images/tp-color-arrow.svg'
 import Col from 'react-bootstrap/Col'
 import React from "react";
 import Row from 'react-bootstrap/Row'
@@ -31,6 +34,10 @@ export function FollowHeader() {
                                 'follow-tab-unselected') + ' follow-tab'}>
                         Following
                     </Col>
+                    <img 
+                        onClick={() => navigate(-1)} 
+                        src={createImageSrcUrl(isFollowers ? arrow : arrow_tp)} 
+                        alt="" width='40' height='40' />
                 </Row>
                 <Outlet />
             </Col>

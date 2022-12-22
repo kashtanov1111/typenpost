@@ -15,6 +15,7 @@ import { LogoBanner } from './LogoBanner';
 import { AlertContext } from '../context/AlertContext';
 import { useAuth } from '../customHooks/useAuth';
 import { useAlert } from '../customHooks/useAlert';
+import { ClientContext } from '../context/ApolloContext'
 
 export function App({ client }) {
 
@@ -71,43 +72,45 @@ export function App({ client }) {
   console.log('Render App Component,', ', isAuthenticated:', isAuthenticated)
 
   return (
-    <AlertContext.Provider value={handleAlert}>
-      <IsAuthContext.Provider value={isAuthenticated} >
-        <UsernameContext.Provider value={username} >
-          <IdContext.Provider value={authenticatedUserId} >
-            <ProfileIdContext.Provider value={authenticatedUserProfileId} >
-              <div className={isAuthenticated === true ? 'auth' : 'unauth'}>
-                <main className='main'>
-                  <Container>
-                    {showAlert ?
-                      <Alert
-                        className='main-alert'
-                        key={styleAlert}
-                        variant={styleAlert}>
-                        {textAlert}
-                      </Alert> :
-                      <></>}
-                    <LogoBanner />
-                    <RoutesComponent
-                      handleLogout={handleLogout}
-                      setIsAuthenticated={setIsAuthenticated}
-                      email={email}
-                      queryMe={queryMe}
-                      secondaryEmail={secondaryEmail}
-                    />
-                  </Container>
-                </main>
-                <Header
-                  avatar={avatar}
-                  handleLogout={handleLogout}
-                  handleAlert={handleAlert}
-                  secondaryEmail={secondaryEmail}
-                />
-              </div>
-            </ProfileIdContext.Provider>
-          </IdContext.Provider>
-        </UsernameContext.Provider>
-      </IsAuthContext.Provider>
-    </AlertContext.Provider>
+    <ClientContext.Provider value={client} >
+      <AlertContext.Provider value={handleAlert}>
+        <IsAuthContext.Provider value={isAuthenticated} >
+          <UsernameContext.Provider value={username} >
+            <IdContext.Provider value={authenticatedUserId} >
+              <ProfileIdContext.Provider value={authenticatedUserProfileId} >
+                <div className={isAuthenticated === true ? 'auth' : 'unauth'}>
+                  <main className='main'>
+                    <Container>
+                      {showAlert ?
+                        <Alert
+                          className='main-alert'
+                          key={styleAlert}
+                          variant={styleAlert}>
+                          {textAlert}
+                        </Alert> :
+                        <></>}
+                      <LogoBanner onClick={() => window.scrollTo(0, 0)}/>
+                      <RoutesComponent
+                        handleLogout={handleLogout}
+                        setIsAuthenticated={setIsAuthenticated}
+                        email={email}
+                        queryMe={queryMe}
+                        secondaryEmail={secondaryEmail}
+                      />
+                    </Container>
+                  </main>
+                  <Header
+                    avatar={avatar}
+                    handleLogout={handleLogout}
+                    handleAlert={handleAlert}
+                    secondaryEmail={secondaryEmail}
+                  />
+                </div>
+              </ProfileIdContext.Provider>
+            </IdContext.Provider>
+          </UsernameContext.Provider>
+        </IsAuthContext.Provider>
+      </AlertContext.Provider>
+    </ClientContext.Provider>
   )
 }

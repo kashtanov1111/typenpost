@@ -1,27 +1,26 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-
-import { CreatePost } from './post/Post';
+import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
+import { ArchiveAccount } from './auth/ArchiveAccount';
+import { EditProfile } from './profile/EditProfile';
+import { Error } from './Error';
+import { Followers } from './profile/follow/Followers';
+import { FollowHeader } from './profile/follow/FollowHeader';
+import { Following } from './profile/follow/Following';
 import { Login } from './auth/Login';
-import { Register } from './auth/Register';
 import { PasswordChange } from './auth/PasswordChange';
 import { PasswordReset } from './auth/PasswordReset';
-import { UsernameChange } from './auth/UsernameChange';
-import { VerifyAccount } from './auth/VerifyAccount';
-import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
 import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
-import { RemoveSecondaryEmail } from './auth/RemoveSecondaryEmail';
-import { VerifySecondaryEmail } from './auth/VerifySecondaryEmail';
-import { ArchiveAccount } from './auth/ArchiveAccount';
-import { SwapEmails } from './auth/SwapEmails';
-import { UserProfile } from './profile/user/UserProfile';
-import { EditProfile } from './profile/EditProfile';
-import { Followers } from './profile/follow/Followers';
-import { Following } from './profile/follow/Following';
-import { FollowHeader } from './profile/follow/FollowHeader';
-import { Error } from './Error';
+import { PostCreate } from './post/PostCreate';
 import { PostDetail } from './post/PostDetail';
 import { PostFeed } from './post/PostFeed';
+import { Register } from './auth/Register';
+import { RemoveSecondaryEmail } from './auth/RemoveSecondaryEmail';
+import { Route, Routes } from 'react-router-dom';
+import { SwapEmails } from './auth/SwapEmails';
+import { UsernameChange } from './auth/UsernameChange';
+import { UserProfile } from './profile/user/UserProfile';
+import { VerifyAccount } from './auth/VerifyAccount';
+import { VerifySecondaryEmail } from './auth/VerifySecondaryEmail';
+import React from 'react';
 
 
 export function RoutesComponent({
@@ -55,7 +54,7 @@ export function RoutesComponent({
         path='/password-reset/:confirmationToken'
         element={<PasswordResetWithToken />}
       />
-      <Route path='/create' element={<CreatePost />} />
+      <Route path='/create' element={<PostCreate />} />
       <Route path='/password_reset' element={<PasswordReset />} />
       <Route
         path='/password_change'

@@ -1,28 +1,25 @@
 import React, { useState } from "react";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import Button from 'react-bootstrap/Button'
-import { SpinnerForButton } from "../../SpinnerForButton";
 import Placeholder from 'react-bootstrap/Placeholder'
 import { useNavigate } from "react-router-dom";
-import gear from '../../../assets/images/gear.svg'
 
 export function UserProfileTopLg({
-    setIsImageOpen,
-    loadingUserProfile,
-    isMyProfile,
     amIFollowing,
-    isHeFollowing,
-    improvedUserData,
-    userUsername,
-    placeholderProfileSrc,
     avatarSrc,
+    email,
     getDateJoined,
     getFinalStringForNumber,
-    loadingFollowingUser,
     handleFollow,
-    email,
+    improvedUserData,
+    isAuthenticated,
+    isHeFollowing,
+    isMyProfile,
+    loadingUserProfile,
+    placeholderProfileSrc,
     secondaryEmail,
-    isAuthenticated
+    setIsImageOpen,
+    userUsername,
 }) {
     const navigate = useNavigate()
     const [showMore, setShowMore] = useState(false)
@@ -53,42 +50,36 @@ export function UserProfileTopLg({
                     <div className="user-header__username">
                         <p>{'@' + userUsername}</p>
                     </div>
-                {isAuthenticated && improvedUserData && <>
-                    {isMyProfile ?
-                        <>
-                            <Button
-                                className='user-header-lg__edit-button'
-                                onClick={() => {
-                                    navigate('../edit_profile',
-                                        { replace: true, state: (improvedUserData && improvedUserData) });
-                                }}
-                                variant='outline-dark'>Edit Profile</Button>
-                        </>
-                        :
-                        <>
-                            {amIFollowing ?
+                    {isAuthenticated && improvedUserData && <>
+                        {isMyProfile ?
+                            <>
                                 <Button
                                     className='user-header-lg__edit-button'
-                                    variant='following'
-                                    onClick={handleFollow}
-                                >
-                                    {loadingFollowingUser ?
-                                        <SpinnerForButton /> :
+                                    onClick={() => {
+                                        navigate('../edit_profile',
+                                            { replace: true, state: (improvedUserData && improvedUserData) });
+                                    }}
+                                    variant='outline-dark'>Edit Profile</Button>
+                            </>
+                            :
+                            <>
+                                {amIFollowing ?
+                                    <Button
+                                        className='user-header-lg__edit-button'
+                                        variant='following'
+                                        onClick={handleFollow}
+                                    >
                                         <span>Following</span>
-                                    }
-                                </Button> :
-                                <Button
-                                    className='user-header-lg__edit-button'
-                                    variant='primary'
-                                    onClick={handleFollow}>
-                                    {loadingFollowingUser ?
-                                        <SpinnerForButton /> :
-                                        (isHeFollowing ? 'Follow back' : 'Follow')
-                                    }
-                                </Button>
-                            }
-                        </>
-                    }</>}
+                                    </Button> :
+                                    <Button
+                                        className='user-header-lg__edit-button'
+                                        variant='primary'
+                                        onClick={handleFollow}>
+                                        {(isHeFollowing ? 'Follow back' : 'Follow')}
+                                    </Button>
+                                }
+                            </>
+                        }</>}
                 </div>
                 <div className='user-header-stats'>
                     <div className="user-header__posts">

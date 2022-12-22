@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import nobody from '../../../assets/images/nobody.jpg'
 import { useNavigate } from "react-router-dom";
 import ProgressiveImage from 'react-progressive-graceful-image'
 import Button from 'react-bootstrap/Button'
-import { SpinnerForButton } from "../../SpinnerForButton";
 
 import { createImagePlaceholderUrl } from '../../../functions/functions';
 import { useFollowing } from "../../../customHooks/useFollowing";
@@ -15,17 +14,22 @@ export function UserFollowCard({
 }) {
     const userUsername = profile.user.username
     const avatar = profile.avatar
+    const [amIFollowing, setAmIFollowing] = useState(
+        profile && profile.amIFollowing)
     const following = useFollowing(
-        handleAlert, userUsername, profile)
+        userUsername,
+        amIFollowing,
+        profile,
+        handleAlert)
     const handleFollow = following.handleFollow
-    const loadingFollowingUser = following.loadingFollowingUser
     const navigate = useNavigate()
 
-    function handleFollowBtnClicked(e) {
-        e.stopPropagation()
-        handleFollow()
-    }
-    
+    useEffect(() => {
+        if (profile) {
+            setAmIFollowing(profile.amIFollowing)
+        }
+    }, [profile])
+
     return (
         <div
             onClick={() => navigate(
@@ -57,30 +61,32 @@ export function UserFollowCard({
                 <p>{'@' + userUsername}</p>
             </div>
             {username !== userUsername && <div>
-                {profile.amIFollowing ?
+                {amIFollowing ?
                     <Button
                         size='sm'
                         variant='following'
                         className="follow-list-btn"
-                        onClick={handleFollowBtnClicked}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleFollow()
+                        }}
                     >
-                        {loadingFollowingUser ?
-                            <SpinnerForButton /> :
-                            <span>Following</span>
-                        }
+                        <span>Following</span>
                     </Button> :
                     <Button
                         className='follow-list-btn'
                         size='sm'
                         variant='primary'
-                        onClick={handleFollowBtnClicked}>
-                        {loadingFollowingUser ?
-                            <SpinnerForButton /> :
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleFollow()
+                        }}>
+                        {
                             (profile.isHeFollowing ? 'Follow back' : 'Follow')
                         }
                     </Button>
-                }
-            </div>}
-        </div>
+            }
+        </div>}
+        </div >
     )
 }

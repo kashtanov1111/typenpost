@@ -114,8 +114,15 @@ export const RESEND_ACTIVATION_EMAIL = gql`
 export const FOLLOWING_USER = gql`
     mutation FollowingUser($username: String!) {
         followingUser(username: $username) {
-            success
-            action
+            fromUser {
+                id
+                numberOfFollowing
+            }
+            toUser {
+                id
+                numberOfFollowers
+                amIFollowing
+            }
         }
     }
 `
@@ -222,10 +229,10 @@ export const DELETE_USER_PROFILE_AVATAR = gql`
 export const POST_LIKING = gql`
     mutation PostLiking($uuid: UUID!) {
         likePost(uuid: $uuid) {
-            action
             post {
                 id
                 numberOfLikes
+                hasILiked
             }
         }
     }
@@ -240,6 +247,20 @@ export const POST_DELETING = gql`
 `
 
 
+export const CREATE_POST = gql`
+    mutation CreatePost($text: String!) {
+        createPost(text: $text) {
+            post {
+                id
+                uuid
+                text
+                created
+                numberOfLikes
+                hasILiked
+            }
+        }
+    }
+`
 
 
 

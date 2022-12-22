@@ -9,7 +9,7 @@ from graphene_django import DjangoObjectType
 from graphene_django.utils import camelize
 from graphql_jwt.decorators import login_required
 
-from graphql_auth.schema import UserNode, UserQuery, MeQuery
+from graphql_auth.schema import UserNode, UserQuery, MeQuery, UserProfileNode
 from graphql_auth import mutations
 from graphene_django.filter.fields import DjangoFilterConnectionField
 
@@ -52,8 +52,8 @@ class AuthMutation(graphene.ObjectType):
     delete_refresh_token_cookie = graphql_jwt.DeleteRefreshTokenCookie.Field()
 
 class FollowingUser(graphene.Mutation):
-    success = graphene.Boolean()
-    action = graphene.String()
+    from_user = graphene.Field(UserProfileNode)
+    to_user = graphene.Field(UserProfileNode)
 
     class Arguments:
         username = graphene.String(required=True)
@@ -67,12 +67,11 @@ class FollowingUser(graphene.Mutation):
         to_user_followers = to_user.profile.followers
         if to_user_followers.filter(user=from_user).exists():
             to_user_followers.remove(from_user_profile)
-            action = 'unfollowed'
         else:
             to_user_followers.add(from_user_profile)
-            action = 'followed'
         to_user.save()
-        return FollowingUser(success=True, action=action)
+        return FollowingUser(
+            from_user=from_user_profile, to_user=to_user.profile)
 
 class ErrorType(graphene.Scalar):
     @staticmethod

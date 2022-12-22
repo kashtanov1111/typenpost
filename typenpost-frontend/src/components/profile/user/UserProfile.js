@@ -17,16 +17,25 @@ import ProgressiveImage from 'react-progressive-graceful-image';
 import React, { useState, useEffect, useContext } from "react";
 import Spinner from 'react-bootstrap/Spinner';
 import white from '../../../assets/images/white.png'
-
+import { ClientContext } from '../../../context/ApolloContext';
 
 export function UserProfile({ secondaryEmail, email, handleLogout }) {
-    console.log('User Profile render')
+    // console.log('User Profile render')
 
+    // const client = useContext(ClientContext)
+
+    // const newPostEdited = client.readFragment({
+    //     id: l``
+    // })
+
+    window.history.replaceState({}, document.title)
     const handleAlert = useContext(AlertContext)
     const username = useContext(UsernameContext)
     const isAuthenticated = useContext(IsAuthContext)
     const location = useLocation()
     const pathname = location.pathname
+    const [newPost, setNewPost] = useState({})
+
     const params = useParams()
     const userUsername = params.userUsername
 
@@ -74,6 +83,14 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
     })
 
     useEffect(() => {
+        if (location.state) {
+            setNewPost(location.state)
+        }
+    }, [location.state])
+
+
+
+    useEffect(() => {
         if (isMyProfile === false) {
             document.title = 'Typenpost - ' + userUsername
         } else if (isMyProfile === true) {
@@ -99,6 +116,9 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
                 numberOfPosts: user.numberOfPosts,
             }
             userPosts = user.posts
+            if (newPost) {
+
+            }
 
         }
     }
@@ -126,38 +146,54 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
         return <Error />
     }
 
+    console.log('newPost', newPost, 'data', data)
+
     return (
         !isImageOpen ?
             <>
                 <HeaderSettingsModal
                     pathname={pathname}
                     secondaryEmail={secondaryEmail}
-                    showSettingsModal={showSettingsModal}
-                    setShowSettingsModal={setShowSettingsModal}
                     setShowLogoutModal={setShowLogoutModal}
+                    setShowSettingsModal={setShowSettingsModal}
+                    showSettingsModal={showSettingsModal}
                 />
                 <HeaderLogoutModal
                     handleLogoutButtonClicked={handleLogoutButtonClicked}
-                    showLogoutModal={showLogoutModal}
                     setShowLogoutModal={setShowLogoutModal}
+                    showLogoutModal={showLogoutModal}
                 />
                 <UserProfileTop
-                    setIsImageOpen={setIsImageOpen}
-                    loadingUserProfile={loadingUserProfile}
-                    isMyProfile={isMyProfile}
                     amIFollowing={amIFollowing}
-                    isHeFollowing={isHeFollowing}
-                    improvedUserData={improvedUserData}
-                    userUsername={userUsername}
-                    placeholderProfileSrc={placeholderProfileSrc}
                     avatarSrc={avatarSrc}
-                    handleAlert={handleAlert}
-                    setShowSettingsModal={setShowSettingsModal}
                     email={email}
-                    secondaryEmail={secondaryEmail}
-                    showSettingsModal={showSettingsModal}
                     getFinalStringForNumber={getFinalStringForNumber}
+                    handleAlert={handleAlert}
+                    improvedUserData={improvedUserData}
+                    isHeFollowing={isHeFollowing}
+                    isMyProfile={isMyProfile}
+                    loadingUserProfile={loadingUserProfile}
+                    placeholderProfileSrc={placeholderProfileSrc}
+                    secondaryEmail={secondaryEmail}
+                    setIsImageOpen={setIsImageOpen}
+                    setShowSettingsModal={setShowSettingsModal}
+                    showSettingsModal={showSettingsModal}
+                    userUsername={userUsername}
                 />
+                {Object.keys(newPost).length !== 0 &&
+                improvedUserData &&
+                    <PostCard
+                        key={newPost.id}
+                        post={newPost}
+                        placeholderProfileSrc={placeholderProfileSrc}
+                        avatarSrc={avatarSrc}
+                        improvedUserData={improvedUserData}
+                        userUsername={userUsername}
+                        authUsername={username}
+                        handleAlert={handleAlert}
+                        getFinalStringForNumber={getFinalStringForNumber}
+                    />
+                }
                 <InfiniteScroll
                     dataLength={data ? userPosts.edges.length : 1}
                     next={() => fetchMore({

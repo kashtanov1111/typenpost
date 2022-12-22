@@ -28,13 +28,13 @@ export function PostCard({
     userUsername,
 }) {
 
-    console.log('Post Card Render')
+    // console.log('Post Card Render')
     const navigate = useNavigate()
     const [showDropdown, setShowDropdown] = useState(false)
     const dropRef = useRef(null)
 
     useOutsideAlerter(dropRef, () => setShowDropdown(false))
-    
+
     var completedPost = {}
     if (fromPostDetail !== true) {
         completedPost.created = post.created
@@ -63,15 +63,12 @@ export function PostCard({
 
     const [showPostDeleteModal, setShowPostDeleteModal] = useState(false)
     const isMyPost = completedPost.username === authUsername
-
-    const liking = useLiking(completedPost, handleAlert, authUsername)
-    const hasILiked = liking.hasILiked
-    const numberOfLikes = liking.numberOfLikes
-    const handleLikeBtnClicked = liking.handleLikeBtnClicked
+    const liking = useLiking(post, handleAlert)
+    const handleLikePost = liking.handleLikePost
 
     function navigateToUserProfile(e) {
         e.stopPropagation()
-        if (fromPostFeed) {
+        if (fromPostFeed || fromPostDetail) {
             navigate('../profile/' + completedPost.username)
         }
     }
@@ -91,7 +88,11 @@ export function PostCard({
             return text
         }
     }
-    console.log('showDropdown', showDropdown)
+
+    function handleLikeBtnClicked(e) {
+        e.stopPropagation()
+        handleLikePost()
+    }
 
     return (
         <>
@@ -145,17 +146,16 @@ export function PostCard({
                         <div
                             onClick={(e) => {
                                 e.stopPropagation()
-                                console.log('clicked')
                                 setShowDropdown(!showDropdown)
-                            }} 
+                            }}
                             className='c-dropdown__toggle pointer'>
                             <img
                                 className='ellipsis-img'
                                 src={createImageSrcUrl(ellipsis)}
                                 alt="" width='15' height='15' />
                         </div>
-                        <div  className={
-                            'c-dropdown__body-post c-dropdown__body ' + 
+                        <div className={
+                            'c-dropdown__body-post c-dropdown__body ' +
                             (showDropdown ? 'c-dropdown__body-show' : '')}>
                             <div
                                 className='c-dropdown__el-post c-dropdown__el pointer'
@@ -169,7 +169,7 @@ export function PostCard({
                                 <img
                                     src={createImageSrcUrl(trash)}
                                     alt="" height='20' width='20' />
-                                <span style={{color: 'red'}}>Delete</span>
+                                <span style={{ color: 'red' }}>Delete</span>
                             </div>
                         </div>
                     </div>}
@@ -179,7 +179,7 @@ export function PostCard({
                 </div>
                 <div className='post-card__footer'>
                     <div>
-                        {hasILiked ?
+                        {post.hasILiked ?
                             <img
                                 onClick={(e) => handleLikeBtnClicked(e)}
                                 className='filled-heart pointer'
@@ -190,9 +190,9 @@ export function PostCard({
                                 className='pointer'
                                 src={createImageSrcUrl(heart)}
                                 alt="" width='18' height='18' />}
-                        {numberOfLikes ?
-                            <p className={hasILiked ? 'special-red' : ''}>
-                                {getFinalStringForNumber(numberOfLikes)}
+                        {post.numberOfLikes ?
+                            <p className={post.hasILiked ? 'special-red' : ''}>
+                                {getFinalStringForNumber(post.numberOfLikes)}
                             </p> : <p>&nbsp;</p>}
                     </div>
                     <div>

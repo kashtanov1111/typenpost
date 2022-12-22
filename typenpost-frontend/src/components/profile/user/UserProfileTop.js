@@ -1,47 +1,45 @@
-import React, { useState, useContext } from "react";
-import ProgressiveImage from 'react-progressive-graceful-image'
-import Button from 'react-bootstrap/Button'
-import { SpinnerForButton } from "../../SpinnerForButton";
-import Placeholder from 'react-bootstrap/Placeholder'
-import { useNavigate } from "react-router-dom";
-import gear from '../../../assets/images/gear.svg'
-import gear_white from '../../../assets/images/gear-white.svg'
-import { UserProfileTopLg } from "./UserProfileTopLg";
+import { createImageSrcUrl } from "../../../functions/functions";
+import { getDateJoined } from "../../../functions/functions";
 import { IsAuthContext } from "../../../context/LoginContext";
 import { useFollowing } from "../../../customHooks/useFollowing";
-import { createImageSrcUrl } from "../../../functions/functions";
+import { useNavigate } from "react-router-dom";
+import { UserProfileTopLg } from "./UserProfileTopLg";
+import Button from 'react-bootstrap/Button'
+import gear from '../../../assets/images/gear.svg'
+import gear_white from '../../../assets/images/gear-white.svg'
+import Placeholder from 'react-bootstrap/Placeholder'
+import ProgressiveImage from 'react-progressive-graceful-image'
+import React, { useState, useContext } from "react";
 
 export function UserProfileTop({
-    setIsImageOpen,
-    loadingUserProfile,
-    isMyProfile,
     amIFollowing,
-    isHeFollowing,
-    improvedUserData,
-    userUsername,
-    placeholderProfileSrc,
     avatarSrc,
-    handleAlert,
-    showSettingsModal,
-    setShowSettingsModal,
     email,
+    getFinalStringForNumber,
+    handleAlert,
+    improvedUserData,
+    isHeFollowing,
+    isMyProfile,
+    loadingUserProfile,
+    placeholderProfileSrc,
     secondaryEmail,
-    getFinalStringForNumber
+    setIsImageOpen,
+    setShowSettingsModal,
+    showSettingsModal,
+    userUsername,
 }) {
-    const isAuthenticated = useContext(IsAuthContext)
+    console.log('User Profile Top Render')
+
     const navigate = useNavigate()
+    const isAuthenticated = useContext(IsAuthContext)
     const [showMore, setShowMore] = useState(false)
 
     const following = useFollowing(
-        handleAlert, userUsername, improvedUserData)
+        userUsername,
+        amIFollowing,
+        improvedUserData,
+        handleAlert)
     const handleFollow = following.handleFollow
-    const loadingFollowingUser = following.loadingFollowingUser
-
-    function getDateJoined(string) {
-        const d = new Date(string)
-        return d.toLocaleDateString(
-            'en-us', { day: 'numeric', month: 'long', year: 'numeric' })
-    }
 
     return (<>
         <UserProfileTopLg
@@ -55,7 +53,6 @@ export function UserProfileTop({
             isAuthenticated={isAuthenticated}
             isHeFollowing={isHeFollowing}
             isMyProfile={isMyProfile}
-            loadingFollowingUser={loadingFollowingUser}
             loadingUserProfile={loadingUserProfile}
             placeholderProfileSrc={placeholderProfileSrc}
             secondaryEmail={secondaryEmail}
@@ -159,52 +156,46 @@ export function UserProfileTop({
                 </div>
             </div>
             {isAuthenticated && improvedUserData &&
-            <div className='user-header__buttons'>
-                {isMyProfile ?
-                    <>
-                        <Button
-                            onClick={() => {
-                                navigate('../edit_profile',
-                                    { replace: true, state: (improvedUserData && improvedUserData) });
-                            }}
-                            variant='outline-dark'>Edit Profile</Button>
-                        <Button
-                            onClick={() => setShowSettingsModal(true)}
-                            variant='outline-dark'
-                            className='settings-btn'>
-                            <img className={showSettingsModal ? 'offscreen' : ''} src={createImageSrcUrl(gear)} alt="" width='15' height='15' />
-                            <img className={showSettingsModal ? '' : 'offscreen'} src={createImageSrcUrl(gear_white)} alt="" width='15' height='15' />
-                            <span>Settings</span>
-                        </Button>
-                    </>
-                    :
-                    <>
-                        {amIFollowing ?
+                <div className='user-header__buttons'>
+                    {isMyProfile ?
+                        <>
                             <Button
-                                variant='following'
-                                className="longer-btn"
-                                onClick={handleFollow}
-                            >
-                                {loadingFollowingUser ?
-                                    <SpinnerForButton /> :
-                                    <span>Following</span>
-                                }
-                            </Button> :
+                                onClick={() => {
+                                    navigate('../edit_profile',
+                                        { replace: true, state: (improvedUserData && improvedUserData) });
+                                }}
+                                variant='outline-dark'>Edit Profile</Button>
                             <Button
-                                className="longer-btn"
-                                variant='primary'
-                                onClick={handleFollow}>
-                                {loadingFollowingUser ?
-                                    <SpinnerForButton /> :
-                                    (
-                                        isHeFollowing !== null &&
-                                        isHeFollowing) ? 'Follow back' : 'Follow'
-                                }
+                                onClick={() => setShowSettingsModal(true)}
+                                variant='outline-dark'
+                                className='settings-btn'>
+                                <img className={showSettingsModal ? 'offscreen' : ''} src={createImageSrcUrl(gear)} alt="" width='15' height='15' />
+                                <img className={showSettingsModal ? '' : 'offscreen'} src={createImageSrcUrl(gear_white)} alt="" width='15' height='15' />
+                                <span>Settings</span>
                             </Button>
-                        }
-                    </>
-                }   
-            </div>}
+                        </>
+                        :
+                        <>
+                            {amIFollowing ?
+                                <Button
+                                    variant='following'
+                                    className="longer-btn"
+                                    onClick={handleFollow}
+                                >
+                                    <span>Following</span>
+                                </Button> :
+                                <Button
+                                    className="longer-btn"
+                                    variant='primary'
+                                    onClick={handleFollow}>
+                                    {(
+                                        isHeFollowing !== null &&
+                                        isHeFollowing) ? 'Follow back' : 'Follow'}
+                                </Button>
+                            }
+                        </>
+                    }
+                </div>}
         </section>
     </>
     )

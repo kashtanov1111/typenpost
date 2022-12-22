@@ -86,10 +86,16 @@ class UserProfileNode(DjangoObjectType):
     def resolve_am_i_following(parent, info):
         user = info.context.user
         if user.is_authenticated:
-            if parent.followers_me:
-                return True        
-            else:
-                return False
+            try: 
+                if parent.followers_me:
+                    return True        
+                else:
+                    return False
+            except:
+                if parent.followers.filter(user=user).exists():
+                    return True        
+                else:
+                    return False
         else:
             return False
             
