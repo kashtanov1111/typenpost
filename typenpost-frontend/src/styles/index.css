@@ -231,6 +231,16 @@ li.header-auth__nav__ul__li-1 {
   padding-bottom: 0.4rem;
 }
 
+
+.logo-banner img.logo-banner-send {
+  height: 2rem;
+  width: 2rem;
+  position: absolute;
+  top: 50%;
+  right: 0rem;
+  transform: translate(-50%, -50%);
+}
+
 /* || SPINNER FOR PAGES */
 .spinner-for-pages {
   display: flex;
@@ -750,15 +760,6 @@ li.header-auth__nav__ul__li-1 {
 
 .create-post-form__textarea:focus {
   outline: none;
-}
-
-.create-post-form img {
-  height: 2rem;
-  width: 2rem;
-  position: fixed;
-  bottom: calc(58px);
-  right: 1.3rem;
-  transform: translate(-50%, -50%);
 }
 
 /* || SMALL */

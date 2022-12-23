@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Header } from './header/Header';
 import { Error } from './Error';
 import { RoutesComponent } from './Routes';
@@ -41,6 +41,8 @@ export function App({ client }) {
   const setIsAuthenticated = authentication.setIsAuthenticated
   const username = authentication.username
 
+  const [btnCreateClicked, setBtnCreateClicked] = useState(false)
+  
   if (
     errorRefreshToken ||
     errorDeleteToken ||
@@ -89,7 +91,9 @@ export function App({ client }) {
                           {textAlert}
                         </Alert> :
                         <></>}
-                      <LogoBanner onClick={() => window.scrollTo(0, 0)}/>
+                      <LogoBanner 
+                        onClick={() => window.scrollTo(0, 0)}
+                        />
                       <RoutesComponent
                         handleLogout={handleLogout}
                         setIsAuthenticated={setIsAuthenticated}

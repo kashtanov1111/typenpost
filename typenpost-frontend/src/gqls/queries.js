@@ -24,11 +24,9 @@ export const QUERY_ME_FOR_EDIT_PROFILE = gql`
     }
 `
 
-export const USER_PROFILE = gql`
+export const USER_PROFILE_TOP = gql`
     ${CORE_USER_FIELDS}
-    query UserProfile(
-        $username: String!
-        $cursor: String ) {
+    query UserProfile($username: String!) {
         user(username: $username) {
             ...CoreUserFields
             name
@@ -41,6 +39,16 @@ export const USER_PROFILE = gql`
                 amIFollowing
                 isHeFollowing
             }
+        }
+    }
+`
+
+export const USER_PROFILE_POSTS = gql`
+    query UserProfile(
+        $username: String!
+        $cursor: String ) {
+        user(username: $username) {
+            id
             posts(first: 10, after: $cursor) {
                 pageInfo {
                     hasNextPage

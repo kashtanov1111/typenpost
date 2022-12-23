@@ -19,7 +19,9 @@ export function PostFeed() {
     const username = useContext(UsernameContext)
     useTitle('Typenpost')
     const navigate = useNavigate()
-    const { data, fetchMore, loading, error } = useQuery(POST_FEED)
+    const { data, fetchMore, loading, error } = useQuery(POST_FEED, {
+        fetchPolicy: 'cache-and-network',
+    })
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -33,33 +35,31 @@ export function PostFeed() {
 
     return (
         <>
-            {!loading ?
-                <InfiniteScroll
-                    dataLength={data ? data.feed.edges.length : 1}
-                    next={() => fetchMore({
-                        variables: {
-                            cursor: data.feed.pageInfo.endCursor,
-                        },
-                    })}
-                    hasMore={data && data.feed.pageInfo.hasNextPage}
-                    loader={<div className='text-center my-3'>
-                        <Spinner variant='primary' animation='border' />
-                    </div>}
-                    style={{ overflow: 'visible' }}
-                >
-                    {data && data.feed.edges.map((el) => (
-                        el.node &&
-                        <PostCard
-                            key={el.node.id}
-                            post={el.node}
-                            handleAlert={handleAlert}
-                            authUsername={username}
-                            fromPostFeed={true}
-                            getFinalStringForNumber={getFinalStringForNumber}
-                        />
-                    ))}
-                </InfiniteScroll> :
-                <SpinnerForPages />}
+            <InfiniteScroll
+                dataLength={data ? data.feed.edges.length : 1}
+                next={() => fetchMore({
+                    variables: {
+                        cursor: data.feed.pageInfo.endCursor,
+                    },
+                })}
+                hasMore={data && data.feed.pageInfo.hasNextPage}
+                loader={<div className='text-center my-3'>
+                    <Spinner variant='primary' animation='border' />
+                </div>}
+                style={{ overflow: 'visible' }}
+            >
+                {data ? data.feed.edges.map((el) => (
+                    el.node &&
+                    <PostCard
+                        key={el.node.id}
+                        post={el.node}
+                        handleAlert={handleAlert}
+                        authUsername={username}
+                        fromPostFeed={true}
+                        getFinalStringForNumber={getFinalStringForNumber}
+                    />
+                )) : <SpinnerForPages />}
+            </InfiniteScroll> :
         </>
     )
 }

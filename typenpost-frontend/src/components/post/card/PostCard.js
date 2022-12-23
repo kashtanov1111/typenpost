@@ -63,7 +63,7 @@ export function PostCard({
 
     const [showPostDeleteModal, setShowPostDeleteModal] = useState(false)
     const isMyPost = completedPost.username === authUsername
-    const liking = useLiking(post, handleAlert)
+    const liking = useLiking(completedPost, handleAlert)
     const handleLikePost = liking.handleLikePost
 
     function navigateToUserProfile(e) {
@@ -140,7 +140,7 @@ export function PostCard({
                     <div className={
                         'post-card__top-created ' +
                         (isMyPost ? '' : 'pe-0')}>
-                        <p>{getDateCreatedPostCard(post.created)}</p>
+                        <p>{getDateCreatedPostCard(completedPost.created)}</p>
                     </div>
                     {isMyPost && <div ref={dropRef} className='c-dropdown'>
                         <div
@@ -175,11 +175,11 @@ export function PostCard({
                     </div>}
                 </div>
                 <div>
-                    <p className='mt-1'>{handlePostText(post.text)}</p>
+                    <p className='mt-1'>{handlePostText(completedPost.text)}</p>
                 </div>
                 <div className='post-card__footer'>
                     <div>
-                        {post.hasILiked ?
+                        {completedPost.hasILiked ?
                             <img
                                 onClick={(e) => handleLikeBtnClicked(e)}
                                 className='filled-heart pointer'
@@ -190,9 +190,9 @@ export function PostCard({
                                 className='pointer'
                                 src={createImageSrcUrl(heart)}
                                 alt="" width='18' height='18' />}
-                        {post.numberOfLikes ?
-                            <p className={post.hasILiked ? 'special-red' : ''}>
-                                {getFinalStringForNumber(post.numberOfLikes)}
+                        {completedPost.numberOfLikes ?
+                            <p className={completedPost.hasILiked ? 'special-red' : ''}>
+                                {getFinalStringForNumber(completedPost.numberOfLikes)}
                             </p> : <p>&nbsp;</p>}
                     </div>
                     <div>

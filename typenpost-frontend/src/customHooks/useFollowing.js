@@ -47,12 +47,10 @@ export function useFollowing(
                 }
             }
         },
-        onError: (error) => {
-            console.log(error)
+        onError: () => {
             handleAlert('An error occured, please try again.', 'danger')
         },
     })
-
 
     return {
         handleFollow: handleFollow

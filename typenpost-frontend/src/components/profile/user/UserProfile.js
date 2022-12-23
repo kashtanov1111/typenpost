@@ -8,7 +8,7 @@ import { PostCard } from '../../post/card/PostCard';
 import { SpinnerForPages } from '../../SpinnerForPages';
 import { useParams, useLocation } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { USER_PROFILE } from "../../../gqls/queries";
+import { USER_PROFILE_TOP, USER_PROFILE_POSTS } from "../../../gqls/queries";
 import { UsernameContext, IsAuthContext } from '../../../context/LoginContext';
 import { UserProfileTop } from './UserProfileTop';
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -17,16 +17,9 @@ import ProgressiveImage from 'react-progressive-graceful-image';
 import React, { useState, useEffect, useContext } from "react";
 import Spinner from 'react-bootstrap/Spinner';
 import white from '../../../assets/images/white.png'
-import { ClientContext } from '../../../context/ApolloContext';
 
 export function UserProfile({ secondaryEmail, email, handleLogout }) {
-    // console.log('User Profile render')
-
-    // const client = useContext(ClientContext)
-
-    // const newPostEdited = client.readFragment({
-    //     id: l``
-    // })
+    console.log('User Profile render')
 
     window.history.replaceState({}, document.title)
     const handleAlert = useContext(AlertContext)
@@ -34,7 +27,6 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
     const isAuthenticated = useContext(IsAuthContext)
     const location = useLocation()
     const pathname = location.pathname
-    const [newPost, setNewPost] = useState({})
 
     const params = useParams()
     const userUsername = params.userUsername
@@ -47,9 +39,9 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
     const [showLogoutModal, setShowLogoutModal] = useState(false)
 
     var improvedUserData = null
-    var userPosts = null
     var placeholderProfileSrc = null
     var avatarSrc = null
+    var userPosts = null
 
     if (isAuthenticated === true) {
         if (username) {
@@ -64,31 +56,35 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
         setIsMyProfile(false)
     }
 
-    const { data, fetchMore, loading: loadingUserProfile, error } = useQuery(USER_PROFILE, {
-        variables: { username: userUsername },
-        onCompleted: (data) => {
-            const amIFollowing = data.user.profile.amIFollowing
-            if (amIFollowing) {
-                setAmIFollowing(true)
-            } else {
-                setAmIFollowing(false)
-            }
-            const isHeFollowing = data.user.profile.isHeFollowing
-            if (isHeFollowing) {
-                setIsHeFollowing(true)
-            } else {
-                setIsHeFollowing(false)
-            }
-        },
-    })
+    const {
+        data: dataTop,
+        loading: loadingUserProfileTop,
+        error: errorUserProfileTop } = useQuery(
+            USER_PROFILE_TOP, {
+            variables: { username: userUsername },
+            onCompleted: (data) => {
+                const amIFollowing = data.user.profile.amIFollowing
+                if (amIFollowing) {
+                    setAmIFollowing(true)
+                } else {
+                    setAmIFollowing(false)
+                }
+                const isHeFollowing = data.user.profile.isHeFollowing
+                if (isHeFollowing) {
+                    setIsHeFollowing(true)
+                } else {
+                    setIsHeFollowing(false)
+                }
+            },
+        })
 
-    useEffect(() => {
-        if (location.state) {
-            setNewPost(location.state)
-        }
-    }, [location.state])
-
-
+    const {
+        data: dataPosts,
+        fetchMore,
+        error: errorUserProfilePosts,
+        refetch } = useQuery(USER_PROFILE_POSTS, {
+            variables: { username: userUsername }
+        })
 
     useEffect(() => {
         if (isMyProfile === false) {
@@ -98,8 +94,14 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
         }
     }, [userUsername, isMyProfile])
 
-    if (data && data.user) {
-        const user = data.user
+    useEffect(() => {
+        if (location.state === 'created') {
+            refetch()
+        }
+    }, [location.state, refetch])
+
+    if (dataTop && dataTop.user && dataPosts && dataPosts.user) {
+        const user = dataTop.user
         if (user === null) {
             return <Error description='User is not found.' />
         } else {
@@ -115,13 +117,10 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
                 numberOfFollowing: user.profile.numberOfFollowing,
                 numberOfPosts: user.numberOfPosts,
             }
-            userPosts = user.posts
-            if (newPost) {
-
-            }
-
+            userPosts = dataPosts.user.posts
         }
     }
+
     if (improvedUserData === null) {
         placeholderProfileSrc = white
         avatarSrc = white
@@ -142,11 +141,9 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
         handleAlert('You have signed out.', 'success')
     }
 
-    if (error) {
+    if (errorUserProfileTop || errorUserProfilePosts) {
         return <Error />
     }
-
-    console.log('newPost', newPost, 'data', data)
 
     return (
         !isImageOpen ?
@@ -172,7 +169,7 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
                     improvedUserData={improvedUserData}
                     isHeFollowing={isHeFollowing}
                     isMyProfile={isMyProfile}
-                    loadingUserProfile={loadingUserProfile}
+                    loadingUserProfile={loadingUserProfileTop}
                     placeholderProfileSrc={placeholderProfileSrc}
                     secondaryEmail={secondaryEmail}
                     setIsImageOpen={setIsImageOpen}
@@ -180,35 +177,21 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
                     showSettingsModal={showSettingsModal}
                     userUsername={userUsername}
                 />
-                {Object.keys(newPost).length !== 0 &&
-                improvedUserData &&
-                    <PostCard
-                        key={newPost.id}
-                        post={newPost}
-                        placeholderProfileSrc={placeholderProfileSrc}
-                        avatarSrc={avatarSrc}
-                        improvedUserData={improvedUserData}
-                        userUsername={userUsername}
-                        authUsername={username}
-                        handleAlert={handleAlert}
-                        getFinalStringForNumber={getFinalStringForNumber}
-                    />
-                }
                 <InfiniteScroll
-                    dataLength={data ? userPosts.edges.length : 1}
+                    dataLength={(dataPosts && userPosts) ? userPosts.edges.length : 1}
                     next={() => fetchMore({
                         variables: {
                             username: userUsername,
-                            cursor: userPosts.pageInfo.endCursor,
+                            cursor: (userPosts.pageInfo.endCursor),
                         },
                     })}
-                    hasMore={data && userPosts.pageInfo.hasNextPage}
+                    hasMore={(dataPosts && userPosts) && userPosts.pageInfo.hasNextPage}
                     loader={<div className='text-center my-3'>
                         <Spinner variant='primary' animation='border' />
                     </div>}
                     style={{ overflow: 'visible' }}
                 >
-                    {data ? userPosts.edges.map((el) => (
+                    {(dataPosts && userPosts) ? userPosts.edges.map((el) => (
                         el.node &&
                         <PostCard
                             key={el.node.id}

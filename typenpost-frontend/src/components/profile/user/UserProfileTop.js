@@ -28,7 +28,7 @@ export function UserProfileTop({
     showSettingsModal,
     userUsername,
 }) {
-    console.log('User Profile Top Render')
+    // console.log('User Profile Top Render')
 
     const navigate = useNavigate()
     const isAuthenticated = useContext(IsAuthContext)

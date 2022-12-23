@@ -28,7 +28,7 @@ export function RoutesComponent({
   email,
   secondaryEmail,
   setIsAuthenticated,
-  queryMe
+  queryMe,
 }) {
   return (
     <Routes>
@@ -54,7 +54,9 @@ export function RoutesComponent({
         path='/password-reset/:confirmationToken'
         element={<PasswordResetWithToken />}
       />
-      <Route path='/create' element={<PostCreate />} />
+      <Route path='/create' element={<PostCreate 
+        // handleCreatePostButtonClicked={handleCreatePostButtonClicked}
+         />} />
       <Route path='/password_reset' element={<PasswordReset />} />
       <Route
         path='/password_change'
