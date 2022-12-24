@@ -13,11 +13,12 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Form from 'react-bootstrap/Form'
 import React, { useState, useEffect, useContext } from "react"
 import Row from 'react-bootstrap/Row'
-
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function ArchiveAccount({ handleLogout }) {
     console.log('ArchiveAccount render')
     
+    useScrollTop()
     const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()

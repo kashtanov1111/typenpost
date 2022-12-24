@@ -10,8 +10,10 @@ import Button from 'react-bootstrap/Button'
 import Col from 'react-bootstrap/Col'
 import React, { useContext } from "react"
 import Row from 'react-bootstrap/Row'
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function VerifySecondaryEmail({ queryMe }) {
+    useScrollTop()
     const isAuthenticated = useContext(IsAuthContext)
     const handleAlert = useContext(AlertContext)
     const params = useParams()

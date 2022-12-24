@@ -98,6 +98,19 @@ p {
   margin: 0 -0.75rem;
 }
 
+.btn-outline-dark:hover {
+  color: var(--bs-body-color);
+  background-color: white;
+}
+
+@media (hover: hover) {
+  .btn-outline-dark:hover {
+    color: white;
+    background-color: var(--bs-body-color);
+  }
+}
+
+
 /* || HEADER */
 
 /* || HEADER AUTHENTICATED */
@@ -227,6 +240,7 @@ li.header-auth__nav__ul__li-1 {
   display: block;
   background-color: white;
 }
+
 .logo-banner span.name {
   padding-bottom: 0.4rem;
 }
@@ -681,8 +695,8 @@ li.header-auth__nav__ul__li-1 {
   display: flex;
 }
 .post-card__top div.post-card__top-avatar img.avatar {
-  height: 4rem;
-  width: 4rem;
+  height: 2.5rem;
+  width: 2.5rem;
   object-fit: cover;
   border-radius: 50%;
 }

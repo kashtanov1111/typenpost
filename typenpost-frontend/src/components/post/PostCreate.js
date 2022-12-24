@@ -7,6 +7,7 @@ import { AlertContext } from "../../context/AlertContext";
 import send_btn from '../../assets/images/send-btn.svg'
 import arrow from '../../assets/images/white-arrow.svg'
 import { createImageSrcUrl } from "../../functions/functions";
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function PostCreate() {
 
@@ -19,8 +20,7 @@ export function PostCreate() {
     const isAuthenticated = useContext(IsAuthContext)
     const authUsername = useContext(UsernameContext)
 
-    // console.log(handleCreatePostButtonClicked())
-
+    useScrollTop()
     const [createPost] = useMutation(CREATE_POST, {
         variables: {
             text: post

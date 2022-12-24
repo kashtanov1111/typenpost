@@ -7,11 +7,13 @@ import { RESEND_ACTIVATION_EMAIL } from "../../gqls/mutations";
 import { useMutation } from "@apollo/client";
 import { Error } from "../Error";
 import { LogoBanner } from "../LogoBanner";
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function RegisterMade({
     formState,
     handleAlert,
 }) {
+    useScrollTop()
     const [handleResend, { loading, error }] = useMutation(
         RESEND_ACTIVATION_EMAIL, {
         variables: {

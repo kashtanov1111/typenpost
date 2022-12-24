@@ -13,6 +13,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Form from 'react-bootstrap/Form'
 import React, { useState, useEffect, useContext } from "react"
 import Row from 'react-bootstrap/Row'
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function AddSecondaryEmail({ email }) {
     console.log('AddSecondaryEmail render')
@@ -21,6 +22,7 @@ export function AddSecondaryEmail({ email }) {
     const isAuthenticated = useContext(IsAuthContext)
     const navigate = useNavigate()
     useTitle('Typenpost - Add secondary email')
+    useScrollTop()
 
     const [showPassword, setShowPassword] = useState(false)
     const [formState, setFormState] = useState({

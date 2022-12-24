@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { UserProfileTopLg } from "./UserProfileTopLg";
 import Button from 'react-bootstrap/Button'
 import gear from '../../../assets/images/gear.svg'
-import gear_white from '../../../assets/images/gear-white.svg'
 import Placeholder from 'react-bootstrap/Placeholder'
 import ProgressiveImage from 'react-progressive-graceful-image'
 import React, { useState, useContext } from "react";
@@ -25,7 +24,6 @@ export function UserProfileTop({
     secondaryEmail,
     setIsImageOpen,
     setShowSettingsModal,
-    showSettingsModal,
     userUsername,
 }) {
     // console.log('User Profile Top Render')
@@ -169,8 +167,8 @@ export function UserProfileTop({
                                 onClick={() => setShowSettingsModal(true)}
                                 variant='outline-dark'
                                 className='settings-btn'>
-                                <img className={showSettingsModal ? 'offscreen' : ''} src={createImageSrcUrl(gear)} alt="" width='15' height='15' />
-                                <img className={showSettingsModal ? '' : 'offscreen'} src={createImageSrcUrl(gear_white)} alt="" width='15' height='15' />
+                                <img src={createImageSrcUrl(gear)} alt="" width='15' height='15' />
+                                {/* <img className={showSettingsModal ? '' : 'offscreen'} src={createImageSrcUrl(gear_white)} alt="" width='15' height='15' /> */}
                                 <span>Settings</span>
                             </Button>
                         </>

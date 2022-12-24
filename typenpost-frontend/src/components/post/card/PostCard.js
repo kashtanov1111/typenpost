@@ -91,7 +91,9 @@ export function PostCard({
 
     function handleLikeBtnClicked(e) {
         e.stopPropagation()
-        handleLikePost()
+        if (authUsername) {
+            handleLikePost()
+        }
     }
 
     return (
@@ -159,7 +161,6 @@ export function PostCard({
                             (showDropdown ? 'c-dropdown__body-show' : '')}>
                             <div
                                 className='c-dropdown__el-post c-dropdown__el pointer'
-                                // className='post-card__dropdown-item py-2'
                                 onClick={(e) => {
                                     e.stopPropagation()
                                     setShowDropdown(false)
@@ -175,7 +176,7 @@ export function PostCard({
                     </div>}
                 </div>
                 <div>
-                    <p className='mt-1'>{handlePostText(completedPost.text)}</p>
+                    <p className='post-card__text mt-1'>{handlePostText(completedPost.text)}</p>
                 </div>
                 <div className='post-card__footer'>
                     <div>

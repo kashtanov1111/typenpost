@@ -11,18 +11,20 @@ import { useTitle } from "../../customHooks/useTitle"
 import InfiniteScroll from "react-infinite-scroll-component"
 import React, { useEffect, useContext } from "react"
 import Spinner from "react-bootstrap/Spinner"
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function PostFeed() {
     console.log('Post Feed render')
     const isAuthenticated = useContext(IsAuthContext)
     const handleAlert = useContext(AlertContext)
     const username = useContext(UsernameContext)
-    useTitle('Typenpost')
     const navigate = useNavigate()
-    const { data, fetchMore, loading, error } = useQuery(POST_FEED, {
+    const { data, fetchMore, error } = useQuery(POST_FEED, {
         fetchPolicy: 'cache-and-network',
     })
-
+    
+    useTitle('Typenpost')
+    useScrollTop()
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('../login', { replace: true })
@@ -59,7 +61,7 @@ export function PostFeed() {
                         getFinalStringForNumber={getFinalStringForNumber}
                     />
                 )) : <SpinnerForPages />}
-            </InfiniteScroll> :
+            </InfiniteScroll>
         </>
     )
 }

@@ -11,9 +11,10 @@ import Button from 'react-bootstrap/Button'
 import Col from 'react-bootstrap/Col'
 import React, { useContext, useEffect } from "react"
 import Row from 'react-bootstrap/Row'
-
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function VerifyAccount() {
+    useScrollTop()
     const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)
     const params = useParams()

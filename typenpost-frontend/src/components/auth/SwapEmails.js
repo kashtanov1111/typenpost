@@ -13,8 +13,10 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form'
 import React, { useState, useEffect, useContext } from "react"
 import Row from 'react-bootstrap/Row'
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function SwapEmails({ secondaryEmail }) {
+    useScrollTop()
     const isAuthenticated = useContext(IsAuthContext)
     const handleAlert = useContext(AlertContext)
     const navigate = useNavigate()

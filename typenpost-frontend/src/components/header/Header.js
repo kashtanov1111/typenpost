@@ -1,5 +1,4 @@
 import nobody from '../../assets/images/nobody.jpg'
-import white from '../../assets/images/white.png'
 import home from '../../assets/images/home.svg'
 import gear from '../../assets/images/gear.svg'
 import logout from '../../assets/images/box-arrow-left.svg'
@@ -18,10 +17,7 @@ import ProgressiveImage from 'react-progressive-graceful-image'
 import { HeaderLogoutModal } from './HeaderLogoutModal'
 import { HeaderSettingsModal } from './HeaderSettingsModal'
 
-import {
-    createImageSrcUrl,
-    createImagePlaceholderUrl
-} from '../../functions/functions'
+import { createImagePlaceholderUrl, createImageSrcUrl } from '../../functions/functions'
 
 export function Header({
     avatar,
@@ -44,19 +40,6 @@ export function Header({
         setShowLogoutModal(false)
         handleLogout()
         handleAlert('You have signed out.', 'success')
-    }
-
-    var src = null
-    var placeholderSrc = null
-    if (avatar === null) {
-        src = white
-        placeholderSrc = white
-    } else if (avatar === false) {
-        src = nobody
-        placeholderSrc = nobody
-    } else {
-        src = avatar
-        placeholderSrc = createImagePlaceholderUrl(avatar, '50x50')
     }
 
     return (isAuthenticated === true ?
@@ -100,8 +83,10 @@ export function Header({
                             className='header-auth__nav__ul__li-4'
                             onClick={() => navigate('/profile/' + username)}>
                             <ProgressiveImage
-                                src={src}
-                                placeholder={placeholderSrc}>
+                                src={avatar ? avatar : nobody}
+                                placeholder={avatar ? 
+                                    createImagePlaceholderUrl(avatar, '50x50') :
+                                    nobody}>
                                 {(src, loading) =>
                                     <img
                                         style={{

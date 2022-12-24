@@ -14,8 +14,10 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import React, { useEffect, useState, useContext } from "react";
 import Row from 'react-bootstrap/Row';
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function Login({ queryMe, setIsAuthenticated }) {
+    useScrollTop()
     const navigate = useNavigate()
     const handleAlert = useContext(AlertContext)
     const isAuthenticated = useContext(IsAuthContext)

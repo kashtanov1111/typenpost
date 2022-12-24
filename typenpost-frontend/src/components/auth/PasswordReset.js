@@ -12,8 +12,10 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Form from 'react-bootstrap/Form'
 import React, { useState, useEffect, useContext } from "react"
 import Row from 'react-bootstrap/Row'
+import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function PasswordReset() {
+    useScrollTop()
     console.log('PasswordReset render')
     
     const isAuthenticated = useContext(IsAuthContext)

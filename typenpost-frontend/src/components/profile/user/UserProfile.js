@@ -16,7 +16,7 @@ import nobody from '../../../assets/images/nobody.jpg'
 import ProgressiveImage from 'react-progressive-graceful-image';
 import React, { useState, useEffect, useContext } from "react";
 import Spinner from 'react-bootstrap/Spinner';
-import white from '../../../assets/images/white.png'
+import { useScrollTop } from '../../../customHooks/useScrollTop';
 
 export function UserProfile({ secondaryEmail, email, handleLogout }) {
     console.log('User Profile render')
@@ -42,6 +42,8 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
     var placeholderProfileSrc = null
     var avatarSrc = null
     var userPosts = null
+
+    useScrollTop()
 
     if (isAuthenticated === true) {
         if (username) {
@@ -121,18 +123,13 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
         }
     }
 
-    if (improvedUserData === null) {
-        placeholderProfileSrc = white
-        avatarSrc = white
+    if (improvedUserData && improvedUserData.avatar) {
+        avatarSrc = improvedUserData.avatar
+        placeholderProfileSrc = 
+            createImagePlaceholderUrl(improvedUserData.avatar, '250x250')
     } else {
-        if (improvedUserData.avatar === null) {
-            placeholderProfileSrc = nobody
-            avatarSrc = nobody
-        } else {
-            placeholderProfileSrc = createImagePlaceholderUrl(
-                improvedUserData.avatar, '250x250')
-            avatarSrc = improvedUserData.avatar
-        }
+        avatarSrc = nobody
+        placeholderProfileSrc = nobody
     }
 
     function handleLogoutButtonClicked() {
@@ -174,7 +171,6 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
                     secondaryEmail={secondaryEmail}
                     setIsImageOpen={setIsImageOpen}
                     setShowSettingsModal={setShowSettingsModal}
-                    showSettingsModal={showSettingsModal}
                     userUsername={userUsername}
                 />
                 <InfiniteScroll

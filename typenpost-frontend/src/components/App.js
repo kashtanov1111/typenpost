@@ -41,8 +41,6 @@ export function App({ client }) {
   const setIsAuthenticated = authentication.setIsAuthenticated
   const username = authentication.username
 
-  const [btnCreateClicked, setBtnCreateClicked] = useState(false)
-  
   if (
     errorRefreshToken ||
     errorDeleteToken ||

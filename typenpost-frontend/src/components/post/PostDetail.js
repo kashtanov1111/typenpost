@@ -12,10 +12,9 @@ import { createImagePlaceholderUrl } from '../../functions/functions';
 import nobody from '../../assets/images/nobody.jpg'
 import { SpinnerForPages } from '../SpinnerForPages';
 
-
 export function PostDetail() {
     console.log('Post Detail render')
-
+    
     const handleAlert = useContext(AlertContext)
     const authUsername = useContext(UsernameContext)
     const location = useLocation()

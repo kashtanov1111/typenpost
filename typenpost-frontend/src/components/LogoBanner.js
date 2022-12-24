@@ -17,9 +17,10 @@ export function LogoBanner({ onClick }) {
         className = 'offscreen'
     }
     return (pathname !== '/create' &&
+            pathname !== '/create/' &&
         <h1 onClick={onClick} className={className}>
             <img
-                className='logo-banner-back'
+                className='logo-banner-back pointer'
                 onClick={(e) => {
                     e.stopPropagation()
                     navigate(-1)

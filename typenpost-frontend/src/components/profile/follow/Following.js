@@ -10,11 +10,12 @@ import { useTitle } from "../../../customHooks/useTitle";
 import InfiniteScroll from 'react-infinite-scroll-component'
 import React, { useEffect, useContext } from "react";
 import Spinner from "react-bootstrap/Spinner";
-
+import { useScrollTop } from '../../../customHooks/useScrollTop';
 
 export function Following() {
     console.log('Render Following Component')
     
+    useScrollTop()
     const handleAlert = useContext(AlertContext)
     const username = useContext(UsernameContext)
     const isAuthenticated = useContext(IsAuthContext)
