@@ -261,7 +261,17 @@ GRAPHQL_AUTH = {
     'ACTIVATION_SECONDARY_EMAIL_PATH_ON_EMAIL' : 'activate2email',
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# email settings
+if is_production:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp-relay.sendinblue.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'kashtanovdjango@gmail.com'
+EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = 'typenpost@gmail.com'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485761
 
