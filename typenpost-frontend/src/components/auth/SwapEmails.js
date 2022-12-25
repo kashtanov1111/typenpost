@@ -15,7 +15,7 @@ import React, { useState, useEffect, useContext } from "react"
 import Row from 'react-bootstrap/Row'
 import { useScrollTop } from '../../customHooks/useScrollTop';
 
-export function SwapEmails({ secondaryEmail }) {
+export function SwapEmails({ secondaryEmail, queryMe }) {
     useScrollTop()
     const isAuthenticated = useContext(IsAuthContext)
     const handleAlert = useContext(AlertContext)
@@ -37,6 +37,7 @@ export function SwapEmails({ secondaryEmail }) {
                 } else {
                     navigate('..' + location.state, { replace: true })
                 }
+                queryMe()
             }
         }
     }

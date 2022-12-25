@@ -90,7 +90,9 @@ export function RoutesComponent({
         element={<AddSecondaryEmail email={email} />} />
       <Route
         path='/swap_emails'
-        element={<SwapEmails secondaryEmail={secondaryEmail} />} />
+        element={<SwapEmails 
+          queryMe={queryMe} 
+          secondaryEmail={secondaryEmail} />} />
       <Route
         path='/remove_secondary_email'
         element={<RemoveSecondaryEmail

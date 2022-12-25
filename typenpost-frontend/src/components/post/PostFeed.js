@@ -62,6 +62,8 @@ export function PostFeed() {
                     />
                 )) : <SpinnerForPages />}
             </InfiniteScroll>
+            {data && data.feed && data.feed.edges.length === 0 &&
+            <p className='mt-4'>Hello! There are no posts in your feed yet. Follow somebody who already has posts or create a new one!</p>}
         </>
     )
 }
