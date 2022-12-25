@@ -87,7 +87,7 @@ export function Register() {
     }
 
     return (isAuthenticated === false) &&
-        <>{(data === undefined || data.register.errors && 0) ?
+        <>{(data === undefined || data.register.errors) ?
             <Row>
                 <Col md={6} className='mx-auto' >
                     <h1 className='text-center mt-2 mb-3'>
