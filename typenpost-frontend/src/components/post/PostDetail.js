@@ -11,16 +11,40 @@ import React, { useState, useContext, useEffect } from 'react'
 import { createImagePlaceholderUrl } from '../../functions/functions';
 import nobody from '../../assets/images/nobody.jpg'
 import { SpinnerForPages } from '../SpinnerForPages';
+import { gql } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 
 export function PostDetail() {
     console.log('Post Detail render')
-    
+
+    window.history.replaceState({}, document.title)
+
+    const client = useApolloClient()
     const handleAlert = useContext(AlertContext)
     const authUsername = useContext(UsernameContext)
     const location = useLocation()
     const params = useParams()
     const postUUID = params.postId
+
     const [post, setPost] = useState({})
+
+    function handleLikeClickForPostDetail() {
+        const editedPost = client.readFragment({
+            id: 'PostNode:' + post.id,
+            fragment: gql`
+                    fragment Post on PostNode {
+                        numberOfLikes
+                        hasILiked
+                    }
+                `
+        })
+        setPost({
+            ...post,
+            numberOfLikes: editedPost.numberOfLikes,
+            hasILiked: editedPost.hasILiked
+        })
+    }
+
     var hasPrevPage = null
     if (location.state) {
         hasPrevPage = location.state.from
@@ -33,7 +57,7 @@ export function PostDetail() {
             {
                 variables: { uuid: postUUID },
                 onCompleted: (data) => {
-                    console.log('lazy query')
+                    // console.log('lazy query')
                     if (data.post) {
                         const dataPost = data.post
                         const dataAvatar = dataPost.user.profile.avatar
@@ -77,6 +101,7 @@ export function PostDetail() {
                 fromPostDetail={true}
                 hasPrevPage={hasPrevPage}
                 getFinalStringForNumber={getFinalStringForNumber}
+                handleLikeClickForPostDetail={location.state && handleLikeClickForPostDetail}
                 authUsername={authUsername} /> :
             <SpinnerForPages />
     )

@@ -3,7 +3,7 @@ import { createImageSrcUrl } from '../../../functions/functions'
 import { getDateCreatedPostCard } from '../../../functions/functions'
 import { PostDeleteModal } from '../PostDeleteModal'
 import { useLiking } from '../../../customHooks/useLiking'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useOutsideAlerter } from '../../../customHooks/useOtsideAlerter'
 import comment from '../../../assets/images/chat-left.svg'
 import ellipsis from '../../../assets/images/three-dots-vertical.svg'
@@ -26,10 +26,12 @@ export function PostCard({
     placeholderProfileSrc,
     post,
     userUsername,
+    handleLikeClickForPostDetail
 }) {
 
     // console.log('Post Card Render')
     const navigate = useNavigate()
+    const location = useLocation()
     const [showDropdown, setShowDropdown] = useState(false)
     const dropRef = useRef(null)
 
@@ -78,6 +80,7 @@ export function PostCard({
     }
 
     function handlePostText(text) {
+        console.log(text.length)
         if (fromPostDetail !== true) {
             if (text.length > 500) {
                 return text.slice(0, 500) + '...'
@@ -89,12 +92,19 @@ export function PostCard({
         }
     }
 
-    function handleLikeBtnClicked(e) {
+    async function handleLikeBtnClicked(e) {
         e.stopPropagation()
         if (authUsername) {
-            handleLikePost()
+            await handleLikePost()
+            if (handleLikeClickForPostDetail) {
+                handleLikeClickForPostDetail()
+            }
+        } else {
+            navigate('../login', { replace: true, state: location.pathname })
         }
     }
+
+    console.log(completedPost.text)
 
     return (
         <>
@@ -180,7 +190,7 @@ export function PostCard({
                 </div>
                 <div className='post-card__footer'>
                     <div>
-                        {completedPost.hasILiked ?
+                        {(completedPost.hasILiked && authUsername) ?
                             <img
                                 onClick={(e) => handleLikeBtnClicked(e)}
                                 className='filled-heart pointer'
@@ -192,7 +202,7 @@ export function PostCard({
                                 src={createImageSrcUrl(heart)}
                                 alt="" width='18' height='18' />}
                         {completedPost.numberOfLikes ?
-                            <p className={completedPost.hasILiked ? 'special-red' : ''}>
+                            <p className={(completedPost.hasILiked && authUsername) ? 'special-red' : ''}>
                                 {getFinalStringForNumber(completedPost.numberOfLikes)}
                             </p> : <p>&nbsp;</p>}
                     </div>

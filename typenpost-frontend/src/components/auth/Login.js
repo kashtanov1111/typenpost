@@ -48,7 +48,9 @@ export function Login({ queryMe, setIsAuthenticated }) {
                             navigate('../', { replace: true })
                         } else {
                             navigate(
-                                '..' + location.state, { replace: true })
+                                '..' + location.state, { 
+                                    replace: true,
+                                    state: 'loggedIn' })
                         }
                     } else {
                         navigate('../', { replace: true })

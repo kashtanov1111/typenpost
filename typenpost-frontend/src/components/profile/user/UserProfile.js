@@ -97,7 +97,8 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
     }, [userUsername, isMyProfile])
 
     useEffect(() => {
-        if (location.state === 'created') {
+        if (location.state === 'created' ||
+            location.state === 'loggedIn') {
             refetch()
         }
     }, [location.state, refetch])

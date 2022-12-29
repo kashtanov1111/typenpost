@@ -1,9 +1,9 @@
-import { useContext, useState, useEffect } from 'react'
+import { useContext} from 'react'
 import { useMutation } from "@apollo/client";
 import { ProfileIdContext } from '../context/LoginContext';
 import { FOLLOWING_USER } from '../gqls/mutations';
-import { ClientContext } from '../context/ApolloContext';
 import { gql } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 
 export function useFollowing(
     userUsername,
@@ -11,7 +11,7 @@ export function useFollowing(
     improvedUserData,
     handleAlert
 ) {
-    const client = useContext(ClientContext)
+    const client = useApolloClient()
     const authenticatedUserProfileId = useContext(ProfileIdContext)
     function getAuthUserNumOfFollowingFromCache() {
         const authUserProfileFragment = client.readFragment({
