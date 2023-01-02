@@ -67,6 +67,7 @@ export function PostDetail() {
                             id: dataPost.id,
                             uuid: dataPost.uuid,
                             numberOfLikes: dataPost.numberOfLikes,
+                            numberOfComments: dataPost.numberOfComments,
                             hasILiked: dataPost.hasILiked,
                             name: dataPost.user.name,
                             username: dataPost.user.username,

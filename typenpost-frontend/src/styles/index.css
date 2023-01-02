@@ -755,6 +755,10 @@ li.header-auth__nav__ul__li-1 {
   height: 1rem;
 }
 
+.post-card__text {
+  white-space: pre-line;
+}
+
 .special-red {
   color: var(--SPECIAL-RED);
 }

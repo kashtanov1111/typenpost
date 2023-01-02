@@ -44,6 +44,7 @@ export function PostCard({
         completedPost.id = post.id
         completedPost.uuid = post.uuid
         completedPost.numberOfLikes = post.numberOfLikes
+        completedPost.numberOfComments = post.numberOfComments
         completedPost.hasILiked = post.hasILiked
         if (fromPostFeed === true) {
             completedPost.name = post.user.name
@@ -80,15 +81,36 @@ export function PostCard({
     }
 
     function handlePostText(text) {
-        console.log(text.length)
+        var editedText = text.replace(/^\s*\n/gm, '\n')
+        if (editedText.startsWith('\n')) {
+            editedText = editedText.slice(1)
+        }
+        if (editedText.endsWith('\n\n')) {
+            editedText = editedText.slice(0, -2)
+        }
+        if (editedText.endsWith('\n')) {
+            editedText = editedText.slice(0, -1)
+        }
+        function getTruncatedStringWithSeveralLines(string, addEllipsis=false) {
+            if (string.indexOf('\n') !== -1) {
+                const position = string.split('\n', 3).join('\n').length
+                string = string.slice(
+                    0, position)
+                return string + ((position !== editedText.length || addEllipsis) ? ' ...' : '')
+            } else {
+                return string + (addEllipsis ? ' ...' : '')
+            }
+        }
+        
         if (fromPostDetail !== true) {
             if (text.length > 500) {
-                return text.slice(0, 500) + '...'
+                editedText = editedText.slice(0, 500)
+                return getTruncatedStringWithSeveralLines(editedText, true)
             } else {
-                return text
+                return getTruncatedStringWithSeveralLines(editedText)
             }
         } else {
-            return text
+            return editedText
         }
     }
 
@@ -104,7 +126,6 @@ export function PostCard({
         }
     }
 
-    console.log(completedPost.text)
 
     return (
         <>
@@ -117,7 +138,7 @@ export function PostCard({
                 fromPostDetail={fromPostDetail}
                 hasPrevPage={hasPrevPage}
             />
-            <div onClick={navigateToPostDetail} className='post-card'>
+            <div onClick={navigateToPostDetail} className='post-card pointer'>
                 <div className='post-card__top'>
                     <div className='post-card__top-avatar'>
                         <ProgressiveImage
@@ -210,7 +231,10 @@ export function PostCard({
                         <img
                             src={createImageSrcUrl(comment)}
                             alt="" width='18' height='18' />
-                        {/* <p>0</p> */}
+                        {completedPost.numberOfComments ?
+                            <p>
+                                {getFinalStringForNumber(completedPost.numberOfComments)}
+                            </p> : <p>&nbsp;</p>}
                     </div>
                 </div>
             </div>

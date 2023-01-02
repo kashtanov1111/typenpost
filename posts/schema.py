@@ -9,6 +9,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required
 
 from .models import Post
+from comments.models import Comment
 
 from graphene import relay
 
@@ -34,6 +35,7 @@ class PostFilter(django_filters.FilterSet):
 class PostNode(DjangoObjectType):
     user = graphene.Field(UserNode, required=False)
     number_of_likes = graphene.Int()
+    number_of_comments = graphene.Int()
     has_i_liked = graphene.Boolean()
     uuid = graphene.UUID()
 
@@ -67,6 +69,9 @@ class PostNode(DjangoObjectType):
     def resolve_number_of_likes(parent, info):
         return parent.likes.count()
 
+    def resolve_number_of_comments(parent, info):
+        return parent.comments.count()
+
     @classmethod
     def get_queryset(cls, queryset, info, *args, **kwargs):
         me_username = info.context.user.username
@@ -79,6 +84,13 @@ class PostNode(DjangoObjectType):
                     queryset=(
                         get_user_model().objects
                         .filter(status__archived=False))
+                ))
+            .prefetch_related(
+                Prefetch(
+                    'comments',
+                    queryset=(
+                        Comment.objects
+                        .filter(user__status__archived=False))
                 ))
             .prefetch_related(
                 Prefetch(

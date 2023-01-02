@@ -63,6 +63,7 @@ export const USER_PROFILE_POSTS = gql`
                         text
                         created
                         numberOfLikes
+                        numberOfComments
                         hasILiked
                     }
                     cursor
@@ -124,6 +125,7 @@ export const POST_FEED = gql`
                     text
                     created
                     numberOfLikes
+                    numberOfComments
                     hasILiked
                     user {
                         username
@@ -147,6 +149,7 @@ export const POST_DETAIL = gql`
             text
             created
             numberOfLikes
+            numberOfComments
             hasILiked
             user {
                 username
