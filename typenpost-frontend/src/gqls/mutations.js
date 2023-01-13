@@ -262,6 +262,31 @@ export const CREATE_POST = gql`
     }
 `
 
+export const COMMENT_LIKING = gql`
+    mutation CommentLiking($uuid: UUID!) {
+        likeComment(uuid: $uuid) {
+            comment {
+                id
+                numberOfLikes
+                hasILiked
+            }
+        }
+    }
+`
 
+export const CREATE_COMMENT = gql`
+    mutation CreateComment($text: String!, $postUuid: UUID!) {
+        createComment(text: $text, postUuid: $postUuid) {
+            comment {
+                id
+                uuid
+                text
+                created
+                numberOfLikes
+                hasILiked
+            }
+        }
+    }
+`
 
 

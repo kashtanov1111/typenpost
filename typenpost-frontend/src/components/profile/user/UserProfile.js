@@ -16,7 +16,6 @@ import nobody from '../../../assets/images/nobody.jpg'
 import ProgressiveImage from 'react-progressive-graceful-image';
 import React, { useState, useEffect, useContext } from "react";
 import Spinner from 'react-bootstrap/Spinner';
-import { useScrollTop } from '../../../customHooks/useScrollTop';
 
 export function UserProfile({ secondaryEmail, email, handleLogout }) {
     console.log('User Profile render')
@@ -42,8 +41,6 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
     var placeholderProfileSrc = null
     var avatarSrc = null
     var userPosts = null
-
-    useScrollTop()
 
     if (isAuthenticated === true) {
         if (username) {

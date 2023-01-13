@@ -2,7 +2,7 @@ import { createImagePlaceholderUrl } from '../../../functions/functions'
 import { createImageSrcUrl } from '../../../functions/functions'
 import { getDateCreatedPostCard } from '../../../functions/functions'
 import { PostDeleteModal } from '../PostDeleteModal'
-import { useLiking } from '../../../customHooks/useLiking'
+import { usePostLiking } from '../../../customHooks/usePostLiking'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useOutsideAlerter } from '../../../customHooks/useOtsideAlerter'
 import comment from '../../../assets/images/chat-left.svg'
@@ -13,6 +13,7 @@ import nobody from '../../../assets/images/nobody.jpg'
 import ProgressiveImage from 'react-progressive-graceful-image'
 import React, { useRef, useState } from "react";
 import trash from '../../../assets/images/trash-red.svg'
+import { handleText } from '../../../functions/functions'
 
 export function PostCard({
     authUsername,
@@ -66,7 +67,7 @@ export function PostCard({
 
     const [showPostDeleteModal, setShowPostDeleteModal] = useState(false)
     const isMyPost = completedPost.username === authUsername
-    const liking = useLiking(completedPost, handleAlert)
+    const liking = usePostLiking(completedPost, handleAlert)
     const handleLikePost = liking.handleLikePost
 
     function navigateToUserProfile(e) {
@@ -76,41 +77,10 @@ export function PostCard({
         }
     }
 
-    function navigateToPostDetail() {
-        navigate('../' + completedPost.uuid, { state: { completedPost: completedPost, from: true } })
-    }
-
-    function handlePostText(text) {
-        var editedText = text.replace(/^\s*\n/gm, '\n')
-        if (editedText.startsWith('\n')) {
-            editedText = editedText.slice(1)
-        }
-        if (editedText.endsWith('\n\n')) {
-            editedText = editedText.slice(0, -2)
-        }
-        if (editedText.endsWith('\n')) {
-            editedText = editedText.slice(0, -1)
-        }
-        function getTruncatedStringWithSeveralLines(string, addEllipsis=false) {
-            if (string.indexOf('\n') !== -1) {
-                const position = string.split('\n', 3).join('\n').length
-                string = string.slice(
-                    0, position)
-                return string + ((position !== editedText.length || addEllipsis) ? ' ...' : '')
-            } else {
-                return string + (addEllipsis ? ' ...' : '')
-            }
-        }
-        
-        if (fromPostDetail !== true) {
-            if (text.length > 500) {
-                editedText = editedText.slice(0, 500)
-                return getTruncatedStringWithSeveralLines(editedText, true)
-            } else {
-                return getTruncatedStringWithSeveralLines(editedText)
-            }
-        } else {
-            return editedText
+    function navigateToPostDetail(e, autoFocusShow=false) {
+        e.stopPropagation()
+        if (!fromPostDetail) {
+            navigate('../' + completedPost.uuid, { state: { completedPost: completedPost, from: true, autoFocusShow: autoFocusShow } })
         }
     }
 
@@ -138,7 +108,7 @@ export function PostCard({
                 fromPostDetail={fromPostDetail}
                 hasPrevPage={hasPrevPage}
             />
-            <div onClick={navigateToPostDetail} className='post-card pointer'>
+            <div onClick={(e) => navigateToPostDetail(e)} className='post-card pointer'>
                 <div className='post-card__top'>
                     <div className='post-card__top-avatar'>
                         <ProgressiveImage
@@ -207,9 +177,14 @@ export function PostCard({
                     </div>}
                 </div>
                 <div>
-                    <p className='post-card__text mt-1'>{handlePostText(completedPost.text)}</p>
+                    <p className={'post-card__text ' + 
+                        (fromPostDetail ? 'mt-3 ' : 'ps-5 ') +
+                        (completedPost.name ? '' : 'card-text-lifted')}>
+                        {handleText(completedPost.text, fromPostDetail, true)}
+                    </p>
                 </div>
-                <div className='post-card__footer'>
+                <div className={'post-card__footer ' + 
+                    (fromPostDetail ? '' : 'ms-5')}>
                     <div>
                         {(completedPost.hasILiked && authUsername) ?
                             <img
@@ -224,12 +199,13 @@ export function PostCard({
                                 alt="" width='18' height='18' />}
                         {completedPost.numberOfLikes ?
                             <p className={(completedPost.hasILiked && authUsername) ? 'special-red' : ''}>
-                                {getFinalStringForNumber(completedPost.numberOfLikes)}
+                                {getFinalStringForNumber(completedPost.numberOfLikes) + ' like' + (completedPost.numberOfLikes !== 1 ? 's' : '')}
                             </p> : <p>&nbsp;</p>}
                     </div>
                     <div>
                         <img
                             src={createImageSrcUrl(comment)}
+                            onClick={(e) => navigateToPostDetail(e, true)}
                             alt="" width='18' height='18' />
                         {completedPost.numberOfComments ?
                             <p>

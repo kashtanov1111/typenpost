@@ -13,6 +13,7 @@ class Query(PostSchema.Query,
     debug = graphene.Field(DjangoDebug, name='_debug')
 
 class Mutation(PostSchema.Mutation,
+               CommentSchema.Mutation, 
                UserSchema.Mutation, 
                graphene.ObjectType):
     pass

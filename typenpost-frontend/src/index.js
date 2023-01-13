@@ -12,8 +12,8 @@ import { App } from './components/App';
 import { relayStylePagination } from '@apollo/client/utilities';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:8000/graphql/',
-  // uri: 'https://www.typenpost.com/graphql/',
+  // uri: 'http://localhost:8000/graphql/',
+  uri: 'https://www.typenpost.com/graphql/',
   credentials: 'include', // remove in production
   
   cache: new InMemoryCache({
@@ -27,6 +27,11 @@ const client = new ApolloClient({
       UserNode: {
           fields: {
             posts: relayStylePagination(),
+          }
+      },
+      PostNode: {
+          fields: {
+            comments: relayStylePagination(),
           }
       },
       Query: {

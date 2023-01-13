@@ -42,7 +42,7 @@ class PostNode(DjangoObjectType):
     class Meta:
         model = Post
         filterset_class = PostFilter
-        fields = ('id', 'text', 'created', 'updated',
+        fields = ('id', 'text', 'created',
                   'user', 'comments', 'likes', 'uuid')
         interfaces = (graphene.relay.Node, )
 
@@ -53,7 +53,7 @@ class PostNode(DjangoObjectType):
         me = info.context.user
         if me.is_authenticated:
             try:
-                if parent.amIInLikes:
+                if parent.am_i_in_likes:
                     return True
                 else:
                     return False
@@ -62,15 +62,21 @@ class PostNode(DjangoObjectType):
                     return True
                 else:
                     return False
-                
+
         else:
             return False
 
     def resolve_number_of_likes(parent, info):
-        return parent.likes.count()
+        try:
+            return len(parent.all_likes)
+        except:
+            return parent.likes.filter(status__archived=False).count()
 
     def resolve_number_of_comments(parent, info):
-        return parent.comments.count()
+        try:
+            return len(parent.all_comments)
+        except:
+            return parent.comments.filter(user__status__archived=False).count()
 
     @classmethod
     def get_queryset(cls, queryset, info, *args, **kwargs):
@@ -83,14 +89,16 @@ class PostNode(DjangoObjectType):
                     'likes',
                     queryset=(
                         get_user_model().objects
-                        .filter(status__archived=False))
+                        .filter(status__archived=False)),
+                    to_attr='all_likes'
                 ))
             .prefetch_related(
                 Prefetch(
                     'comments',
                     queryset=(
                         Comment.objects
-                        .filter(user__status__archived=False))
+                        .filter(user__status__archived=False)),
+                    to_attr='all_comments'
                 ))
             .prefetch_related(
                 Prefetch(
@@ -99,7 +107,7 @@ class PostNode(DjangoObjectType):
                         get_user_model().objects
                         .filter(username=me_username)
                     ),
-                    to_attr='amIInLikes'
+                    to_attr='am_i_in_likes'
                 )
             )
         )
@@ -111,24 +119,14 @@ class Query(graphene.ObjectType):
     feed = DjangoFilterConnectionField(PostNode)
 
     def resolve_post(parent, info, uuid):
-        user = info.context.user
-        if user.is_authenticated:
-            me_username = user.username
-        else:
-            me_username = None
+        # user = info.context.user
+        # if user.is_authenticated:
+        #     me_username = user.username
+        # else:
+        #     me_username = None
         return (Post.objects
-            .select_related('user__profile')
-            .prefetch_related(
-                Prefetch(
-                    'likes',
-                    queryset=(
-                        get_user_model().objects
-                        .filter(username=me_username)
-                    ),
-                    to_attr='amIInLikes'
-                )
-            )
-            .get(id=uuid))
+                .select_related('user__profile')
+                .get(id=uuid))
 
     @login_required
     def resolve_feed(parent, info, *args, **kwargs):

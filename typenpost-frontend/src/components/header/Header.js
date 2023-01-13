@@ -84,7 +84,7 @@ export function Header({
                             onClick={() => navigate('/profile/' + username)}>
                             <ProgressiveImage
                                 src={avatar ? avatar : nobody}
-                                placeholder={avatar ? 
+                                placeholder={avatar ?
                                     createImagePlaceholderUrl(avatar, '50x50') :
                                     nobody}>
                                 {(src, loading) =>

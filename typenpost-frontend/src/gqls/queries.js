@@ -162,5 +162,40 @@ export const POST_DETAIL = gql`
     }
 `
 
+export const POST_COMMENTS = gql`
+    query PostComments($uuid: UUID, $cursor: String) {
+        post(uuid: $uuid) {
+            id
+            comments(first: 10, after: $cursor) {
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                    startCursor
+                    hasPreviousPage
+                }
+                edges {
+                    node {
+                        id
+                        uuid
+                        text
+                        created
+                        numberOfLikes
+                        hasILiked
+                        user {
+                            id
+                            name
+                            username
+                            profile {
+                                id
+                                avatar
+                            }
+                        }
+                    }
+                }
+          }
+        }
+    }
+`
+
 
 

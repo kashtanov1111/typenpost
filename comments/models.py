@@ -20,19 +20,22 @@ class CommentLike(models.Model):
 class Comment(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
-    text = models.TextField(max_length=50000)
+    text = models.TextField(max_length=2000)
     created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments')
     post = models.ForeignKey(
         Post, on_delete=models.CASCADE, related_name='comments')
-    # likes = models.ManyToManyField(
-    #     User,
-    #     related_name='likes',
-    #     blank=True,
-    #     null=True,
-    #     through=CommentLike)
-    # reply = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    likes = models.ManyToManyField(
+        User,
+        related_name='comment_likes',
+        blank=True,
+        null=True,
+        through=CommentLike)
+    reply = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
 
     def __str__(self):
         return self.text[:40]
+    
+    class Meta:
+        ordering = ['-created']

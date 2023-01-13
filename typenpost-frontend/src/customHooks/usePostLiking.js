@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { POST_LIKING } from '../gqls/mutations';
 
 
-export function useLiking(post, handleAlert) {
+export function usePostLiking(post, handleAlert) {
     const [handleLikePost] = useMutation(
         POST_LIKING, {
         variables: {
@@ -19,7 +19,6 @@ export function useLiking(post, handleAlert) {
             }
         },
         onError: (error) => {
-            console.log(error)
             handleAlert('An error occured, please try again.', 'danger')
         }
     }
