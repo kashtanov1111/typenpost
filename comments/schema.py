@@ -4,6 +4,7 @@ from graphene_django import DjangoObjectType
 from django.db.models import Prefetch
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import login_required
+from graphene_django.filter import DjangoFilterConnectionField
 
 from graphql_auth.schema import UserNode
 
@@ -32,10 +33,13 @@ class CommentNode(DjangoObjectType):
     number_of_likes = graphene.Int()
     has_i_liked = graphene.Boolean()
     uuid = graphene.UUID()
+    # replies = DjangoFilterConnectionField(
+    #     lambda: CommentNode, required=False)
 
     class Meta:
         model = Comment
-        fields = ('id', 'text', 'created', 'user', 'post', 'likes', 'uuid')
+        fields = ('id', 'text', 'created', 'user', 
+            'post', 'likes', 'uuid', 'replies', 'reply')
         filterset_class = CommentFilter
         interfaces = (graphene.relay.Node, )
 
@@ -90,11 +94,12 @@ class CommentNode(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    pass
-    # comments = graphene.List(CommentType)
+    comment = graphene.Field(CommentNode, uuid=graphene.UUID())
 
-    # def resolve_comments(parent, info):
-    #     return Comment.objects.all()
+    def resolve_comment(parent, info, uuid):
+        return (Comment.objects
+                .get(id=uuid))
+
 
 
 class LikeComment(graphene.Mutation):
@@ -131,6 +136,25 @@ class CreateComment(graphene.Mutation):
         comment.save()
         return CreateComment(comment=comment)
 
+class DeleteComment(graphene.Mutation):
+    action = graphene.String()
+
+    class Arguments:
+        uuid = graphene.UUID(required=True)
+
+    @login_required
+    def mutate(root, info, uuid=None):
+        user = info.context.user
+        comment = Comment.objects.get(id=uuid)
+        if comment.user == user:
+            comment.delete()
+            action = 'deleted'
+            return DeleteComment(action=action)
+        else:
+            action = 'not deleted'
+            return DeleteComment(action=action)
+
 class Mutation(graphene.ObjectType):
     like_comment = LikeComment.Field()
     create_comment = CreateComment.Field()
+    delete_comment = DeleteComment.Field()

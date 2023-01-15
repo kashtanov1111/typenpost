@@ -239,7 +239,7 @@ export const POST_LIKING = gql`
 `
 
 export const POST_DELETING = gql`
-    mutation PostLiking($uuid: UUID!) {
+    mutation PostDeleting($uuid: UUID!) {
         deletePost(uuid: $uuid) {
             action
         }
@@ -289,4 +289,10 @@ export const CREATE_COMMENT = gql`
     }
 `
 
-
+export const COMMENT_DELETING = gql`
+    mutation CommentDeleting($uuid: UUID!) {
+        deleteComment(uuid: $uuid) {
+            action
+        }
+    }
+`

@@ -7,12 +7,13 @@ export function PostComments({
     fetchMore,
     data,
     postUUID,
+    postId,
     authUsername,
     handleAlert
 }) {
     
     return (
-        <div>
+        <div className={data && data.post.comments.edges.length > 0 ? 'mb-4-5' : 'mt-4-5'}>
         <InfiniteScroll
             dataLength={data ? data.post.comments.edges.length : 1}
             next={() => fetchMore({
@@ -32,6 +33,7 @@ export function PostComments({
                  <CommentCard
                     key={el.node.id}
                     comment={el.node}
+                    postId={postId}
                     authUsername={authUsername}
                     handleAlert={handleAlert}
                  />

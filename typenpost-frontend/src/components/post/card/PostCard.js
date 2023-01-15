@@ -14,6 +14,9 @@ import ProgressiveImage from 'react-progressive-graceful-image'
 import React, { useRef, useState } from "react";
 import trash from '../../../assets/images/trash-red.svg'
 import { handleText } from '../../../functions/functions'
+import { Link } from 'react-router-dom'
+import Linkify from 'linkify-react'
+import 'linkify-plugin-mention'
 
 export function PostCard({
     authUsername,
@@ -77,17 +80,17 @@ export function PostCard({
         }
     }
 
-    function navigateToPostDetail(e, autoFocusShow=false) {
+    function navigateToPostDetail(e, autoFocusShow = false) {
         e.stopPropagation()
         if (!fromPostDetail) {
             navigate('../' + completedPost.uuid, { state: { completedPost: completedPost, from: true, autoFocusShow: autoFocusShow } })
         }
     }
 
-    async function handleLikeBtnClicked(e) {
+    function handleLikeBtnClicked(e) {
         e.stopPropagation()
         if (authUsername) {
-            await handleLikePost()
+            handleLikePost()
             if (handleLikeClickForPostDetail) {
                 handleLikeClickForPostDetail()
             }
@@ -96,6 +99,22 @@ export function PostCard({
         }
     }
 
+    const renderLink = ({ attributes, content }) => {
+        const { href, ...props } = attributes;
+        return <Link 
+            to={'/profile' + href.toLowerCase()} {...props}>{content}</Link>;
+    };
+
+    const options = {
+        render: {
+            mention: renderLink,
+        },
+        attributes: {
+            onClick: (event) => {
+                event.stopPropagation()
+            }
+        }
+    };
 
     return (
         <>
@@ -130,15 +149,18 @@ export function PostCard({
                         </ProgressiveImage>
                     </div>
                     <div className='post-card__top-names'>
-                        <p
-                            onClick={(e) => navigateToUserProfile(e)}
-                            className='mb-0 pointer'>{completedPost.name}</p>
-                        <p
-                            onClick={(e) => navigateToUserProfile(e)}
-                            className={
-                                'pointer ' + (completedPost.name ? '' :
-                                    'post-card__top-no-top-margin')}>
-                            {'@' + completedPost.username}</p>
+                        <p className='mb-0 pointer'>
+                            <span onClick={(e) => navigateToUserProfile(e)}>
+                                {completedPost.name}
+                            </span>
+                        </p>
+                        <p className={
+                            'pointer ' + (completedPost.name ? '' :
+                                'post-card__top-no-top-margin')}>
+                            <span onClick={(e) => navigateToUserProfile(e)}>
+                                {'@' + completedPost.username}
+                            </span>
+                        </p>
                     </div>
                     <div className={
                         'post-card__top-created ' +
@@ -177,13 +199,32 @@ export function PostCard({
                     </div>}
                 </div>
                 <div>
-                    <p className={'post-card__text ' + 
+                    <Linkify as='p' className={'post-card__text ' +
                         (fromPostDetail ? 'mt-3 ' : 'ps-5 ') +
-                        (completedPost.name ? '' : 'card-text-lifted')}>
-                        {handleText(completedPost.text, fromPostDetail, true)}
-                    </p>
+                        (completedPost.name ? '' : 'card-text-lifted')}
+                        options={options}
+                    >
+                        {handleText(
+                            completedPost.text,
+                            fromPostDetail,
+                            true)}
+                    </Linkify>
+                    {/* <p className={'post-card__text ' +
+                        (fromPostDetail ? 'mt-3 ' : 'ps-5 ') +
+                        (completedPost.name ? '' : 'card-text-lifted')}
+                        dangerouslySetInnerHTML={
+                            {
+                                __html: DOMPurify.sanitize(
+                                    handleText(
+                                        completedPost.text,
+                                        fromPostDetail,
+                                        true)
+                                )
+                            }}
+                    >
+                    </p> */}
                 </div>
-                <div className={'post-card__footer ' + 
+                <div className={'post-card__footer ' +
                     (fromPostDetail ? '' : 'ms-5')}>
                     <div>
                         {(completedPost.hasILiked && authUsername) ?
@@ -191,12 +232,12 @@ export function PostCard({
                                 onClick={(e) => handleLikeBtnClicked(e)}
                                 className='filled-heart pointer'
                                 src={createImageSrcUrl(heart_filled)}
-                                alt="" width='18' height='18' /> :
+                                alt="" width='20' height='20' /> :
                             <img
                                 onClick={(e) => handleLikeBtnClicked(e)}
                                 className='pointer'
                                 src={createImageSrcUrl(heart)}
-                                alt="" width='18' height='18' />}
+                                alt="" width='20' height='20' />}
                         {completedPost.numberOfLikes ?
                             <p className={(completedPost.hasILiked && authUsername) ? 'special-red' : ''}>
                                 {getFinalStringForNumber(completedPost.numberOfLikes) + ' like' + (completedPost.numberOfLikes !== 1 ? 's' : '')}
@@ -206,7 +247,7 @@ export function PostCard({
                         <img
                             src={createImageSrcUrl(comment)}
                             onClick={(e) => navigateToPostDetail(e, true)}
-                            alt="" width='18' height='18' />
+                            alt="" width='20' height='20' />
                         {completedPost.numberOfComments ?
                             <p>
                                 {getFinalStringForNumber(completedPost.numberOfComments)}

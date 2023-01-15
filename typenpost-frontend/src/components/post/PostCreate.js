@@ -22,9 +22,6 @@ export function PostCreate() {
 
     useScrollTop()
     const [createPost] = useMutation(CREATE_POST, {
-        variables: {
-            text: post
-        },
         optimisticResponse: {
             createPost: {
                 post: {
@@ -60,9 +57,31 @@ export function PostCreate() {
     }, [isAuthenticated, navigate])
 
     function handleCreatePostButtonClicked() {
-        navigate('../profile/' + authUsername, {state: 'created'})
+        var postCopy = post.slice()
+        postCopy = postCopy.replace(/^\s*\n/gm, '\n')
+        if (postCopy.startsWith('\n')) {
+            postCopy = postCopy.slice(1)
+        }
+        if (postCopy.endsWith('\n\n')) {
+            postCopy = postCopy.slice(0, -2)
+        }
+        if (postCopy.endsWith('\n')) {
+            postCopy = postCopy.slice(0, -1)
+        }
+        postCopy = postCopy.replace(
+            /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gm,
+            function (url) {
+                if (url.endsWith('/')) {
+                    return url.slice(0, -1)
+                }
+                return url
+            });
+        if (postCopy.includes('http')) {
+            postCopy = postCopy.replace(/https?:\/\/(www\.)?/gmi, "");
+        }
+        navigate('../profile/' + authUsername, { state: 'created' })
         handleAlert('The post was successfully created.', 'success')
-        createPost()
+        createPost({variables: {text: postCopy}})
     }
 
     return (

@@ -56,7 +56,7 @@ export function PostDeleteModal({
     return (
         <Modal show={showPostDeleteModal} onHide={() => setShowPostDeleteModal(false)} centered>
             <Modal.Header closeButton >
-                <Modal.Title>Log Out</Modal.Title>
+                <Modal.Title>Delete Post</Modal.Title>
             </Modal.Header>
             <Modal.Body>Are you sure want to delete this post?</Modal.Body>
             <Modal.Footer>

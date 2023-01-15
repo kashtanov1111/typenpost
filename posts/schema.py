@@ -119,13 +119,15 @@ class Query(graphene.ObjectType):
     feed = DjangoFilterConnectionField(PostNode)
 
     def resolve_post(parent, info, uuid):
-        # user = info.context.user
-        # if user.is_authenticated:
-        #     me_username = user.username
-        # else:
-        #     me_username = None
         return (Post.objects
                 .select_related('user__profile')
+                .prefetch_related(
+                    Prefetch(
+                        'comments',
+                        queryset=(
+                            Comment.objects
+                            .filter(reply=None))),
+                )
                 .get(id=uuid))
 
     @login_required

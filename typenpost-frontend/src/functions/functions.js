@@ -91,35 +91,26 @@ export function getDateJoined(string) {
 
 
 export function handleText(text, fromPostDetail=null, fromPostCard=false) {
-    var editedText = text.replace(/^\s*\n/gm, '\n')
-    if (editedText.startsWith('\n')) {
-        editedText = editedText.slice(1)
-    }
-    if (editedText.endsWith('\n\n')) {
-        editedText = editedText.slice(0, -2)
-    }
-    if (editedText.endsWith('\n')) {
-        editedText = editedText.slice(0, -1)
-    }
+
     function getTruncatedStringWithSeveralLines(string, addEllipsis=false) {
         if (string.indexOf('\n') !== -1) {
             const position = string.split('\n', 5).join('\n').length
             string = string.slice(
                 0, position)
-            return string + ((position !== editedText.length || addEllipsis) ? ' ...' : '')
+            return string + ((position !== text.length || addEllipsis) ? ' ...' : '')
         } else {
             return string + (addEllipsis ? ' ...' : '')
         }
     }
     
     if (fromPostDetail !== true && fromPostCard) {
-        if (text.length > 500) {
-            editedText = editedText.slice(0, 500)
-            return getTruncatedStringWithSeveralLines(editedText, true)
+        if (text.length > 350) {
+            text = text.slice(0, 350)
+            return getTruncatedStringWithSeveralLines(text, true)
         } else {
-            return getTruncatedStringWithSeveralLines(editedText)
+            return getTruncatedStringWithSeveralLines(text)
         }
     } else {
-        return editedText
+        return text
     }
 }
