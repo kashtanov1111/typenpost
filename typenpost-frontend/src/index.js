@@ -34,6 +34,11 @@ const client = new ApolloClient({
             comments: relayStylePagination(),
           }
       },
+      CommentNode: {
+          fields: {
+            replies: relayStylePagination(),
+          }
+      },
       Query: {
           fields: {
             feed: relayStylePagination(),

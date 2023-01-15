@@ -33,8 +33,7 @@ class CommentNode(DjangoObjectType):
     number_of_likes = graphene.Int()
     has_i_liked = graphene.Boolean()
     uuid = graphene.UUID()
-    # replies = DjangoFilterConnectionField(
-    #     lambda: CommentNode, required=False)
+    number_of_replies = graphene.Int()
 
     class Meta:
         model = Comment
@@ -48,6 +47,9 @@ class CommentNode(DjangoObjectType):
 
     def resolve_number_of_likes(parent, info):
         return parent.likes.count()
+
+    def resolve_number_of_replies(parent, info):
+        return parent.replies.count()
 
     def resolve_has_i_liked(parent, info):
         me = info.context.user
@@ -79,6 +81,7 @@ class CommentNode(DjangoObjectType):
                         get_user_model().objects
                         .filter(status__archived=False))
                 ))
+            .prefetch_related('replies')
             .prefetch_related(
                 Prefetch(
                     'likes',

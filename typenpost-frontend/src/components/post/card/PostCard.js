@@ -30,7 +30,8 @@ export function PostCard({
     placeholderProfileSrc,
     post,
     userUsername,
-    handleLikeClickForPostDetail
+    handleLikeClickForPostDetail,
+    handleShowAutoFocus
 }) {
 
     // console.log('Post Card Render')
@@ -84,6 +85,8 @@ export function PostCard({
         e.stopPropagation()
         if (!fromPostDetail) {
             navigate('../' + completedPost.uuid, { state: { completedPost: completedPost, from: true, autoFocusShow: autoFocusShow } })
+        } else if (autoFocusShow === true) {
+            handleShowAutoFocus()
         }
     }
 
@@ -238,20 +241,21 @@ export function PostCard({
                                 className='pointer'
                                 src={createImageSrcUrl(heart)}
                                 alt="" width='20' height='20' />}
-                        {completedPost.numberOfLikes ?
+                        {(completedPost.numberOfLikes !== 0) &&
                             <p className={(completedPost.hasILiked && authUsername) ? 'special-red' : ''}>
                                 {getFinalStringForNumber(completedPost.numberOfLikes) + ' like' + (completedPost.numberOfLikes !== 1 ? 's' : '')}
-                            </p> : <p>&nbsp;</p>}
+                            </p>}
                     </div>
                     <div>
                         <img
                             src={createImageSrcUrl(comment)}
                             onClick={(e) => navigateToPostDetail(e, true)}
                             alt="" width='20' height='20' />
-                        {completedPost.numberOfComments ?
+                        {(completedPost.numberOfComments !== 0) && 
                             <p>
-                                {getFinalStringForNumber(completedPost.numberOfComments)}
-                            </p> : <p>&nbsp;</p>}
+                                {getFinalStringForNumber(completedPost.numberOfComments) + 
+                                (completedPost.numberOfComments !== 1 ? ' replies' : ' reply')}
+                            </p>}
                     </div>
                 </div>
             </div>

@@ -53,8 +53,6 @@ export const USER_PROFILE_POSTS = gql`
                 pageInfo {
                     hasNextPage
                     endCursor
-                    startCursor
-                    hasPreviousPage
                 }
                 edges {
                     node {
@@ -115,8 +113,6 @@ export const POST_FEED = gql`
             pageInfo {
                 hasNextPage
                 endCursor
-                startCursor
-                hasPreviousPage
             }
             edges {
                 node {
@@ -170,8 +166,39 @@ export const POST_COMMENTS = gql`
                 pageInfo {
                     hasNextPage
                     endCursor
-                    startCursor
-                    hasPreviousPage
+                }
+                edges {
+                    node {
+                        id
+                        uuid
+                        text
+                        created
+                        numberOfLikes
+                        numberOfReplies
+                        hasILiked
+                        user {
+                            id
+                            name
+                            username
+                            profile {
+                                id
+                                avatar
+                            }
+                        }
+                    }
+                }
+          }
+        }
+    }
+`
+
+export const COMMENT_REPLIES = gql`
+    query CommentReplies($uuid: UUID, $first: Int) {
+        comment(uuid: $uuid) {
+            id
+            replies(first: $first) {
+                pageInfo {
+                    hasNextPage
                 }
                 edges {
                     node {

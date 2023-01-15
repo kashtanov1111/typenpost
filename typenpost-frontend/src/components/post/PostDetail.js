@@ -24,6 +24,7 @@ export function PostDetail() {
     const location = useLocation()
     const params = useParams()
     const postUUID = params.postId
+    const [autoFocusShow, setAutoFocusShow] = useState(false)
 
     const [post, setPost] = useState({})
 
@@ -35,11 +36,14 @@ export function PostDetail() {
         })
     }
 
+    function handleShowAutoFocus() {
+        console.log('show')
+        setAutoFocusShow(true)
+    }
+
     var hasPrevPage = null
-    var autoFocusShow = false
     if (location.state) {
         hasPrevPage = location.state.from
-        autoFocusShow = location.state.autoFocusShow
     }
     useScrollTop()
 
@@ -74,11 +78,11 @@ export function PostDetail() {
             }
         )
 
-    const {
+    const [getPostComments, {
         data: postComments,
         fetchMore,
         refetch
-    } = useQuery(POST_COMMENTS, {
+    }] = useLazyQuery(POST_COMMENTS, {
         variables: { uuid: postUUID },
         onError: () => {
             handleAlert('An error occured, please try again.', 'danger')
@@ -88,15 +92,26 @@ export function PostDetail() {
     useEffect(() => {
         if (location.state === null || location.state === 'loggedIn') {
             getPostDetail()
+            getPostComments()
         } else {
-            setPost(location.state.completedPost)
+            const completedPost = location.state.completedPost
+            setPost(completedPost)
+            if (completedPost.numberOfComments !== 0) {
+                getPostComments()
+            }
         }
-    }, [location.state, getPostDetail])
+    }, [location.state, getPostDetail, getPostComments])
 
+    useEffect(() => {
+        if (location.state && location.state.autoFocusShow === true) {
+            setAutoFocusShow(true)
+        }
+    }, [location.state])
+    
     if (errorPostDetail) {
         return <Error />
     }
-    
+
     return (
         <>
             {(Object.keys(post).length !== 0) ?
@@ -107,9 +122,20 @@ export function PostDetail() {
                     hasPrevPage={hasPrevPage}
                     getFinalStringForNumber={getFinalStringForNumber}
                     handleLikeClickForPostDetail={location.state && handleLikeClickForPostDetail}
+                    handleShowAutoFocus={handleShowAutoFocus}
                     authUsername={authUsername} /> :
                 <SpinnerForPages />}
-            <div className='divider'></div>
+            <div className='divider-post-detail'></div>
+            {authUsername && <CommentCreate
+                autoFocusShow={autoFocusShow}
+                setAutoFocusShow={setAutoFocusShow}
+                handleAlert={handleAlert}
+                postUUID={postUUID}
+                refetch={refetch}
+                setPost={setPost}
+                post={post} 
+                notMobile={true}
+                />}
             <div className='post-comments'>
                 <PostComments
                     fetchMore={fetchMore}
@@ -121,6 +147,7 @@ export function PostDetail() {
             </div>
             {authUsername && <CommentCreate
                 autoFocusShow={autoFocusShow}
+                setAutoFocusShow={setAutoFocusShow}
                 handleAlert={handleAlert}
                 postUUID={postUUID}
                 refetch={refetch}

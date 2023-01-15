@@ -90,9 +90,9 @@ export function getDateJoined(string) {
 }
 
 
-export function handleText(text, fromPostDetail=null, fromPostCard=false) {
+export function handleText(text, fromPostDetail = null, fromPostCard = false) {
 
-    function getTruncatedStringWithSeveralLines(string, addEllipsis=false) {
+    function getTruncatedStringWithSeveralLines(string, addEllipsis = false) {
         if (string.indexOf('\n') !== -1) {
             const position = string.split('\n', 5).join('\n').length
             string = string.slice(
@@ -102,7 +102,7 @@ export function handleText(text, fromPostDetail=null, fromPostCard=false) {
             return string + (addEllipsis ? ' ...' : '')
         }
     }
-    
+
     if (fromPostDetail !== true && fromPostCard) {
         if (text.length > 350) {
             text = text.slice(0, 350)
@@ -113,4 +113,30 @@ export function handleText(text, fromPostDetail=null, fromPostCard=false) {
     } else {
         return text
     }
+}
+
+
+export function handleTextOnCreation(text) {
+    var editedText = text.replace(/^\s*\n/gm, '\n')
+    if (editedText.startsWith('\n')) {
+        editedText = editedText.slice(1)
+    }
+    if (editedText.endsWith('\n\n')) {
+        editedText = editedText.slice(0, -2)
+    }
+    if (editedText.endsWith('\n')) {
+        editedText = editedText.slice(0, -1)
+    }
+    editedText = editedText.replace(
+        /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gm,
+        function (url) {
+            if (url.endsWith('/')) {
+                return url.slice(0, -1)
+            }
+            return url
+        });
+    if (editedText.includes('http')) {
+        editedText = editedText.replace(/https?:\/\/(www\.)?/gmi, "");
+    }
+    return editedText
 }

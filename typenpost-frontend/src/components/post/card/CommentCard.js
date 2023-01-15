@@ -17,12 +17,17 @@ import {
 } from "../../../functions/functions"
 import { getDateCreatedPostCard } from "../../../functions/functions"
 import { handleText } from "../../../functions/functions"
+import { COMMENT_REPLIES } from '../../../gqls/queries'
+import { useLazyQuery } from '@apollo/client'
+import { SpinnerForPages } from '../../SpinnerForPages'
 
 export function CommentCard({
     comment,
     authUsername,
     postId,
-    handleAlert
+    handleAlert,
+    mainComment,
+    parentCommentId
 }) {
     const navigate = useNavigate()
     const location = useLocation()
@@ -32,16 +37,49 @@ export function CommentCard({
 
     const [showDropdown, setShowDropdown] = useState(false)
     const [showCommentDeleteModal, setShowCommentDeleteModal] = useState(false)
+    const [showRepliesNumber, setShowRepliesNumber] = useState(10)
     const liking = useCommentLiking(comment, handleAlert)
     const handleLikeComment = liking.handleLikeComment
 
     useOutsideAlerter(dropRef, () => setShowDropdown(false))
-    
+
+    const [getReplies, {
+        data: dataReplies,
+        loading: loadingReplies,
+        fetchMore
+    }] = useLazyQuery(COMMENT_REPLIES, {
+        variables: {
+            uuid: comment.uuid
+        },
+        onCompleted: (data) => console.log(data),
+        onError: () => {
+            handleAlert('An error occured, please try again.', 'danger')
+        },
+    })
+
+    var hasNextPageForReplies = null
+
+    if (dataReplies) {
+        hasNextPageForReplies = 
+            dataReplies.comment.replies.pageInfo.hasNextPage
+    }
+
     if (comment) {
         avatar = comment.user.profile.avatar
         isMyComment = comment.user.username === authUsername
     }
 
+    function handleShowMoreRepliesClick() {
+        if (hasNextPageForReplies) {
+            fetchMore({
+                variables: {
+                    first: showRepliesNumber + 10
+                }
+            })        
+            setShowRepliesNumber(showRepliesNumber + 10)
+        }
+    }
+    
     function navigateToUserProfile() {
         navigate('../profile/' + comment.user.username)
     }
@@ -63,10 +101,12 @@ export function CommentCard({
                 showCommentDeleteModal={showCommentDeleteModal}
                 setShowCommentDeleteModal={setShowCommentDeleteModal}
                 handleAlert={handleAlert}
+                parentCommentId={parentCommentId}
             />
             <div className='comment-card pointer'>
                 <div className='comment-card__top'>
-                    <div className='comment-card__top-avatar'>
+                    <div className={'comment-card__top-avatar' +
+                        (mainComment ? '' : ' comment-card__top-avatar--small')}>
                         <ProgressiveImage
                             src={avatar ? avatar : nobody}
                             placeholder={avatar ?
@@ -136,12 +176,15 @@ export function CommentCard({
                     </div>}
                 </div>
                 <div>
-                    <p className={'comment-card__text ps-5 ' +
-                        (comment.user.name ? '' : 'card-text-lifted')}>
+                    <p className={'comment-card__text' +
+                        (mainComment ? ' ps-5 ' : ' ps-2-and-5rem ') +
+                        (comment.user.name ? '' :
+                            (mainComment ? 'card-text-lifted' : 'card-text-lifted--reply'))}>
                         {handleText(comment.text)}
                     </p>
                 </div>
-                <div className='comment-card__footer ms-5'>
+                <div className={'comment-card__footer ' +
+                    (mainComment ? 'ms-5' : 'ms-2-and-5rem')}>
                     <div>
                         {(comment.hasILiked && authUsername) ?
                             <img
@@ -154,21 +197,43 @@ export function CommentCard({
                                 className='pointer'
                                 src={createImageSrcUrl(heart)}
                                 alt="" width='20' height='20' />}
-                        {comment.numberOfLikes ?
+                        {(comment.numberOfLikes !== 0) &&
                             <p className={(comment.hasILiked && authUsername) ? 'special-red' : ''}>
                                 {getFinalStringForNumber(comment.numberOfLikes) + ' like' + (comment.numberOfLikes !== 1 ? 's' : '')}
-                            </p> : <p>&nbsp;</p>}
+                            </p>}
                     </div>
                     <div>
                         <img
                             src={createImageSrcUrl(comment_image)}
                             alt="" width='20' height='20' />
-                        {comment.numberOfComments ?
-                            <p>
-                                {getFinalStringForNumber(comment.numberOfComments)}
-                            </p> : <p>&nbsp;</p>}
+                        {mainComment &&
+                            ((comment.numberOfReplies !== 0) &&
+                                <p onClick={() => getReplies({variables: {first: showRepliesNumber}})}>
+                                    {getFinalStringForNumber(comment.numberOfReplies) + ' replies'}
+                                </p>)}
                     </div>
                 </div>
+            </div>
+            <div className='ms-5'>
+                {dataReplies && dataReplies.comment.replies.edges.map((el) => (
+                    el.node &&
+                    <CommentCard
+                        key={el.node.id}
+                        comment={el.node}
+                        postId={postId}
+                        authUsername={authUsername}
+                        handleAlert={handleAlert}
+                        parentCommentId={comment.id}
+                    />
+                ))}
+                {dataReplies && hasNextPageForReplies &&
+                    <p
+                        className='mb-2'
+                        onClick={handleShowMoreRepliesClick}
+                        style={{ marginTop: '-0.5rem' }}>
+                        &mdash; Show more replies
+                    </p>}
+                {loadingReplies && <SpinnerForPages />}
             </div>
         </>
     )

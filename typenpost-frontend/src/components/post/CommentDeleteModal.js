@@ -11,6 +11,7 @@ export function CommentDeleteModal({
     postId,
     setShowCommentDeleteModal,
     showCommentDeleteModal,
+    parentCommentId
 }) {
     const [handleDeleteComment, {
         loading: loadingDeleteComment
@@ -30,6 +31,16 @@ export function CommentDeleteModal({
                     }
                 }
             })
+            if (parentCommentId) {
+                cache.modify({
+                id: 'CommentNode:' + parentCommentId,
+                fields: {
+                    numberOfReplies(cachedValue) {
+                        return cachedValue - 1
+                        }
+                    }
+                })
+            }
             handleAlert('The comment was successfully deleted.', 'success')
         },
         onError: () => {

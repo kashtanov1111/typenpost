@@ -18,8 +18,6 @@ export const CORE_FOLLOW_LIST_FIELDS = gql`
         pageInfo {
             hasNextPage
             endCursor
-            startCursor
-            hasPreviousPage
         }
         edges {
             node {

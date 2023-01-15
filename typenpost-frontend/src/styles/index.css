@@ -68,7 +68,15 @@ a {
   margin-top: 2.25rem;
 }
 
-.divider {
+.ms-2-and-5rem {
+  margin-left: 2.5rem;
+}
+
+.ps-2-and-5rem {
+  padding-left: 2.5rem;
+}
+
+.divider-post-detail {
   border-top: var(--THIN-LIGHT-GREY-BORDER);
   margin: 0 -12px;
 }
@@ -738,6 +746,11 @@ li.header-auth__nav__ul__li-1 {
   border-radius: 50%;
 }
 
+.comment-card__top div.comment-card__top-avatar--small img.avatar {
+  height: 2rem;
+  width: 2rem;
+}
+
 .comment-card__top div.comment-card__top-names,
 .post-card__top div.post-card__top-names {
   flex: auto;
@@ -837,16 +850,22 @@ li.header-auth__nav__ul__li-1 {
   color: var(--SPECIAL-RED);
 }
 
-/* || COMMENT FORM MOBILE */
+/* || COMMENT FORM */
 
-.comment-form-mobile {
-  position: -webkit-sticky;
+.comment-form-small {
+  display: none;
+}
+
+
+.comment-form {
   position: fixed;
   bottom: 60px;
   margin: 0 -12px;
+  width: 100%;
 }
 
-.comment-form-mobile div textarea {
+.comment-form-small div textarea,
+.comment-form div textarea {
   height: 1rem;
   border: var(--THIN-LIGHT-GREY-BORDER);
   padding-right: 3rem;
@@ -854,11 +873,12 @@ li.header-auth__nav__ul__li-1 {
   resize: none;
 }
 
-.comment-form-mobile div textarea:focus {
+.comment-form-small div textarea:focus,
+.comment-form div textarea:focus {
   border: var(--THIN-LIGHT-GREY-BORDER);
 }
 
-.comment-form-mobile__post-button {
+.comment-form__post-button {
   position: absolute;
   right: -0.5rem;
   top: 50%;
@@ -867,7 +887,7 @@ li.header-auth__nav__ul__li-1 {
   color: var(--TP-COLOR);
 }
 
-.comment-form-mobile__post-button--disabled {
+.comment-form__post-button--disabled {
   color: var(--TP-COLOR-DISABLED);
 }
 
@@ -890,6 +910,10 @@ li.header-auth__nav__ul__li-1 {
 
 .card-text-lifted {
   margin-top: -1.3rem;
+}
+
+.card-text-lifted--reply {
+  margin-top: -0.9rem;
 }
 
 .post-comments {
@@ -1009,6 +1033,20 @@ li.header-auth__nav__ul__li-1 {
   .user-header-lg__edit-button {
     max-width: 7rem;
     width: 7rem;
+  }
+
+  /* COMMENT FORM */
+
+  .divider-post-detail {
+    display: none;
+  }
+  
+  .comment-form {
+    display: none;
+  }
+
+  .comment-form-small {
+    display: block; 
   }
 }
 

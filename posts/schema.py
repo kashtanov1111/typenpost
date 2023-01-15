@@ -76,7 +76,7 @@ class PostNode(DjangoObjectType):
         try:
             return len(parent.all_comments)
         except:
-            return parent.comments.filter(user__status__archived=False).count()
+            return Comment.objects.filter(user__status__archived=False).filter(post=parent).count()
 
     @classmethod
     def get_queryset(cls, queryset, info, *args, **kwargs):

@@ -6,7 +6,7 @@ import { useMutation } from "@apollo/client";
 import { AlertContext } from "../../context/AlertContext";
 import send_btn from '../../assets/images/send-btn.svg'
 import arrow from '../../assets/images/white-arrow.svg'
-import { createImageSrcUrl } from "../../functions/functions";
+import { createImageSrcUrl, handleTextOnCreation } from "../../functions/functions";
 import { useScrollTop } from '../../customHooks/useScrollTop';
 
 export function PostCreate() {
@@ -57,31 +57,9 @@ export function PostCreate() {
     }, [isAuthenticated, navigate])
 
     function handleCreatePostButtonClicked() {
-        var postCopy = post.slice()
-        postCopy = postCopy.replace(/^\s*\n/gm, '\n')
-        if (postCopy.startsWith('\n')) {
-            postCopy = postCopy.slice(1)
-        }
-        if (postCopy.endsWith('\n\n')) {
-            postCopy = postCopy.slice(0, -2)
-        }
-        if (postCopy.endsWith('\n')) {
-            postCopy = postCopy.slice(0, -1)
-        }
-        postCopy = postCopy.replace(
-            /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gm,
-            function (url) {
-                if (url.endsWith('/')) {
-                    return url.slice(0, -1)
-                }
-                return url
-            });
-        if (postCopy.includes('http')) {
-            postCopy = postCopy.replace(/https?:\/\/(www\.)?/gmi, "");
-        }
         navigate('../profile/' + authUsername, { state: 'created' })
         handleAlert('The post was successfully created.', 'success')
-        createPost({variables: {text: postCopy}})
+        createPost({variables: {text: handleTextOnCreation(post)}})
     }
 
     return (
