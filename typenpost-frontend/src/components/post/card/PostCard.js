@@ -14,9 +14,8 @@ import ProgressiveImage from 'react-progressive-graceful-image'
 import React, { useRef, useState } from "react";
 import trash from '../../../assets/images/trash-red.svg'
 import { handleText } from '../../../functions/functions'
-import { Link } from 'react-router-dom'
 import Linkify from 'linkify-react'
-import 'linkify-plugin-mention'
+import { optionsForTextInCards } from '../../../functions/functions'
 
 export function PostCard({
     authUsername,
@@ -39,8 +38,11 @@ export function PostCard({
     const location = useLocation()
     const [showDropdown, setShowDropdown] = useState(false)
     const dropRef = useRef(null)
+    const options = optionsForTextInCards
 
-    useOutsideAlerter(dropRef, () => setShowDropdown(false))
+    useOutsideAlerter(dropRef, () => {
+        setShowDropdown(false)
+    })
 
     var completedPost = {}
     if (fromPostDetail !== true) {
@@ -102,22 +104,7 @@ export function PostCard({
         }
     }
 
-    const renderLink = ({ attributes, content }) => {
-        const { href, ...props } = attributes;
-        return <Link 
-            to={'/profile' + href.toLowerCase()} {...props}>{content}</Link>;
-    };
-
-    const options = {
-        render: {
-            mention: renderLink,
-        },
-        attributes: {
-            onClick: (event) => {
-                event.stopPropagation()
-            }
-        }
-    };
+    
 
     return (
         <>
@@ -212,20 +199,6 @@ export function PostCard({
                             fromPostDetail,
                             true)}
                     </Linkify>
-                    {/* <p className={'post-card__text ' +
-                        (fromPostDetail ? 'mt-3 ' : 'ps-5 ') +
-                        (completedPost.name ? '' : 'card-text-lifted')}
-                        dangerouslySetInnerHTML={
-                            {
-                                __html: DOMPurify.sanitize(
-                                    handleText(
-                                        completedPost.text,
-                                        fromPostDetail,
-                                        true)
-                                )
-                            }}
-                    >
-                    </p> */}
                 </div>
                 <div className={'post-card__footer ' +
                     (fromPostDetail ? '' : 'ms-5')}>

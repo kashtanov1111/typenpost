@@ -34,7 +34,9 @@ export function Header({
     const [showSettingsModal, setShowSettingsModal] = useState(false)
     const [showDropdown, setShowDropdown] = useState(false)
     const dropRef = useRef(null)
-    useOutsideAlerter(dropRef, () => setShowDropdown(false))
+    useOutsideAlerter(dropRef, () => {
+        setShowDropdown(false)
+    })
 
     function handleLogoutButtonClicked() {
         setShowLogoutModal(false)
@@ -106,7 +108,6 @@ export function Header({
                             <li
                                 onClick={(e) => {
                                     e.stopPropagation()
-                                    console.log('clicked')
                                     setShowDropdown(!showDropdown)
                                 }}
                                 className='header-auth__nav__ul__div__li-5 pointer'

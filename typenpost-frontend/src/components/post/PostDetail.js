@@ -3,16 +3,15 @@ import { Error } from '../Error';
 import { getFinalStringForNumber } from '../../functions/functions';
 import { POST_DETAIL, POST_COMMENTS } from '../../gqls/queries';
 import { PostCard } from './card/PostCard';
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { useParams, useLocation } from 'react-router-dom';
 import { UsernameContext } from '../../context/LoginContext';
 import { useScrollTop } from '../../customHooks/useScrollTop';
-import React, { useState, useContext, useEffect, useRef } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { createImagePlaceholderUrl } from '../../functions/functions';
 import nobody from '../../assets/images/nobody.jpg'
 import { SpinnerForPages } from '../SpinnerForPages';
 import { PostComments } from './PostComments';
-import { CommentCreate } from './CommentCreate';
 
 export function PostDetail() {
     console.log('Post Detail render')
@@ -24,28 +23,10 @@ export function PostDetail() {
     const location = useLocation()
     const params = useParams()
     const postUUID = params.postId
-    const [autoFocusShow, setAutoFocusShow] = useState(false)
-
-    const [post, setPost] = useState({})
-
-    function handleLikeClickForPostDetail() {
-        setPost({
-            ...post,
-            numberOfLikes: post.numberOfLikes + (post.hasILiked ? -1 : 1),
-            hasILiked: !post.hasILiked
-        })
-    }
-
-    function handleShowAutoFocus() {
-        console.log('show')
-        setAutoFocusShow(true)
-    }
-
     var hasPrevPage = null
-    if (location.state) {
-        hasPrevPage = location.state.from
-    }
-    useScrollTop()
+
+    const [autoFocusShow, setAutoFocusShow] = useState(false)
+    const [post, setPost] = useState({})
 
     const [getPostDetail, {
         error: errorPostDetail }] = useLazyQuery(
@@ -80,14 +61,19 @@ export function PostDetail() {
 
     const [getPostComments, {
         data: postComments,
+        loading: loadingComments,
         fetchMore,
-        refetch
+        refetch: refetchPostComments,
     }] = useLazyQuery(POST_COMMENTS, {
         variables: { uuid: postUUID },
         onError: () => {
             handleAlert('An error occured, please try again.', 'danger')
         }
     })
+
+    if (location.state) {
+        hasPrevPage = location.state.from
+    }
 
     useEffect(() => {
         if (location.state === null || location.state === 'loggedIn') {
@@ -107,7 +93,21 @@ export function PostDetail() {
             setAutoFocusShow(true)
         }
     }, [location.state])
-    
+
+    useScrollTop()
+
+    function handleLikeClickForPostDetail() {
+        setPost({
+            ...post,
+            numberOfLikes: post.numberOfLikes + (post.hasILiked ? -1 : 1),
+            hasILiked: !post.hasILiked
+        })
+    }
+
+    function handleShowAutoFocus() {
+        setAutoFocusShow(true)
+    }
+
     if (errorPostDetail) {
         return <Error />
     }
@@ -116,43 +116,34 @@ export function PostDetail() {
         <>
             {(Object.keys(post).length !== 0) ?
                 <PostCard
-                    post={post}
-                    handleAlert={handleAlert}
+                    authUsername={authUsername}
                     fromPostDetail={true}
-                    hasPrevPage={hasPrevPage}
                     getFinalStringForNumber={getFinalStringForNumber}
+                    handleAlert={handleAlert}
                     handleLikeClickForPostDetail={location.state && handleLikeClickForPostDetail}
                     handleShowAutoFocus={handleShowAutoFocus}
-                    authUsername={authUsername} /> :
+                    hasPrevPage={hasPrevPage}
+                    post={post}
+                /> :
                 <SpinnerForPages />}
             <div className='divider-post-detail'></div>
-            {authUsername && <CommentCreate
-                autoFocusShow={autoFocusShow}
-                setAutoFocusShow={setAutoFocusShow}
-                handleAlert={handleAlert}
-                postUUID={postUUID}
-                refetch={refetch}
-                setPost={setPost}
-                post={post} 
-                notMobile={true}
-                />}
             <div className='post-comments'>
                 <PostComments
-                    fetchMore={fetchMore}
-                    postUUID={postUUID}
-                    postId={post.id}
                     authUsername={authUsername}
+                    autoFocusShow={autoFocusShow}
+                    data={postComments}
+                    fetchMore={fetchMore}
+                    loadingComments={loadingComments}
                     handleAlert={handleAlert}
-                    data={postComments} />
+                    handleShowAutoFocus={handleShowAutoFocus}
+                    post={post}
+                    postId={post.id}
+                    postUUID={postUUID}
+                    refetchPostComments={refetchPostComments}
+                    setAutoFocusShow={setAutoFocusShow}
+                    setPost={setPost}
+                />
             </div>
-            {authUsername && <CommentCreate
-                autoFocusShow={autoFocusShow}
-                setAutoFocusShow={setAutoFocusShow}
-                handleAlert={handleAlert}
-                postUUID={postUUID}
-                refetch={refetch}
-                setPost={setPost}
-                post={post} />}
         </>
     )
 }

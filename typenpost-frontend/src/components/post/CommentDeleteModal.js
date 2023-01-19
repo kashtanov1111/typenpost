@@ -5,13 +5,15 @@ import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 
 export function CommentDeleteModal({
-    handleAlert,
     commentId,
     commentUUID,
+    handleAlert,
+    parentCommentId,
+    post,
     postId,
+    setPost,
     setShowCommentDeleteModal,
     showCommentDeleteModal,
-    parentCommentId
 }) {
     const [handleDeleteComment, {
         loading: loadingDeleteComment
@@ -30,6 +32,10 @@ export function CommentDeleteModal({
                         return cachedValue - 1
                     }
                 }
+            })
+            setPost({
+                ...post,
+                numberOfComments: post.numberOfComments - 1,
             })
             if (parentCommentId) {
                 cache.modify({

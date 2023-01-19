@@ -15,7 +15,6 @@ import { useScrollTop } from '../../../customHooks/useScrollTop';
 export function Followers() {
     console.log('Render Followers Component')
     
-    useScrollTop()
     const handleAlert = useContext(AlertContext)
     const username = useContext(UsernameContext)
     const isAuthenticated = useContext(IsAuthContext)
@@ -24,7 +23,6 @@ export function Followers() {
     const navigate = useNavigate()
     var message = ''
 
-    useTitle('Typenpost - Followers')
     const { data, fetchMore,
         loading: loadingUserFollowers,
         error: errorUserFollowers } = useQuery(USER_FOLLOWERS, {
@@ -37,6 +35,9 @@ export function Followers() {
         message = "This user has no followers yet."
     }
 
+    useScrollTop()
+    useTitle('Typenpost - Followers')
+    
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('../../login', {

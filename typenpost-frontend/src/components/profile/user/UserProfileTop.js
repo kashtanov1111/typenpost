@@ -9,6 +9,7 @@ import gear from '../../../assets/images/gear.svg'
 import Placeholder from 'react-bootstrap/Placeholder'
 import ProgressiveImage from 'react-progressive-graceful-image'
 import React, { useState, useContext } from "react";
+import { useWindowWidth } from "../../../customHooks/useWindowWidth";
 
 export function UserProfileTop({
     amIFollowing,
@@ -38,9 +39,13 @@ export function UserProfileTop({
         improvedUserData,
         handleAlert)
     const handleFollow = following.handleFollow
+    
+    const windowWidth = useWindowWidth()
+    const isMobileScreen = windowWidth < 576
+
 
     return (<>
-        <UserProfileTopLg
+        {!isMobileScreen && <UserProfileTopLg
             amIFollowing={amIFollowing}
             avatarSrc={avatarSrc}
             email={email}
@@ -56,8 +61,8 @@ export function UserProfileTop({
             secondaryEmail={secondaryEmail}
             setIsImageOpen={setIsImageOpen}
             userUsername={userUsername}
-        />
-        <section className='user-header'>
+        />}
+        {isMobileScreen && <section className='user-header'>
             <div className="user-header__avatar">
                 <ProgressiveImage
                     src={avatarSrc}
@@ -194,7 +199,7 @@ export function UserProfileTop({
                         </>
                     }
                 </div>}
-        </section>
+        </section>}
     </>
     )
 }

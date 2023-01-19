@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+import 'linkify-plugin-mention'
 
 export function createImagePlaceholderUrl(path, size) {
     if (path.indexOf('cloudfront.net') > -1) {
@@ -140,3 +142,21 @@ export function handleTextOnCreation(text) {
     }
     return editedText
 }
+
+
+const renderLink = ({ attributes, content }) => {
+    const { href, ...props } = attributes;
+    return <Link 
+        to={'/profile' + href.toLowerCase()} {...props}>{content}</Link>;
+};
+
+export const optionsForTextInCards = {
+    render: {
+        mention: renderLink,
+    },
+    attributes: {
+        onClick: (event) => {
+            event.stopPropagation()
+        }
+    }
+};

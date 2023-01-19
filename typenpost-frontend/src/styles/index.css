@@ -852,11 +852,6 @@ li.header-auth__nav__ul__li-1 {
 
 /* || COMMENT FORM */
 
-.comment-form-small {
-  display: none;
-}
-
-
 .comment-form {
   position: fixed;
   bottom: 60px;
@@ -919,6 +914,10 @@ li.header-auth__nav__ul__li-1 {
 .post-comments {
   margin-top: -0.5rem;
   margin-top: 0.75rem;
+}
+
+.comment-form-small {
+  display: none;
 }
 
 /* || SMALL */
@@ -1047,6 +1046,14 @@ li.header-auth__nav__ul__li-1 {
 
   .comment-form-small {
     display: block; 
+  }
+
+  .comment-form-small {
+    margin-bottom: 0.75rem;
+  }
+
+  .comment-form-small {
+    margin-top: -0.75rem;
   }
 }
 

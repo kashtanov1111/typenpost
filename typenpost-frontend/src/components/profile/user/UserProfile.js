@@ -84,7 +84,7 @@ export function UserProfile({ secondaryEmail, email, handleLogout }) {
         refetch } = useQuery(USER_PROFILE_POSTS, {
             variables: { username: userUsername }
         })
-
+        
     useEffect(() => {
         if (isMyProfile === false) {
             document.title = 'Typenpost - ' + userUsername

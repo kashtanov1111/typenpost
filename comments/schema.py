@@ -139,6 +139,22 @@ class CreateComment(graphene.Mutation):
         comment.save()
         return CreateComment(comment=comment)
 
+class CreateReplyToComment(graphene.Mutation):
+    comment = graphene.Field(CommentNode)
+
+    class Arguments:
+        text = graphene.String(required=True)
+        comment_uuid = graphene.UUID(required=True)
+
+    @login_required
+    def mutate(root, info, text, comment_uuid):
+        user = info.context.user
+        comment = Comment.objects.get(id=comment_uuid)
+        post = comment.post
+        replyToComment = Comment(text=text, user=user, post=post, reply=comment)
+        replyToComment.save()
+        return CreateComment(comment=replyToComment)
+
 class DeleteComment(graphene.Mutation):
     action = graphene.String()
 
@@ -161,3 +177,4 @@ class Mutation(graphene.ObjectType):
     like_comment = LikeComment.Field()
     create_comment = CreateComment.Field()
     delete_comment = DeleteComment.Field()
+    create_reply_to_comment = CreateReplyToComment.Field()

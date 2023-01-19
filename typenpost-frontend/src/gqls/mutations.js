@@ -279,11 +279,6 @@ export const CREATE_COMMENT = gql`
         createComment(text: $text, postUuid: $postUuid) {
             comment {
                 id
-                uuid
-                text
-                created
-                numberOfLikes
-                hasILiked
             }
         }
     }
@@ -293,6 +288,16 @@ export const COMMENT_DELETING = gql`
     mutation CommentDeleting($uuid: UUID!) {
         deleteComment(uuid: $uuid) {
             action
+        }
+    }
+`
+
+export const CREATE_REPLY_TO_COMMENT = gql`
+    mutation CreateReplyToComment($text: String!, $commentUuid: UUID!) {
+        createReplyToComment(text: $text, commentUuid: $commentUuid) {
+            comment {
+                id
+            }
         }
     }
 `

@@ -38,4 +38,4 @@ class Comment(models.Model):
         return self.text[:40]
     
     class Meta:
-        ordering = ['-created']
+        ordering = ['created']

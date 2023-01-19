@@ -6,7 +6,7 @@ import comment_image from '../../../assets/images/chat-left.svg'
 import ellipsis from '../../../assets/images/three-dots-vertical.svg'
 import heart from '../../../assets/images/heart.svg'
 import heart_filled from '../../../assets/images/heart-fill.svg'
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import trash from '../../../assets/images/trash-red.svg'
 import ProgressiveImage from "react-progressive-graceful-image"
 import { useNavigate, useLocation } from "react-router-dom"
@@ -20,47 +20,57 @@ import { handleText } from "../../../functions/functions"
 import { COMMENT_REPLIES } from '../../../gqls/queries'
 import { useLazyQuery } from '@apollo/client'
 import { SpinnerForPages } from '../../SpinnerForPages'
+import Linkify from 'linkify-react'
+import { optionsForTextInCards } from '../../../functions/functions'
 
 export function CommentCard({
-    comment,
     authUsername,
-    postId,
+    comment,
     handleAlert,
+    handleShowAutoFocus,
     mainComment,
-    parentCommentId
+    parentCommentId,
+    parentCommentUUID,
+    post,
+    postId,
+    refetchRepliesOfCommentUUID,
+    setCommentUserUsername,
+    setCommentUUID,
+    setPost,
 }) {
+    console.log(mainComment ? 'Main Comment Render' : 'Reply render')
+    
     const navigate = useNavigate()
     const location = useLocation()
     var avatar = null
     var isMyComment = null
     const dropRef = useRef(null)
+    const options = optionsForTextInCards
 
     const [showDropdown, setShowDropdown] = useState(false)
     const [showCommentDeleteModal, setShowCommentDeleteModal] = useState(false)
-    const [showRepliesNumber, setShowRepliesNumber] = useState(10)
+    const [numberOfRepliesToShow, setNumberOfRepliesToShow] = useState(10)
+    const [loadingOnFetchMore, setLoadingOnFetchMore] = useState(false)
     const liking = useCommentLiking(comment, handleAlert)
     const handleLikeComment = liking.handleLikeComment
-
-    useOutsideAlerter(dropRef, () => setShowDropdown(false))
+    var hasNextPageForReplies = null
 
     const [getReplies, {
         data: dataReplies,
         loading: loadingReplies,
-        fetchMore
+        fetchMore,
+        refetch: refetchReplies
     }] = useLazyQuery(COMMENT_REPLIES, {
         variables: {
             uuid: comment.uuid
         },
-        onCompleted: (data) => console.log(data),
         onError: () => {
             handleAlert('An error occured, please try again.', 'danger')
         },
     })
 
-    var hasNextPageForReplies = null
-
     if (dataReplies) {
-        hasNextPageForReplies = 
+        hasNextPageForReplies =
             dataReplies.comment.replies.pageInfo.hasNextPage
     }
 
@@ -69,17 +79,30 @@ export function CommentCard({
         isMyComment = comment.user.username === authUsername
     }
 
-    function handleShowMoreRepliesClick() {
+    useOutsideAlerter(dropRef, () => setShowDropdown(false))
+
+    useEffect(() => {
+        if (refetchRepliesOfCommentUUID === comment.uuid) {
+            refetchReplies()
+        }
+    }, [
+        refetchRepliesOfCommentUUID, 
+        comment.uuid, 
+        refetchReplies])
+
+    async function handleShowMoreRepliesClick() {
         if (hasNextPageForReplies) {
-            fetchMore({
+            setLoadingOnFetchMore(true)
+            await fetchMore({
                 variables: {
-                    first: showRepliesNumber + 10
+                    first: numberOfRepliesToShow + 10
                 }
-            })        
-            setShowRepliesNumber(showRepliesNumber + 10)
+            })
+            setLoadingOnFetchMore(false)
+            setNumberOfRepliesToShow(numberOfRepliesToShow + 10)
         }
     }
-    
+
     function navigateToUserProfile() {
         navigate('../profile/' + comment.user.username)
     }
@@ -96,12 +119,14 @@ export function CommentCard({
         <>
             <CommentDeleteModal
                 commentId={comment.id}
-                postId={postId}
                 commentUUID={comment.uuid}
-                showCommentDeleteModal={showCommentDeleteModal}
-                setShowCommentDeleteModal={setShowCommentDeleteModal}
                 handleAlert={handleAlert}
                 parentCommentId={parentCommentId}
+                post={post}
+                postId={postId}
+                setPost={setPost}
+                setShowCommentDeleteModal={setShowCommentDeleteModal}
+                showCommentDeleteModal={showCommentDeleteModal}
             />
             <div className='comment-card pointer'>
                 <div className='comment-card__top'>
@@ -176,12 +201,13 @@ export function CommentCard({
                     </div>}
                 </div>
                 <div>
-                    <p className={'comment-card__text' +
+                    <Linkify as='p' className={'comment-card__text' +
                         (mainComment ? ' ps-5 ' : ' ps-2-and-5rem ') +
                         (comment.user.name ? '' :
-                            (mainComment ? 'card-text-lifted' : 'card-text-lifted--reply'))}>
+                            (mainComment ? 'card-text-lifted' : 'card-text-lifted--reply'))}
+                        options={options}>
                         {handleText(comment.text)}
-                    </p>
+                    </Linkify>
                 </div>
                 <div className={'comment-card__footer ' +
                     (mainComment ? 'ms-5' : 'ms-2-and-5rem')}>
@@ -204,12 +230,23 @@ export function CommentCard({
                     </div>
                     <div>
                         <img
+                            onClick={() => {
+                                handleShowAutoFocus()
+                                if (mainComment) {
+                                    setCommentUUID(comment.uuid)
+                                } else {
+                                    setCommentUUID(parentCommentUUID)
+                                }
+                                setCommentUserUsername(comment.user.username)
+                            }}
                             src={createImageSrcUrl(comment_image)}
                             alt="" width='20' height='20' />
                         {mainComment &&
                             ((comment.numberOfReplies !== 0) &&
-                                <p onClick={() => getReplies({variables: {first: showRepliesNumber}})}>
-                                    {getFinalStringForNumber(comment.numberOfReplies) + ' replies'}
+                                <p onClick={() => getReplies({ variables: { first: numberOfRepliesToShow } })}>
+                                    {getFinalStringForNumber(comment.numberOfReplies) +
+                                        ' repl' +
+                                        (comment.numberOfReplies === 1 ? 'y' : 'ies')}
                                 </p>)}
                     </div>
                 </div>
@@ -224,16 +261,22 @@ export function CommentCard({
                         authUsername={authUsername}
                         handleAlert={handleAlert}
                         parentCommentId={comment.id}
+                        parentCommentUUID={comment.uuid}
+                        handleShowAutoFocus={handleShowAutoFocus}
+                        post={post}
+                        setPost={setPost}
+                        setCommentUUID={setCommentUUID}
+                        setCommentUserUsername={setCommentUserUsername}
                     />
                 ))}
+                {(loadingReplies || loadingOnFetchMore) && <SpinnerForPages />}
                 {dataReplies && hasNextPageForReplies &&
                     <p
-                        className='mb-2'
+                        className='pb-3'
                         onClick={handleShowMoreRepliesClick}
                         style={{ marginTop: '-0.5rem' }}>
                         &mdash; Show more replies
                     </p>}
-                {loadingReplies && <SpinnerForPages />}
             </div>
         </>
     )
