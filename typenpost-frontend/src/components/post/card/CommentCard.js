@@ -231,7 +231,9 @@ export function CommentCard({
                                 src={createImageSrcUrl(heart)}
                                 alt="" width='20' height='20' />}
                         {(comment.numberOfLikes !== 0) &&
-                            <p className={(comment.hasILiked && authUsername) ? 'special-red' : ''}>
+                            <p 
+                                onClick={() => navigate('/comment/' + comment.uuid + '/likes')}
+                                className={(comment.hasILiked && authUsername) ? 'special-red' : ''}>
                                 {getFinalStringForNumber(comment.numberOfLikes) + ' like' + (comment.numberOfLikes !== 1 ? 's' : '')}
                             </p>}
                     </div>

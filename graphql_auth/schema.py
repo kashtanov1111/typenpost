@@ -59,7 +59,6 @@ class UserProfileNode(DjangoObjectType):
     is_he_following = graphene.Boolean()
     user = graphene.Field(UserNode, required=False)
     followers = DjangoFilterConnectionField(lambda: UserProfileNode, required=False)
-    # following = DjangoFilterConnectionField(lambda: UserProfileNode, required=False)
 
     class Meta:
         model = UserProfile
@@ -67,9 +66,6 @@ class UserProfileNode(DjangoObjectType):
             'pk', 'following')
         filter_fields = ['about',]
         interfaces = (graphene.relay.Node, )
-    
-    # def resolve_following(root, info):
-    #     return root.following.all()
     
     def resolve_avatar(root, info):
         if root.avatar:
@@ -121,8 +117,6 @@ class UserProfileNode(DjangoObjectType):
             .select_related('user')
             .order_by('-id')
         )
-
-
 
 class UserQuery(graphene.ObjectType):
     user = graphene.Field(UserNode, username=graphene.String())

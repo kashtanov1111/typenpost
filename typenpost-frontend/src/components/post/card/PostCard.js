@@ -215,7 +215,12 @@ export function PostCard({
                                 src={createImageSrcUrl(heart)}
                                 alt="" width='20' height='20' />}
                         {(completedPost.numberOfLikes !== 0) &&
-                            <p className={(completedPost.hasILiked && authUsername) ? 'special-red' : ''}>
+                            <p 
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    navigate('/' + completedPost.uuid + '/likes')
+                                }}
+                                className={(completedPost.hasILiked && authUsername) ? 'special-red' : ''}>
                                 {getFinalStringForNumber(completedPost.numberOfLikes) + ' like' + (completedPost.numberOfLikes !== 1 ? 's' : '')}
                             </p>}
                     </div>

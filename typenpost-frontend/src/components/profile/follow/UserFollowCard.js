@@ -10,8 +10,22 @@ import { useFollowing } from "../../../customHooks/useFollowing";
 export function UserFollowCard({
     profile,
     handleAlert,
-    username
+    username,
+    forLikes
 }) {
+    if (forLikes) {
+        profile = {
+            id: profile.profile.id,
+            avatar: profile.profile.avatar,
+            amIFollowing: profile.profile.amIFollowing,
+            isHeFollowing: profile.profile.isHeFollowing,
+            user: {
+                id: profile.id,
+                name: profile.name,
+                username: profile.username
+            }
+        }
+    }
     const userUsername = profile.user.username
     const avatar = profile.avatar
     const [amIFollowing, setAmIFollowing] = useState(

@@ -224,5 +224,56 @@ export const COMMENT_REPLIES = gql`
     }
 `
 
+export const POST_LIKES_USERS = gql`
+    query PostLikesUsers($uuid: UUID, $cursor: String) {
+        postForLikes(uuid: $uuid) {
+            id
+            likes(first: 20, after: $cursor) {
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+                edges {
+                    node {
+                        id
+                        name
+                        username
+                        profile {
+                            id
+                            avatar
+                            amIFollowing
+                            isHeFollowing
+                        }
+                    }
+                }
+          }
+        }
+    }
+`
 
-
+export const COMMENT_LIKES_USERS = gql`
+    query CommentLikesUsers($uuid: UUID, $cursor: String) {
+        commentForLikes(uuid: $uuid) {
+            id
+            likes(first: 20, after: $cursor) {
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            edges {
+                node {
+                    id
+                    name
+                    username
+                    profile {
+                        id
+                        avatar
+                        amIFollowing
+                        isHeFollowing
+                    }
+                }
+            }
+          }
+        }
+    }
+`

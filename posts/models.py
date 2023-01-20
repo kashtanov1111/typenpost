@@ -30,7 +30,6 @@ class PostManager(models.Manager):
     def feed(self, user):
         return self.get_queryset().feed(user)
 
-
 class PostLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey("Post", on_delete=models.CASCADE)

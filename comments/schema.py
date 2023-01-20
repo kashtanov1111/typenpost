@@ -10,7 +10,7 @@ from graphql_auth.schema import UserNode
 
 from .models import Comment
 from posts.models import Post
-
+from accounts.models import UserProfile
 
 class CommentFilter(django_filters.FilterSet):
     text = django_filters.CharFilter(lookup_expr='iexact')
@@ -46,7 +46,11 @@ class CommentNode(DjangoObjectType):
         return parent.pk
 
     def resolve_number_of_likes(parent, info):
-        return parent.likes.count()
+        try:
+            return len(parent.all_likes)
+        except:
+            return parent.likes.filter(status__archived=False).count()
+
 
     def resolve_number_of_replies(parent, info):
         return parent.replies.count()
@@ -79,7 +83,8 @@ class CommentNode(DjangoObjectType):
                     'likes',
                     queryset=(
                         get_user_model().objects
-                        .filter(status__archived=False))
+                        .filter(status__archived=False)),
+                    to_attr='all_likes'
                 ))
             .prefetch_related('replies')
             .prefetch_related(
@@ -98,9 +103,35 @@ class CommentNode(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     comment = graphene.Field(CommentNode, uuid=graphene.UUID())
+    comment_for_likes = graphene.Field(CommentNode, uuid=graphene.UUID())
 
     def resolve_comment(parent, info, uuid):
         return (Comment.objects
+                .get(id=uuid))
+
+    def resolve_comment_for_likes(parent, info, uuid):
+        me = info.context.user
+        return (Comment.objects
+                .prefetch_related(
+                    Prefetch(
+                        'likes',
+                        queryset=(
+                            get_user_model().objects
+                            .filter(status__archived=False)
+                            .prefetch_related(
+                                Prefetch(
+                                    'profile__followers',
+                                    queryset=UserProfile.objects.filter(user=me),
+                                    to_attr='followers_me')
+                            )
+                            .prefetch_related(
+                                Prefetch(
+                                    'profile__following',
+                                    queryset=UserProfile.objects.filter(user=me),
+                                    to_attr='following_me')
+                            )
+                        ) 
+                ))
                 .get(id=uuid))
 
 

@@ -8,14 +8,17 @@ django.setup()
 
 from accounts.models import CustomUser
 from posts.models import Post
+from comments.models import Comment
 
-post = Post.objects.get(id="642ef50e-d6a0-4141-8583-f519a689a61f")
+post = Post.objects.get(id="5a75bf4e-469e-4668-a231-25f783540eb7")
+comment = Comment.objects.get(id="61d95195-28da-4f55-8b1e-10d92399504e")
 
-def populate(N=30):
+def populate(N=100):
 
     for i in range(N):
         user = CustomUser.objects.get(username=i)
-        post.likes.add(user)
+        # post.likes.add(user)
+        comment.likes.add(user)
 
     # COMPANY = Company.objects.order_by('company_name')
 

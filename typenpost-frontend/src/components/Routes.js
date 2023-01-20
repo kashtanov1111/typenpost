@@ -1,5 +1,6 @@
 import { AddSecondaryEmail } from './auth/AddSecondaryEmail';
 import { ArchiveAccount } from './auth/ArchiveAccount';
+import { CommentLikes } from './post/CommentLikes';
 import { EditProfile } from './profile/EditProfile';
 import { Error } from './Error';
 import { Followers } from './profile/follow/Followers';
@@ -9,6 +10,7 @@ import { Login } from './auth/Login';
 import { PasswordChange } from './auth/PasswordChange';
 import { PasswordReset } from './auth/PasswordReset';
 import { PasswordResetWithToken } from './auth/PasswordResetWithToken';
+import { PostLikes } from './post/PostLikes';
 import { PostCreate } from './post/PostCreate';
 import { PostDetail } from './post/PostDetail';
 import { PostFeed } from './post/PostFeed';
@@ -43,6 +45,8 @@ export function RoutesComponent({
         path='/register'
         element={<Register />} />
       <Route path='/:postId' element={<PostDetail />} />
+      <Route path='/:postId/likes' element={<PostLikes />} />
+      <Route path='comment/:commentId/likes' element={<CommentLikes />} />
       <Route
         path='/activate/:confirmationToken'
         element={<VerifyAccount />} />
@@ -54,9 +58,7 @@ export function RoutesComponent({
         path='/password-reset/:confirmationToken'
         element={<PasswordResetWithToken />}
       />
-      <Route path='/create' element={<PostCreate 
-        // handleCreatePostButtonClicked={handleCreatePostButtonClicked}
-         />} />
+      <Route path='/create' element={<PostCreate />} />
       <Route path='/password_reset' element={<PasswordReset />} />
       <Route
         path='/password_change'

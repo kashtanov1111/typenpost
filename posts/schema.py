@@ -7,11 +7,12 @@ from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from graphql_jwt.decorators import login_required
+from graphene import relay
 
 from .models import Post
 from comments.models import Comment
+from accounts.models import UserProfile
 
-from graphene import relay
 
 from graphql_auth.schema import UserNode
 
@@ -115,6 +116,7 @@ class PostNode(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     post = graphene.Field(PostNode, uuid=graphene.UUID())
+    post_for_likes = graphene.Field(PostNode, uuid=graphene.UUID())
     posts = DjangoFilterConnectionField(PostNode)
     feed = DjangoFilterConnectionField(PostNode)
 
@@ -128,6 +130,31 @@ class Query(graphene.ObjectType):
                             Comment.objects
                             .filter(reply=None))),
                 )
+                .get(id=uuid))
+
+    def resolve_post_for_likes(parent, info, uuid):
+        me = info.context.user
+        return (Post.objects
+                .prefetch_related(
+                    Prefetch(
+                        'likes',
+                        queryset=(
+                            get_user_model().objects
+                            .filter(status__archived=False)
+                            .prefetch_related(
+                                Prefetch(
+                                    'profile__followers',
+                                    queryset=UserProfile.objects.filter(user=me),
+                                    to_attr='followers_me')
+                            )
+                            .prefetch_related(
+                                Prefetch(
+                                    'profile__following',
+                                    queryset=UserProfile.objects.filter(user=me),
+                                    to_attr='following_me')
+                            )
+                        ) 
+                ))
                 .get(id=uuid))
 
     @login_required

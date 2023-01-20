@@ -32,11 +32,13 @@ const client = new ApolloClient({
       PostNode: {
           fields: {
             comments: relayStylePagination(),
+            likes: relayStylePagination()
           }
       },
       CommentNode: {
           fields: {
             replies: relayStylePagination(),
+            likes: relayStylePagination(),
           }
       },
       Query: {
