@@ -21,8 +21,11 @@ export function PostComments({
     setAutoFocusShow,
     setPost,
 }) {
+    console.log('Post Comments render')
+    
     const [commentUserUsername, setCommentUserUsername] = useState(null)
     const [commentUUID, setCommentUUID] = useState(null)
+    const [commentId, setCommentId] = useState(null)
     const [
         refetchRepliesOfCommentUUID, 
         setRefetchRepliesOfCommentUUID] = useState(false)
@@ -35,7 +38,7 @@ export function PostComments({
     }
     
     return (
-        <>
+        <div className='mb-3'>
             {!isMobileScreen && authUsername && <CommentCreate
                 autoFocusShow={autoFocusShow}
                 setAutoFocusShow={setAutoFocusShow}
@@ -46,8 +49,10 @@ export function PostComments({
                 setPost={setPost}
                 post={post}
                 commentUUID={commentUUID}
+                commentId={commentId}
                 commentUserUsername={commentUserUsername}
                 setCommentUUID={setCommentUUID}
+                setCommentId={setCommentId}
                 setCommentUserUsername={setCommentUserUsername}
                 notMobile={true}
             />}
@@ -79,8 +84,10 @@ export function PostComments({
                             postId={postId}
                             setCommentUserUsername={setCommentUserUsername}
                             setCommentUUID={setCommentUUID}
+                            setCommentId={setCommentId}
                             setPost={setPost}
                             refetchRepliesOfCommentUUID={refetchRepliesOfCommentUUID}
+                            setRefetchRepliesOfCommentUUID={setRefetchRepliesOfCommentUUID}
                         />
                     ))}
                     {loadingComments && <SpinnerForPages />}
@@ -95,10 +102,12 @@ export function PostComments({
                 refetchPostComments={refetchPostComments}
                 setPost={setPost}
                 commentUUID={commentUUID}
+                commentId={commentId}
                 commentUserUsername={commentUserUsername}
                 setCommentUUID={setCommentUUID}
+                setCommentId={setCommentId}
                 setCommentUserUsername={setCommentUserUsername}
                 post={post} />}
-        </>
+        </div>
     )
 }

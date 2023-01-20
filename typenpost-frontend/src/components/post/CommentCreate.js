@@ -20,13 +20,16 @@ export function CommentCreate({
     notMobile,
     setAutoFocusShow,
     setCommentUUID,
+    setCommentId,
     setCommentUserUsername,
     commentUUID,
+    commentId,
     commentUserUsername
 }) {
     const textAreaRef = useRef(null)
     const [newComment, setNewComment] = useState('')
     const formForNewCommentDisabled = (newComment === '' || newComment.length > 2000)
+    const willItBeReply = commentId !== null
 
     if (autoFocusShow === true) {
         textAreaRef.current.children[0].focus()
@@ -58,6 +61,14 @@ export function CommentCreate({
                     }
                 }
             })
+            cache.modify({
+                id: 'CommentNode:' + commentId,
+                fields: {
+                    numberOfReplies(cachedValue) {
+                        return cachedValue + 1
+                    }
+                }
+            })
         },
         onError: () => {
             handleAlert('An error occured, please try again.', 'danger')
@@ -74,23 +85,30 @@ export function CommentCreate({
     }, [textAreaRef, newComment]);
 
     useEffect(() => {
-        if ((commentUUID !== null) && (commentUserUsername !== null)) {
+        if (willItBeReply) {
             setNewComment('@' + commentUserUsername + ' ')
         } else {
             setNewComment('')
         }
-    }, [commentUUID, setNewComment, commentUserUsername])
+    }, [willItBeReply, setNewComment, commentUserUsername])
 
     useOutsideAlerter(textAreaRef, () => {
         setAutoFocusShow(false)
         setCommentUUID(null)
+        setCommentId(null)
         setCommentUserUsername(null)
     })
     
-    function handleCreateNewComment() {
+    async function handleCreateNewComment() {
         if (!formForNewCommentDisabled) {
-            if ((commentUUID !== null) && (commentUserUsername !== null)) {
-                createReplyToComment({
+            setPost({
+                ...post,
+                numberOfComments: post.numberOfComments + 1,
+            })
+            setAutoFocusShow(false)
+            setNewComment('')
+            if (willItBeReply) {
+                await createReplyToComment({
                     variables: {
                         text: handleTextOnCreation(newComment),
                         commentUuid: commentUUID
@@ -98,7 +116,7 @@ export function CommentCreate({
                 })
                 handleReplyOnCommentCreation()
             } else {
-                createComment({
+                await createComment({
                     variables: {
                         text: handleTextOnCreation(newComment),
                         postUuid: postUUID
@@ -106,11 +124,6 @@ export function CommentCreate({
                 })
                 refetchPostComments()
             }
-            setPost({
-                ...post,
-                numberOfComments: post.numberOfComments + 1,
-            })
-            setNewComment('')
         }
     }
 

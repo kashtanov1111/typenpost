@@ -77,6 +77,7 @@ export function PostDetail() {
 
     useEffect(() => {
         if (location.state === null || location.state === 'loggedIn') {
+            console.log('here')
             getPostDetail()
             getPostComments()
         } else {

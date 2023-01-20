@@ -22,20 +22,24 @@ export function CommentDeleteModal({
         variables: {
             uuid: commentUUID
         },
-        update(cache) {
+        update(cache, data) {
+            var numberOfReplies = 0
+            if (!parentCommentId) {
+                numberOfReplies = data.data.deleteComment.numberOfReplies
+            }
             cache.evict({ id: 'CommentNode:' + commentId })
             cache.gc()
             cache.modify({
                 id: 'PostNode:' + postId,
                 fields: {
                     numberOfComments(cachedValue) {
-                        return cachedValue - 1
+                        return cachedValue - 1 - numberOfReplies
                     }
                 }
             })
             setPost({
                 ...post,
-                numberOfComments: post.numberOfComments - 1,
+                numberOfComments: post.numberOfComments - 1 - numberOfReplies,
             })
             if (parentCommentId) {
                 cache.modify({

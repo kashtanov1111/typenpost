@@ -288,6 +288,7 @@ export const COMMENT_DELETING = gql`
     mutation CommentDeleting($uuid: UUID!) {
         deleteComment(uuid: $uuid) {
             action
+            numberOfReplies
         }
     }
 `

@@ -157,6 +157,7 @@ class CreateReplyToComment(graphene.Mutation):
 
 class DeleteComment(graphene.Mutation):
     action = graphene.String()
+    number_of_replies = graphene.Int()
 
     class Arguments:
         uuid = graphene.UUID(required=True)
@@ -165,13 +166,14 @@ class DeleteComment(graphene.Mutation):
     def mutate(root, info, uuid=None):
         user = info.context.user
         comment = Comment.objects.get(id=uuid)
+        number_of_replies = comment.replies.count()
         if comment.user == user:
             comment.delete()
             action = 'deleted'
-            return DeleteComment(action=action)
+            return DeleteComment(action=action, number_of_replies=number_of_replies)
         else:
             action = 'not deleted'
-            return DeleteComment(action=action)
+            return DeleteComment(action=action, number_of_replies=number_of_replies)
 
 class Mutation(graphene.ObjectType):
     like_comment = LikeComment.Field()

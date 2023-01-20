@@ -36,9 +36,10 @@ export function CommentCard({
     refetchRepliesOfCommentUUID,
     setCommentUserUsername,
     setCommentUUID,
+    setCommentId,
     setPost,
+    setRefetchRepliesOfCommentUUID
 }) {
-    console.log(mainComment ? 'Main Comment Render' : 'Reply render')
     
     const navigate = useNavigate()
     const location = useLocation()
@@ -48,6 +49,7 @@ export function CommentCard({
     const options = optionsForTextInCards
 
     const [showDropdown, setShowDropdown] = useState(false)
+    const [repliesAreShown, setRepliesAreShown] = useState(null)
     const [showCommentDeleteModal, setShowCommentDeleteModal] = useState(false)
     const [numberOfRepliesToShow, setNumberOfRepliesToShow] = useState(10)
     const [loadingOnFetchMore, setLoadingOnFetchMore] = useState(false)
@@ -62,7 +64,8 @@ export function CommentCard({
         refetch: refetchReplies
     }] = useLazyQuery(COMMENT_REPLIES, {
         variables: {
-            uuid: comment.uuid
+            uuid: comment.uuid,
+            first: numberOfRepliesToShow
         },
         onError: () => {
             handleAlert('An error occured, please try again.', 'danger')
@@ -84,9 +87,12 @@ export function CommentCard({
     useEffect(() => {
         if (refetchRepliesOfCommentUUID === comment.uuid) {
             refetchReplies()
+            setRepliesAreShown(true)
+            setRefetchRepliesOfCommentUUID(false)
         }
     }, [
         refetchRepliesOfCommentUUID, 
+        setRefetchRepliesOfCommentUUID,
         comment.uuid, 
         refetchReplies])
 
@@ -99,6 +105,7 @@ export function CommentCard({
                 }
             })
             setLoadingOnFetchMore(false)
+
             setNumberOfRepliesToShow(numberOfRepliesToShow + 10)
         }
     }
@@ -234,8 +241,10 @@ export function CommentCard({
                                 handleShowAutoFocus()
                                 if (mainComment) {
                                     setCommentUUID(comment.uuid)
+                                    setCommentId(comment.id)
                                 } else {
                                     setCommentUUID(parentCommentUUID)
+                                    setCommentId(parentCommentId)
                                 }
                                 setCommentUserUsername(comment.user.username)
                             }}
@@ -243,7 +252,10 @@ export function CommentCard({
                             alt="" width='20' height='20' />
                         {mainComment &&
                             ((comment.numberOfReplies !== 0) &&
-                                <p onClick={() => getReplies({ variables: { first: numberOfRepliesToShow } })}>
+                                <p onClick={() => {
+                                        setRepliesAreShown(true)
+                                        getReplies()
+                                    }}>
                                     {getFinalStringForNumber(comment.numberOfReplies) +
                                         ' repl' +
                                         (comment.numberOfReplies === 1 ? 'y' : 'ies')}
@@ -252,7 +264,7 @@ export function CommentCard({
                 </div>
             </div>
             <div className='ms-5'>
-                {dataReplies && dataReplies.comment.replies.edges.map((el) => (
+                {repliesAreShown && dataReplies && dataReplies.comment.replies.edges.map((el) => (
                     el.node &&
                     <CommentCard
                         key={el.node.id}
@@ -266,6 +278,7 @@ export function CommentCard({
                         post={post}
                         setPost={setPost}
                         setCommentUUID={setCommentUUID}
+                        setCommentId={setCommentId}
                         setCommentUserUsername={setCommentUserUsername}
                     />
                 ))}
@@ -273,9 +286,17 @@ export function CommentCard({
                 {dataReplies && hasNextPageForReplies &&
                     <p
                         className='pb-3'
-                        onClick={handleShowMoreRepliesClick}
                         style={{ marginTop: '-0.5rem' }}>
-                        &mdash; Show more replies
+                        <span 
+                            onClick={handleShowMoreRepliesClick}>
+                            &mdash; Show more replies</span>
+                    </p>}
+                {!hasNextPageForReplies && comment.numberOfReplies !== 0 && repliesAreShown &&
+                    <p
+                        className='pb-3'
+                        style={{ marginTop: '-0.5rem' }}>
+                        <span onClick={() => setRepliesAreShown(false)}>
+                            &mdash; Hide repl{comment.numberOfReplies === 1 ? 'y' : 'ies'}</span>
                     </p>}
             </div>
         </>
