@@ -308,7 +308,7 @@ export const USER_SEARCH = gql`
             pageInfo {
                 hasNextPage
                 endCursor
-            }
+            } 
             edges {
                 node {
                     id

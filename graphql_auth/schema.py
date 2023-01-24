@@ -120,7 +120,7 @@ class UserProfileNode(DjangoObjectType):
 
 class UserQuery(graphene.ObjectType):
     user = graphene.Field(UserNode, username=graphene.String())
-    user_search = DjangoFilterConnectionField(UserNode, search=graphene.String())
+    user_search = DjangoFilterConnectionField(UserNode, search=graphene.String()) 
 
     @login_required
     def resolve_user_search(parent, info, search, *args, **kwargs):
