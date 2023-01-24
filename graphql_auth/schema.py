@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Prefetch
-
+from django.db.models import Q
 
 import graphene
 
@@ -120,6 +120,14 @@ class UserProfileNode(DjangoObjectType):
 
 class UserQuery(graphene.ObjectType):
     user = graphene.Field(UserNode, username=graphene.String())
+    user_search = DjangoFilterConnectionField(UserNode, search=graphene.String())
+
+    @login_required
+    def resolve_user_search(parent, info, search, *args, **kwargs):
+        users = (get_user_model().objects
+            .filter(
+                Q(username__icontains=search) | Q(name__icontains=search)))
+        return users
 
     def resolve_user(parent, info, username):
         user = info.context.user

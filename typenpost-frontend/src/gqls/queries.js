@@ -277,3 +277,49 @@ export const COMMENT_LIKES_USERS = gql`
         }
     }
 `
+
+export const USER_SEARCH_INITIAL = gql`
+    query UserSearchInitial($search: String!) {
+        userSearchInitial(search: $search, first: 5) {
+            id
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            edges {
+                node {
+                    id
+                    name
+                    username
+                    profile {
+                        id
+                        avatar
+                    }
+                }
+            }
+        }
+    }
+`
+
+export const USER_SEARCH = gql`
+    query UserSearch($search: String!, $cursor: String) {
+        userSearch(search: $search, first: 5, after: $cursor) {
+            id
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            edges {
+                node {
+                    id
+                    name
+                    username
+                    profile {
+                        id
+                        avatar
+                    }
+                }
+            }
+        }
+    }
+`
