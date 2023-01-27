@@ -1,17 +1,21 @@
 .login-signup-button {
     font-size: 25px;
 }
+
 a {
     text-decoration: none;
     color: black;
 }
+
 a:hover {
     color: black
 }
+
 .dropdown-item-link:active {
     color: white
 }
-.loader{
+
+.loader {
     position: fixed;
     margin: auto;
     left: 0;
@@ -22,6 +26,7 @@ a:hover {
     height: 50px;
     width: 50px;
 }
+
 .juju {
     height: calc(3.5rem + 2px);
     background-color: white;
@@ -35,18 +40,22 @@ a:hover {
     border-color: black;
     width: 100px;
 }
+
 .btn-following:hover {
     color: red;
     background-color: white;
     border-color: red;
     width: 100px;
 }
+
 .btn-following:hover span {
     display: none;
 }
+
 .btn-following:hover:before {
     content: 'Unfollow';
 }
+
 .fixed-btn-size {
     width: 100px;
 }
@@ -57,27 +66,33 @@ a:hover {
     background-color: white;
     border-color: black;
 }
+
 .btn-following-list:hover {
     color: red;
     background-color: white;
     border-color: red;
 }
+
 .btn-following-list:hover span {
     display: none;
 }
+
 .btn-following-list:hover:before {
     content: 'Unfollow';
 }
+
 .follow-btn-list {
     color: white;
     background-color: #0d6efd;
     border-color: #0d6efd;
 }
+
 .follow-btn-list:hover {
     color: white;
     background-color: #0b5ed7;
     border-color: #0a58ca;
 }
+
 .fixed-btn-size-list {
     width: 5.5rem;
 }
@@ -88,17 +103,20 @@ a:hover {
 .dropdown-menu li {
     position: relative;
 }
+
 .dropdown-menu .dropdown-submenu {
     display: none;
     position: absolute;
     left: 100%;
     top: -7px;
 }
+
 .dropdown-menu .dropdown-submenu-left {
     right: 100%;
     left: auto;
 }
-.dropdown-menu > li:active > .dropdown-submenu {
+
+.dropdown-menu>li:active>.dropdown-submenu {
     display: block;
 }
 
@@ -106,64 +124,80 @@ a:hover {
     border-bottom-left-radius: calc(0.5rem - 1px);
     border-bottom-right-radius: calc(0.5rem - 1px);
 }
+
 .only-top-border {
     border-top: 0px;
 }
+
 .centered-label {
     display: flex;
     align-items: center;
-  }
+}
+
 .no-left-right-top-border {
     border-right: 0px;
     border-left: 0px;
     border-top: 0px;
 }
+
 .no-border {
     border-right: 0px;
     border-left: 0px;
     border-top: 0px;
     border-bottom: 0px;
 }
+
 .innerBtn button {
     height: 40px;
     padding-left: 1rem;
     padding-right: 1rem;
 }
+
 .rounded-circle {
     width: 100%;
     height: auto;
     overflow: 'hidden';
     object-fit: cover;
 }
+
 .pointer {
     cursor: pointer !important;
 }
+
 .darkened-img {
     filter: brightness(60%)
 }
+
 .centered {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
 .container-image {
     position: relative;
     text-align: center;
     color: white;
 }
+
 .follow-text-profile {
     color: #6c757d;
 }
+
 .follow-text-profile:hover {
     color: #212529;
 }
+
 .card:hover {
-    background: rgb(248, 249, 250)}
+    background: rgb(248, 249, 250)
+}
+
 .follow-images {
     height: 2.8rem;
     width: 2.8rem;
 }
+
 .bottom-border {
     border-top: 0px;
     border-left: 0px;
@@ -173,19 +207,27 @@ a:hover {
     border-color: #dee2e6;
     border-radius: 0%;
 }
-html, body {
+
+html,
+body {
     overflow-x: hidden;
+    scroll-behavior: smooth;
+
 }
+
 body {
     position: relative
 }
+
 .marginx-8px {
-    margin-left: -8px; 
+    margin-left: -8px;
     margin-right: -8px;
 }
+
 .tab-follow li button {
     color: red;
 }
+
 .following-tab {
     border-bottom: 1px;
     border-right: 1px;
@@ -195,6 +237,7 @@ body {
     border-top: 0px;
     border-radius: 0%;
 }
+
 .followers-tab {
     border-bottom: 1px;
     border-right: 0px;
@@ -204,32 +247,38 @@ body {
     border-left: 0px;
     border-radius: 0%;
 }
+
 .active-tab-follow {
     background-color: #0d6efd;
-    color: white; 
+    color: white;
 }
+
 .inactive-tab-follow:hover {
     background-color: rgb(248, 249, 250);
 }
+
 .active-tab-follow:hover {
     color: white;
     background-color: #0d6efd;
 }
+
 .navbar-toggler:focus {
     text-decoration: none;
     outline: none;
     box-shadow: none;
 }
+
 .card-icon {
     margin-bottom: '2px';
-    vertical-align: 'text-bottom'; 
+    vertical-align: 'text-bottom';
 }
 
-.content-special {    
+.content-special {
     text-overflow: ellipsis;
-    overflow: hidden;   
+    overflow: hidden;
     white-space: nowrap;
 }
+
 .delete-btn {
     color: rgb(237, 73, 86);
 }

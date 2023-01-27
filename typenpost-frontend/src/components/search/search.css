@@ -1,0 +1,53 @@
+.search_data:hover {
+    background: rgb(232, 231, 231)
+}
+
+.search_data {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1em;
+    padding: .3em;
+    align-items: center;
+}
+
+.search_data img {
+    border-radius: 50%;
+}
+
+.search_showMore {
+    font-family: var(--font-fmaily);
+    line-height: 40px;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.search_showMore:hover {
+    background: rgb(225, 222, 222)
+}
+
+
+.link {
+    color: black
+}
+
+.link:hover {
+    color: black
+}
+
+@media screen and (min-width:950px) {
+    form {
+        width: 50%;
+        margin: auto;
+    }
+}
+
+
+
+.userName {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    line-height: 20px;
+    padding: .3em;
+}

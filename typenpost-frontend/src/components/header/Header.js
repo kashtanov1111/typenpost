@@ -16,6 +16,8 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import ProgressiveImage from 'react-progressive-graceful-image'
 import { HeaderLogoutModal } from './HeaderLogoutModal'
 import { HeaderSettingsModal } from './HeaderSettingsModal'
+import search from '../../assets/images/search.svg'
+import searchActive from '../../assets/images/search-active.svg'
 
 import { createImagePlaceholderUrl, createImageSrcUrl } from '../../functions/functions'
 
@@ -72,6 +74,14 @@ export function Header({
                             {pathname === '/' ?
                                 <img src={createImageSrcUrl(home_active)} alt="a" height='32' width='32' /> :
                                 <img src={createImageSrcUrl(home)} alt="a" height='32' width='32' />}
+                        </li>
+                        <li
+                            className='header-auth__nav__ul__li-6'
+                            onClick={() => navigate('/search')}>
+                            {(pathname === '/search' ||
+                                pathname === '/search') ?
+                                <img src={createImageSrcUrl(searchActive)} alt="b" height='32' width='32' /> :
+                                <img src={createImageSrcUrl(search)} alt="b" height='32' width='32' />}
                         </li>
                         <li
                             className='header-auth__nav__ul__li-3'

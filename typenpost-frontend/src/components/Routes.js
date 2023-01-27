@@ -22,6 +22,7 @@ import { UsernameChange } from './auth/UsernameChange';
 import { UserProfile } from './profile/user/UserProfile';
 import { VerifyAccount } from './auth/VerifyAccount';
 import { VerifySecondaryEmail } from './auth/VerifySecondaryEmail';
+import Search from './search/Search'
 import React from 'react';
 
 
@@ -59,6 +60,7 @@ export function RoutesComponent({
         element={<PasswordResetWithToken />}
       />
       <Route path='/create' element={<PostCreate />} />
+      <Route path='/search' element={<Search />} />
       <Route path='/password_reset' element={<PasswordReset />} />
       <Route
         path='/password_change'
@@ -68,14 +70,14 @@ export function RoutesComponent({
         element={<UsernameChange handleLogout={handleLogout} />} />
       <Route
         path='/profile/:userUsername'
-        element={<UserProfile 
+        element={<UserProfile
           handleLogout={handleLogout}
           secondaryEmail={secondaryEmail}
           email={email}
-          />} />
+        />} />
       <Route
         path='/profile/:userUsername'
-        element={<FollowHeader/>}
+        element={<FollowHeader />}
       >
         <Route
           path='followers'
@@ -92,8 +94,8 @@ export function RoutesComponent({
         element={<AddSecondaryEmail email={email} />} />
       <Route
         path='/swap_emails'
-        element={<SwapEmails 
-          queryMe={queryMe} 
+        element={<SwapEmails
+          queryMe={queryMe}
           secondaryEmail={secondaryEmail} />} />
       <Route
         path='/remove_secondary_email'

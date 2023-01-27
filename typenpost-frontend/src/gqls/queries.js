@@ -280,8 +280,7 @@ export const COMMENT_LIKES_USERS = gql`
 
 export const USER_SEARCH_INITIAL = gql`
     query UserSearchInitial($search: String!) {
-        userSearchInitial(search: $search, first: 5) {
-            id
+        userSearch(search: $search, first: 5) {
             pageInfo {
                 hasNextPage
                 endCursor
@@ -303,8 +302,7 @@ export const USER_SEARCH_INITIAL = gql`
 
 export const USER_SEARCH = gql`
     query UserSearch($search: String!, $cursor: String) {
-        userSearch(search: $search, first: 5, after: $cursor) {
-            id
+        userSearch(search: $search, first: 10, after: $cursor) {
             pageInfo {
                 hasNextPage
                 endCursor

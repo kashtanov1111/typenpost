@@ -34,6 +34,7 @@ a {
   --TP-BTN-LIGHT-COLOR: hsl(222, 90%, 95%);
   --TP-BTN-DARK-COLOR: hsl(222, 90%, 35%);
   --SPECIAL-RED: #bf0000;
+  --font-family: 'Cabin', sans-serif;
 
   /* BORDERS */
   --THIN-LIGHT-GREY-BORDER: 1px solid var(--bs-gray-200);
@@ -95,6 +96,7 @@ a {
   color: black;
   text-decoration: none;
 }
+
 @media (hover: hover) {
   .a:hover {
     text-decoration: underline;
@@ -257,6 +259,7 @@ li.header-auth__nav__ul__li-1 {
   top: 0;
   z-index: 100000;
 }
+
 .logo-banner img.logo-banner-back {
   position: absolute;
   top: 50%;
@@ -358,6 +361,7 @@ li.header-auth__nav__ul__li-1 {
   border-color: black;
   width: 7rem;
 }
+
 @media (hover: hover) {
   .btn-following:hover {
     color: red;
@@ -365,9 +369,11 @@ li.header-auth__nav__ul__li-1 {
     border-color: red;
     width: 7rem;
   }
+
   .btn-following:hover span {
     display: none;
   }
+
   .btn-following:hover:before {
     content: "Unfollow";
   }
@@ -397,6 +403,7 @@ li.header-auth__nav__ul__li-1 {
     top: 50%;
     left: 50%;
   }
+
   to {
     height: 110vh;
     width: 100vw;
@@ -425,6 +432,7 @@ li.header-auth__nav__ul__li-1 {
   object-fit: cover;
   border-radius: 50%;
 }
+
 .darkened-avatar {
   filter: brightness(60%);
 }
@@ -448,13 +456,16 @@ li.header-auth__nav__ul__li-1 {
 .post-card__dropdown-item {
   display: flex;
 }
+
 .header-auth__dropdown-item span,
 .comment-card__dropdown-item span,
 .post-card__dropdown-item span {
   margin-left: 0.5rem;
   padding-bottom: 0.1rem;
 }
+
 @media (hover: hover) {
+
   .header-auth__dropdown-item:hover,
   .comment-card__dropdown-item:hover,
   .post-card__dropdown-item:hover {
@@ -525,6 +536,7 @@ li.header-auth__nav__ul__li-1 {
   padding-left: 0.25rem;
   padding-bottom: 0.1rem;
 }
+
 .c-dropdown__body-show {
   display: block;
 }
@@ -552,6 +564,7 @@ li.header-auth__nav__ul__li-1 {
   background: white;
   color: #6c757d;
 }
+
 @media (hover: hover) {
   .follow-tab-unselected:hover {
     background: var(--bs-gray-100);
@@ -616,10 +629,12 @@ li.header-auth__nav__ul__li-1 {
   margin-top: 0.3rem;
   overflow-wrap: break-word;
 }
+
 .user-header__name h4 {
   width: 100%;
   margin-bottom: 0;
 }
+
 .user-header__about {
   width: 100%;
   overflow-wrap: break-word;
@@ -649,6 +664,7 @@ li.header-auth__nav__ul__li-1 {
   align-items: center;
   gap: 0.2rem;
 }
+
 .user-header__buttons button.settings-btn span {
   padding-bottom: 0.1rem;
 }
@@ -659,6 +675,7 @@ li.header-auth__nav__ul__li-1 {
 }
 
 @media (hover: hover) {
+
   .user-header__following:hover .user-header__following-word,
   .user-header__followers:hover .user-header__followers-word {
     text-decoration: underline;
@@ -703,6 +720,7 @@ li.header-auth__nav__ul__li-1 {
   font-weight: 500;
   margin-bottom: -0.2rem;
 }
+
 .follow-list-btn {
   width: 6rem;
 }
@@ -822,9 +840,7 @@ li.header-auth__nav__ul__li-1 {
   padding: 0.1875rem 0;
 }
 
-.comment-card__top
-  div.comment-card__top-names
-  p.comment-card__top-no-top-margin,
+.comment-card__top div.comment-card__top-names p.comment-card__top-no-top-margin,
 .post-card__top div.post-card__top-names p.post-card__top-no-top-margin {
   margin-top: 0rem;
 }
@@ -891,6 +907,7 @@ li.header-auth__nav__ul__li-1 {
   margin: 0 -0.75rem;
   margin-top: -0.5rem;
 }
+
 .create-post-form__textarea {
   width: 100%;
   height: 100vh;
@@ -955,14 +972,17 @@ li.header-auth__nav__ul__li-1 {
     border-right: var(--THIN-LIGHT-GREY-BORDER);
     padding-top: 3vh;
   }
+
   .header-auth__nav__ul {
     flex-flow: column nowrap;
     justify-content: flex-start;
     height: 97vh;
   }
+
   .header-auth__nav__ul li {
     height: 4rem;
   }
+
   .auth .main {
     width: 90vw;
   }
@@ -1063,6 +1083,7 @@ li.header-auth__nav__ul__li-1 {
     justify-content: center;
   }
 }
+
 /* || LARGE */
 
 @media screen and (min-width: 992px) {
@@ -1108,19 +1129,28 @@ li.header-auth__nav__ul__li-1 {
     justify-content: flex-start;
     align-items: center;
   }
+
   .header-auth__nav__ul li::after {
     padding-left: 1rem;
     padding-bottom: 0.2rem;
   }
+
   .header-auth__nav__ul__li-2::after {
     content: "Home";
   }
+
   .header-auth__nav__ul__li-3::after {
     content: "Create";
   }
+
   .header-auth__nav__ul__li-4::after {
     content: "Profile";
   }
+
+  .header-auth__nav__ul__li-6::after {
+    content: "Search";
+  }
+
   .header-auth__nav__ul__div__li-5::after {
     content: "More";
   }
@@ -1166,9 +1196,11 @@ li.header-auth__nav__ul__li-1 {
     top: -0.5rem;
     left: 6rem;
   }
+
   .logo-banner {
     height: 3rem;
   }
+
   .main {
     padding-top: 1.5rem;
   }
